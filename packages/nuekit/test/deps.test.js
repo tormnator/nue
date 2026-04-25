@@ -55,8 +55,24 @@ test('SPA app', () => {
 
 test('root SPA', () => {
   const paths = [ 'ui/spa.css', 'ui/users.html', 'index.html' ]
-  const deps = listDependencies('index.html', { paths })
+  const deps = listDependencies('index.html', { paths, is_spa: true })
   expect(deps.length).toBe(2)
+})
+
+test('root index.html does not discover unrelated nested ui layouts', () => {
+  const deps = listDependencies('index.html', {
+    paths: [
+      'index.html',
+      '@shared/ui/layout.html',
+      'layout.html',
+      'shopping/ui/layout.html',
+      'shopping/index.html',
+    ]
+  })
+
+  expect(deps).toContain('@shared/ui/layout.html')
+  expect(deps).toContain('layout.html')
+  expect(deps).not.toContain('shopping/ui/layout.html')
 })
 
 test('MPA deps', () => {

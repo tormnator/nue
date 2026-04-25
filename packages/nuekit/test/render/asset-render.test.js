@@ -1,5 +1,16 @@
 
 import { createAsset } from '../../src/asset'
+import { getFileInfo } from '../../src/file'
+
+
+function layoutFile(path, header) {
+  return {
+    ...getFileInfo(path),
+    async text() {
+      return `<!html lib><header>${header}</header>`
+    }
+  }
+}
 
 
 test('index.html', async () => {
@@ -64,6 +75,28 @@ test('dhtml', async () => {
   expect(js).toInclude("is: 'default-app'")
 
   expect(await file.render()).toInclude("export const lib = [ { tag: 'comp'")
+})
+
+
+test('root index.html does not render unrelated nested ui layout header', async () => {
+  const files = [
+    layoutFile('@shared/ui/layout.html', 'shared'),
+    layoutFile('shopping/ui/layout.html', 'shopping-ui'),
+    {
+      ...getFileInfo('index.html'),
+      async text() { return '<main><h1>Home</h1></main>' }
+    },
+    {
+      ...getFileInfo('shopping/index.html'),
+      async text() { return '<main><h1>Shopping</h1></main>' }
+    },
+  ]
+
+  const page = createAsset(files.find(file => file.path == 'index.html'), { files })
+  const html = await page.render()
+
+  expect(html).toInclude('<header>shared</header>')
+  expect(html).not.toInclude('<header>shopping-ui</header>')
 })
 
 
