@@ -91,6 +91,7 @@ export function renderScripts(assets) {
 }
 
 function sortStyleAssets(assets, conf={}) {
+  // design.base promotes one configured stylesheet without disturbing the rest of the cascade.
   const base = conf.design?.base
   if (!base) return assets
 
