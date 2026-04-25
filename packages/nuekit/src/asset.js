@@ -61,20 +61,27 @@ export function createAsset(file, site={}) {
     return arr.map(file => createAsset(file, site))
   }
 
-  function getDeps(opts={}) {
+  async function getDeps(opts={}) {
     const { include, exclude } = opts
     const paths = files.map(f => f.path)
-    const deps = listDependencies(file.path, { paths, include, exclude })
+    const is_spa = await isSPAEntry()
+    const deps = listDependencies(file.path, { paths, include, exclude, is_spa })
     return toAssets(deps)
   }
 
+  async function isSPAEntry() {
+    if (!file.is_html || file.base != 'index.html') return false
+    const { is_dhtml=false, root={} } = await parse()
+    return is_dhtml && root.tag == 'body'
+  }
+
   async function config() {
-    const asset = getDeps().find(f => f.base == 'app.yaml')
+    const asset = (await getDeps()).find(f => f.base == 'app.yaml')
     return asset ? mergeConf(conf, await asset.parse()) : conf
   }
 
   async function data() {
-    const assets = getDeps()
+    const assets = await getDeps()
     const app_files = assets.filter(f => f.is_yaml && f.name != 'site' && f.basedir != '@shared')
     const app_data = await Promise.all(app_files.map(f => f.parse()))
     const ret = mergeData([conf, ...app_data])

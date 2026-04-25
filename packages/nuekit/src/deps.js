@@ -7,10 +7,10 @@ const AUTO_INCLUDED = ['data', 'design', 'ui'].map(dir => `@shared/${dir}`)
 const ASSET_TYPES = ['.html', '.js', '.ts', '.yaml', '.css']
 
 
-export function listDependencies(basepath, { paths, exclude=[], include=[] }) {
+export function listDependencies(basepath, { paths, exclude=[], include=[], is_spa=false }) {
 
   // folder dependency
-  let deps = paths.filter(path => isDep(basepath, path, paths))
+  let deps = paths.filter(path => isDep(basepath, path, paths, is_spa))
 
   // extensions
   deps = deps.filter(path => ASSET_TYPES.includes(extname(path)))
@@ -31,7 +31,7 @@ export function listDependencies(basepath, { paths, exclude=[], include=[] }) {
 }
 
 
-function isDep(page_path, asset_path, all_paths) {
+function isDep(page_path, asset_path, all_paths, is_spa) {
   // self
   if (page_path == asset_path) return false
 
@@ -42,8 +42,8 @@ function isDep(page_path, asset_path, all_paths) {
   // shared dir -> auto-included
   if (AUTO_INCLUDED.some(dir => asset_path.startsWith(dir + '/'))) return true
 
-  // SPA: entire app tree
-  if (basename(page_path) == 'index.html') {
+  // SPA entry points include their full subtree when explicitly marked as SPA.
+  if (basename(page_path) == 'index.html' && is_spa) {
     const dir = dirname(page_path)
     return dir == '.' ? !all_paths.some(el => extname(el) == '.md') : asset_path.startsWith(dir + '/')
   }
