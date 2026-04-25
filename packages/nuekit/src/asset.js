@@ -47,6 +47,17 @@ function sortHTMLAssets(pagePath, assets) {
 }
 
 
+function sortAppConfigAssets(assets) {
+  return assets
+    .map((asset, index) => ({ asset, index, depth: dirname(asset.path).split('/').filter(Boolean).length }))
+    .sort((left, right) => {
+      if (left.depth != right.depth) return left.depth - right.depth
+      return left.index - right.index
+    })
+    .map(entry => entry.asset)
+}
+
+
 export function createAsset(file, site={}) {
   const { files=[], conf={} } = site
   let cachedObj = null
@@ -76,8 +87,14 @@ export function createAsset(file, site={}) {
   }
 
   async function config() {
-    const asset = (await getDeps()).find(f => f.base == 'app.yaml')
-    return asset ? mergeConf(conf, await asset.parse()) : conf
+    const app_conf_assets = sortAppConfigAssets((await getDeps()).filter(f => f.base == 'app.yaml'))
+
+    let ret = conf
+    for (const asset of app_conf_assets) {
+      ret = mergeConf(ret, await asset.parse())
+    }
+
+    return ret
   }
 
   async function data() {

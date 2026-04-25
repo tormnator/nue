@@ -131,3 +131,27 @@ test('shared data acts as a base layer', async () => {
   })
 })
 
+
+test('nested app.yaml files cascade by specificity', async () => {
+
+  const files = [
+    { path: 'blog/app.yaml', text: 'include: [ syntax ]\nmeta:\n title: Blog\n desc: From blog' },
+    { path: 'blog/entry/app.yaml', text: 'include: [ chart ]\nmeta:\n title: Entry' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: { is_prod: true, port: 5000 } })
+
+  expect(await asset.config()).toEqual({
+    is_prod: true,
+    include: ['chart'],
+    meta: {
+      title: 'Entry',
+      desc: 'From blog',
+    },
+    port: 5000,
+  })
+})
+
