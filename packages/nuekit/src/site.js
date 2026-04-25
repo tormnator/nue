@@ -56,8 +56,10 @@ export async function createSite(conf) {
 export function sortAssets(items) {
 
   function prio(path) {
-    const { dir, base } = parse(path)
-    return base == dir.startsWith('@shared') ? 0 : !dir ? 2 : 1
+    const { dir } = parse(path)
+    if (dir.startsWith('@shared')) return 0
+    if (!dir) return 2
+    return 1
   }
 
   return items.sort((a, b) => {
