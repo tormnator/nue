@@ -61,6 +61,10 @@ The UI components can operate either on client, on server, or both. The ui and l
 
 System-level assets load before root-level assets, establishing the foundation that everything else builds upon.
 
+For regular multi-page pages, automatic HTML discovery is still convention-based: Nue looks in the page directory, its parent directories, their `ui/` subfolders, root-level files, and `@shared/ui/`. Other subfolder names are not auto-discovered unless you include them explicitly or use SPA subtree loading.
+
+When multiple HTML library files define the same layout slot, Nue resolves them by page-relative scope rather than broad asset load order. More specific directories win over broader ones, a directory beats its own `ui/` subfolder, root layout files beat `@shared/ui/`, and `@shared/ui/` acts as the shared fallback.
+
 ## Include and exclude
 Control which assets load across your entire site in `site.yaml`:
 
