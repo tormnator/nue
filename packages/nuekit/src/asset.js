@@ -15,6 +15,7 @@ import { minifyCSS } from './tools/css'
 
 
 function getAssetRank(pagePath, assetPath) {
+  // HTML libs are winner-selection: narrower scopes sort ahead of broader fallbacks.
   const assetDir = dirname(assetPath)
   const is_ui = assetDir.endsWith('/ui') || assetDir == 'ui'
   const scopeDir = is_ui ? assetDir.slice(0, -3) || '.' : assetDir
@@ -48,6 +49,7 @@ function sortHTMLAssets(pagePath, assets) {
 
 
 function sortAppConfigAssets(assets) {
+  // App config is an override cascade, so broader app.yaml files merge before deeper ones.
   return assets
     .map((asset, index) => ({ asset, index, depth: dirname(asset.path).split('/').filter(Boolean).length }))
     .sort((left, right) => {
@@ -101,6 +103,7 @@ export function createAsset(file, site={}) {
     const assets = await getDeps()
     const app_files = assets.filter(f => (f.is_yaml || f.is_json) && f.name != 'site' && f.basedir != '@shared')
     const app_data = await Promise.all(app_files.map(f => f.parse()))
+    // Shared static data establishes the base layer before root/app/page data overrides it.
     const shared_data = await parseSharedData(assets)
     const ret = mergeData([...shared_data, conf, ...app_data])
 
@@ -162,6 +165,8 @@ export function createAsset(file, site={}) {
     const html_assets = sortHTMLAssets(file.path, (await assets()).filter(el => el.is_html))
 
     for (const asset of html_assets) {
+      // Optimization candidate: this still parses non-lib HTML files, but we currently
+      // need AST metadata to tell libs from pages and to preserve html/dhtml compatibility.
       const ast = await asset.parse()
       const { doctype='' } = ast
 

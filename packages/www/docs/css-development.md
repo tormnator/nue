@@ -61,6 +61,10 @@ design:
   inline_css: true
 ```
 
+`design.base` can match either a stylesheet filename such as `base.css` or a project-relative path such as `@shared/design/base.css`.
+
+Use the full project-relative path when you want deterministic behavior. Filename-only matching is convenient, but if multiple stylesheets share the same trailing name, the first discovered match wins.
+
 ### App-specific styling
 Override globally through app configuration. In `app/app.yaml`:
 

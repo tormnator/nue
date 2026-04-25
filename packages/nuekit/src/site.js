@@ -78,12 +78,14 @@ function getSharedDataAssets(assets) {
 
 
 export async function parseSharedData(assets) {
+  // Static shared data is the broad base layer for template data.
   const statics = getSharedDataAssets(assets).filter(file => file.is_json || file.is_yaml)
   return Promise.all(statics.map(file => file.parse()))
 }
 
 
 export async function applySharedDataModifiers(assets, data={}) {
+  // Shared data scripts run after the merged data object exists so they can enrich it.
   const mods = getSharedDataAssets(assets).filter(file => (file.is_js || file.is_ts) && !file.name?.endsWith('.test'))
 
   for (const mod of mods) {

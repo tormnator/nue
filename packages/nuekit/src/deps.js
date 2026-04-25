@@ -8,6 +8,7 @@ const ASSET_TYPES = ['.html', '.js', '.ts', '.yaml', '.json', '.css']
 
 
 function getDependencyRank(path) {
+  // Accumulation categories load broad-to-specific: shared, then root, then nested scopes.
   const dir = dirname(path)
   const depth = dir == '.' ? 0 : dir.split('/').filter(Boolean).length
 
@@ -26,6 +27,7 @@ function sortDependencies(paths) {
 
       if (groupA != groupB) return groupA - groupB
       if (depthA != depthB) return depthA - depthB
+      // Preserve original discovery order for ties so same-scope HTML libs stay stable.
       return left.index - right.index
     })
     .map(entry => entry.path)
