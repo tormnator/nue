@@ -9,7 +9,7 @@ import { renderMD, renderHTML } from './render/page'
 import { getCollections } from './collections'
 import { mergeConf, mergeData } from './conf'
 import { listDependencies, parseDirs } from './deps'
-import { mergeSharedData } from './site'
+import { applySharedDataModifiers, parseSharedData } from './site'
 import { renderSVG } from './render/svg'
 import { minifyCSS } from './tools/css'
 
@@ -84,7 +84,8 @@ export function createAsset(file, site={}) {
     const assets = await getDeps()
     const app_files = assets.filter(f => f.is_yaml && f.name != 'site' && f.basedir != '@shared')
     const app_data = await Promise.all(app_files.map(f => f.parse()))
-    const ret = mergeData([conf, ...app_data])
+    const shared_data = await parseSharedData(assets)
+    const ret = mergeData([...shared_data, conf, ...app_data])
 
     // content collections
     const colls = conf.collections
@@ -95,7 +96,7 @@ export function createAsset(file, site={}) {
     }
 
     // shared data, functions, and transformation
-    await mergeSharedData(assets, ret)
+    await applySharedDataModifiers(assets, ret)
 
     return ret
   }

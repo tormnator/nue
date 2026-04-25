@@ -109,3 +109,25 @@ test('asset data/config', async () => {
 
 })
 
+
+test('shared data acts as a base layer', async () => {
+
+  const files = [
+    { path: '@shared/data/theme.yaml', text: 'color: blue\nshared_only: base' },
+    { path: 'team.yaml', text: 'color: green\nroot_only: root' },
+    { path: 'blog/entry/data.yaml', text: 'color: red\npage_only: page' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: {} })
+
+  expect(await asset.data()).toEqual({
+    color: 'red',
+    shared_only: 'base',
+    root_only: 'root',
+    page_only: 'page',
+  })
+})
+
