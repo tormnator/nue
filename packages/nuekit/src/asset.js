@@ -9,7 +9,7 @@ import { renderMD, renderHTML } from './render/page'
 import { getCollections } from './collections'
 import { mergeConf, mergeData } from './conf'
 import { listDependencies, parseDirs } from './deps'
-import { mergeSharedData } from './site'
+import { applySharedDataModifiers, parseSharedData } from './site'
 import { renderSVG } from './render/svg'
 import { minifyCSS } from './tools/css'
 
@@ -47,6 +47,17 @@ function sortHTMLAssets(pagePath, assets) {
 }
 
 
+function sortAppConfigAssets(assets) {
+  return assets
+    .map((asset, index) => ({ asset, index, depth: dirname(asset.path).split('/').filter(Boolean).length }))
+    .sort((left, right) => {
+      if (left.depth != right.depth) return left.depth - right.depth
+      return left.index - right.index
+    })
+    .map(entry => entry.asset)
+}
+
+
 export function createAsset(file, site={}) {
   const { files=[], conf={} } = site
   let cachedObj = null
@@ -76,15 +87,22 @@ export function createAsset(file, site={}) {
   }
 
   async function config() {
-    const asset = (await getDeps()).find(f => f.base == 'app.yaml')
-    return asset ? mergeConf(conf, await asset.parse()) : conf
+    const app_conf_assets = sortAppConfigAssets((await getDeps()).filter(f => f.base == 'app.yaml'))
+
+    let ret = conf
+    for (const asset of app_conf_assets) {
+      ret = mergeConf(ret, await asset.parse())
+    }
+
+    return ret
   }
 
   async function data() {
     const assets = await getDeps()
-    const app_files = assets.filter(f => f.is_yaml && f.name != 'site' && f.basedir != '@shared')
+    const app_files = assets.filter(f => (f.is_yaml || f.is_json) && f.name != 'site' && f.basedir != '@shared')
     const app_data = await Promise.all(app_files.map(f => f.parse()))
-    const ret = mergeData([conf, ...app_data])
+    const shared_data = await parseSharedData(assets)
+    const ret = mergeData([...shared_data, conf, ...app_data])
 
     // content collections
     const colls = conf.collections
@@ -95,7 +113,7 @@ export function createAsset(file, site={}) {
     }
 
     // shared data, functions, and transformation
-    await mergeSharedData(assets, ret)
+    await applySharedDataModifiers(assets, ret)
 
     return ret
   }
@@ -110,7 +128,7 @@ export function createAsset(file, site={}) {
       const str = await file.text()
 
       cachedObj = file.is_js || file.is_ts ? await import(join(process.cwd(), file.path) + '?' + Math.random())
-        : file.is_json ? JSON.parsek(str)
+        : file.is_json ? JSON.parse(str)
         : file.is_md ? parseNuemark(str)
         : file.is_yaml ? parseYAML(str)
         : parseNue(str)

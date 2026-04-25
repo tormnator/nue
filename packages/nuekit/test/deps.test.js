@@ -1,6 +1,7 @@
 
 import { test, expect } from 'bun:test'
 import { listDependencies, parseDirs } from '../src/deps'
+import { sortAssets } from '../src/site'
 
 const paths = [
 
@@ -170,6 +171,37 @@ test('MPA discovery does not auto-include non-ui custom folders', () => {
   expect(deps).toContain('shopping/cart/ui/layout.html')
   expect(deps).not.toContain('shopping/components/layout.html')
   expect(deps).not.toContain('shopping/cart/widgets/layout.html')
+})
+
+
+test('MPA CSS and JS dependencies stay broad-to-specific', () => {
+  const paths = sortAssets([
+    '@shared/design/base.css',
+    '@shared/ui/keyboard.js',
+    'global.css',
+    'globals.js',
+    'blog/blog.css',
+    'blog/blog.js',
+    'blog/entry/page.css',
+    'blog/entry/page.js',
+    'blog/entry/index.md',
+  ])
+
+  const deps = listDependencies('blog/entry/index.md', { paths })
+
+  expect(deps.filter(path => path.endsWith('.css'))).toEqual([
+    '@shared/design/base.css',
+    'global.css',
+    'blog/blog.css',
+    'blog/entry/page.css',
+  ])
+
+  expect(deps.filter(path => path.endsWith('.js'))).toEqual([
+    '@shared/ui/keyboard.js',
+    'globals.js',
+    'blog/blog.js',
+    'blog/entry/page.js',
+  ])
 })
 
 

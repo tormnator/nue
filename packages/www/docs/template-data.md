@@ -4,7 +4,7 @@ Nue templates receive data from multiple sources that cascade and combine into a
 
 
 ## Data files
-Any `.yaml` file in your project becomes template data. Data files follow the same cascading hierarchy as [configuration](configuration):
+Any `.yaml` or `.json` file in your project becomes template data. Data files follow the same cascading hierarchy as [configuration](configuration):
 
 **Site level** - Root directory:
 
@@ -120,8 +120,8 @@ Scripts run after all YAML and JSON files at the same level are merged:
 Data precedence from lowest to highest priority:
 
 1. **Start with global data** - Load all `@shared/data/*.yaml` and `*.json` files, then run any `.js`/`.ts` scripts
-2. **Add root-level data** - From `site.yaml`  and other root level .yaml files
-3. **Add app-level data** - From `app.yaml` and app-specific .yaml files
+2. **Add root-level data** - From `site.yaml` and other root-level `.yaml` and `.json` files
+3. **Add app-level data** - From `app.yaml` and app-specific `.yaml` and `.json` files
 4. **Add page front matter** - Page-specific overrides
 
 The front matter metadata is flattened so that `title` property would override `meta.title` in site.yaml or app.yaml. Properties with the same name are always overridden, ie: "team" property on app level would override the team array on root level.
