@@ -111,4 +111,50 @@ test('home auto-include', () => {
 })
 
 
+test('MPA discovery includes ancestor ui folders', () => {
+  const deps = listDependencies('shopping/cart/index.md', {
+    paths: [
+      'site.yaml',
+      '@shared/ui/layout.html',
+      'layout.html',
+      'shopping/layout.html',
+      'shopping/ui/layout.html',
+      'shopping/cart/layout.html',
+      'shopping/cart/ui/layout.html',
+      'shopping/cart/index.md',
+    ]
+  })
+
+  expect(deps).toContain('@shared/ui/layout.html')
+  expect(deps).toContain('layout.html')
+  expect(deps).toContain('shopping/layout.html')
+  expect(deps).toContain('shopping/ui/layout.html')
+  expect(deps).toContain('shopping/cart/layout.html')
+  expect(deps).toContain('shopping/cart/ui/layout.html')
+})
+
+
+test('MPA discovery does not auto-include non-ui custom folders', () => {
+  const deps = listDependencies('shopping/cart/index.md', {
+    paths: [
+      'site.yaml',
+      'shopping/layout.html',
+      'shopping/ui/layout.html',
+      'shopping/components/layout.html',
+      'shopping/cart/layout.html',
+      'shopping/cart/ui/layout.html',
+      'shopping/cart/widgets/layout.html',
+      'shopping/cart/index.md',
+    ]
+  })
+
+  expect(deps).toContain('shopping/layout.html')
+  expect(deps).toContain('shopping/ui/layout.html')
+  expect(deps).toContain('shopping/cart/layout.html')
+  expect(deps).toContain('shopping/cart/ui/layout.html')
+  expect(deps).not.toContain('shopping/components/layout.html')
+  expect(deps).not.toContain('shopping/cart/widgets/layout.html')
+})
+
+
 

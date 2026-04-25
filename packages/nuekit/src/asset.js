@@ -1,5 +1,5 @@
 
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 
 import { parseNuemark } from 'nuemark'
 import { parseYAML } from 'nueyaml'
@@ -8,10 +8,43 @@ import { parseNue } from 'nuedom'
 import { renderMD, renderHTML } from './render/page'
 import { getCollections } from './collections'
 import { mergeConf, mergeData } from './conf'
-import { listDependencies } from './deps'
+import { listDependencies, parseDirs } from './deps'
 import { mergeSharedData } from './site'
 import { renderSVG } from './render/svg'
 import { minifyCSS } from './tools/css'
+
+
+function getAssetRank(pagePath, assetPath) {
+  const assetDir = dirname(assetPath)
+  const is_ui = assetDir.endsWith('/ui') || assetDir == 'ui'
+  const scopeDir = is_ui ? assetDir.slice(0, -3) || '.' : assetDir
+
+  if (assetDir.startsWith('@shared/ui')) return [0, 0, is_ui ? 1 : 0]
+  if (scopeDir == '.') return [2, 0, is_ui ? 1 : 0]
+
+  const pageDirs = parseDirs(dirname(pagePath)).filter(Boolean).filter(dir => dir != '.')
+  const depth = pageDirs.lastIndexOf(scopeDir)
+
+  if (depth >= 0) return [3, depth + 1, is_ui ? 1 : 0]
+  if (scopeDir.startsWith(dirname(pagePath) + '/')) return [1, 0, is_ui ? 1 : 0]
+
+  return [1, 0, is_ui ? 1 : 0]
+}
+
+function sortHTMLAssets(pagePath, assets) {
+  return assets
+    .map((asset, index) => ({ asset, index, rank: getAssetRank(pagePath, asset.path) }))
+    .sort((left, right) => {
+      const [groupA, depthA, uiA] = left.rank
+      const [groupB, depthB, uiB] = right.rank
+
+      if (groupA != groupB) return groupB - groupA
+      if (depthA != depthB) return depthB - depthA
+      if (uiA != uiB) return uiA - uiB
+      return left.index - right.index
+    })
+    .map(entry => entry.asset)
+}
 
 
 export function createAsset(file, site={}) {
@@ -101,8 +134,9 @@ export function createAsset(file, site={}) {
   async function components(force_html) {
     const { is_dhtml=false } = await parse()
     const ret = []
+    const html_assets = sortHTMLAssets(file.path, (await assets()).filter(el => el.is_html))
 
-    for (const asset of (await assets()).filter(el => el.is_html)) {
+    for (const asset of html_assets) {
       const ast = await asset.parse()
       const { doctype='' } = ast
 
