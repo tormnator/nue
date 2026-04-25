@@ -28,6 +28,21 @@ test('renderStyles', async () => {
   expect(style[0]).toBe('<style>body{}</style>')
 })
 
+
+test('renderStyles honors design.base ordering', async () => {
+  const files = [
+    { is_css: true, path: 'blog/blog.css', base: 'blog.css', async text() { return '' } },
+    { is_css: true, path: '@shared/design/base.css', base: 'base.css', async text() { return '' } },
+    { is_css: true, path: 'global.css', base: 'global.css', async text() { return '' } },
+  ]
+
+  const css = await renderStyles(files, { design: { base: 'base.css' } })
+
+  expect(css[0]).toBe('<link rel="stylesheet" href="/@shared/design/base.css">')
+  expect(css[1]).toBe('<link rel="stylesheet" href="/blog/blog.css">')
+  expect(css[2]).toBe('<link rel="stylesheet" href="/global.css">')
+})
+
 test('renderMeta', async () => {
   const meta = await renderMeta({
     author: 'tipiirai',

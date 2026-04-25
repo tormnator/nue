@@ -56,8 +56,10 @@ export async function createSite(conf) {
 export function sortAssets(items) {
 
   function prio(path) {
-    const { dir, base } = parse(path)
-    return base == dir.startsWith('@shared') ? 0 : !dir ? 2 : 1
+    const { dir } = parse(path)
+    if (dir.startsWith('@shared')) return 0
+    if (!dir) return 2
+    return 1
   }
 
   return items.sort((a, b) => {
@@ -70,16 +72,21 @@ export function sortAssets(items) {
 }
 
 
-export async function mergeSharedData(assets, data={}) {
-  const shared = assets.filter(a => a.dir?.startsWith(`@shared/data`))
-  const statics = shared.filter(f => f.is_json || f.is_yaml)
+function getSharedDataAssets(assets) {
+  return assets.filter(asset => asset.dir?.startsWith('@shared/data'))
+}
 
-  const dataset = await Promise.all(statics.map(f => f.parse()))
 
-  dataset.forEach(more => Object.assign(data, more))
+export async function parseSharedData(assets) {
+  // Static shared data is the broad base layer for template data.
+  const statics = getSharedDataAssets(assets).filter(file => file.is_json || file.is_yaml)
+  return Promise.all(statics.map(file => file.parse()))
+}
 
-  // modifier scripts
-  const mods = shared.filter(f => (f.is_js || f.is_ts) && !f.name?.endsWith('.test'))
+
+export async function applySharedDataModifiers(assets, data={}) {
+  // Shared data scripts run after the merged data object exists so they can enrich it.
+  const mods = getSharedDataAssets(assets).filter(file => (file.is_js || file.is_ts) && !file.name?.endsWith('.test'))
 
   for (const mod of mods) {
     const fns = await mod.parse()
@@ -87,6 +94,14 @@ export async function mergeSharedData(assets, data={}) {
   }
 
   return data
+}
+
+
+export async function mergeSharedData(assets, data={}) {
+  const dataset = await parseSharedData(assets)
+
+  dataset.forEach(more => Object.assign(data, more))
+  return applySharedDataModifiers(assets, data)
 }
 
 

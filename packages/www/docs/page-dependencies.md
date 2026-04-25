@@ -17,6 +17,7 @@ Global assets that apply to every page:
 global.css          # Site-wide styles
 app.js              # Global JavaScript
 site.yaml           # Site data
+team.json           # Site-wide JSON data
 ```
 
 ### App level
@@ -26,7 +27,8 @@ Area-specific assets that apply to pages within that directory:
 blog/
 ├── blog.css        # Only applies to blog pages
 ├── layout.html     # Blog-specific layouts
-└── data.yaml       # Blog data
+├── data.yaml       # Blog YAML data
+└── data.json       # Blog JSON data
 
 admin/
 ├── admin.js        # Only applies to admin pages
@@ -40,7 +42,8 @@ Assets in the same directory as the page:
 blog/css-is-awesome/
 ├── effects.css     # Only applies to this specific page
 ├── awesome.html    # Page-specific components
-└── products.yaml   # Page-specific data
+├── products.yaml   # Page-specific YAML data
+└── products.json   # Page-specific JSON data
 ```
 
 Page-specific directories are rare but allow construction of complex content that needs dedicated assets.
@@ -54,7 +57,7 @@ Larger projects can use @shared directory for globally available assets:
 ├── ui/          # Auto-included UI components/controllers.
 ├── lib/         # Selective UI components/controllers
 ├── design/      # Design system CSS files (.css)
-└── data/        # Site-wide data files (.yaml)
+└── data/        # Site-wide data files (.yaml and .json)
 ```
 
 The UI components can operate either on client, on server, or both. The ui and lib directories can contain .html, .js, .ts, and component specific .css files.

@@ -109,3 +109,71 @@ test('asset data/config', async () => {
 
 })
 
+
+test('shared data acts as a base layer', async () => {
+
+  const files = [
+    { path: '@shared/data/theme.yaml', text: 'color: blue\nshared_only: base' },
+    { path: 'team.yaml', text: 'color: green\nroot_only: root' },
+    { path: 'blog/entry/data.yaml', text: 'color: red\npage_only: page' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: {} })
+
+  expect(await asset.data()).toEqual({
+    color: 'red',
+    shared_only: 'base',
+    root_only: 'root',
+    page_only: 'page',
+  })
+})
+
+
+test('nested app.yaml files cascade by specificity', async () => {
+
+  const files = [
+    { path: 'blog/app.yaml', text: 'include: [ syntax ]\nmeta:\n title: Blog\n desc: From blog' },
+    { path: 'blog/entry/app.yaml', text: 'include: [ chart ]\nmeta:\n title: Entry' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: { is_prod: true, port: 5000 } })
+
+  expect(await asset.config()).toEqual({
+    is_prod: true,
+    include: ['chart'],
+    meta: {
+      title: 'Entry',
+      desc: 'From blog',
+    },
+    port: 5000,
+  })
+})
+
+
+test('JSON data participates in the same hierarchy as YAML', async () => {
+
+  const files = [
+    { path: '@shared/data/team.json', text: '{ "name": "shared", "shared_only": true }' },
+    { path: 'team.json', text: '{ "name": "root", "root_only": true }' },
+    { path: 'blog/entry/data.json', text: '{ "name": "page", "page_only": true }' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: {} })
+
+  expect(await asset.data()).toEqual({
+    name: 'page',
+    shared_only: true,
+    root_only: true,
+    page_only: true,
+  })
+})
+

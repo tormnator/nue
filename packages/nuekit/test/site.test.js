@@ -6,7 +6,7 @@ test('sortAssets', () => {
     'blog/post.md',
     'index.html',
     '@shared/design/area.css',
-    'docs/getting-started.md',
+    '0docs/getting-started.md',
     'global.css',
     '@shared/design/base.css',
     'about.md'
@@ -15,8 +15,8 @@ test('sortAssets', () => {
   expect(sorted).toEqual([
     "@shared/design/area.css",
     "@shared/design/base.css",
+    "0docs/getting-started.md",
     "blog/post.md",
-    "docs/getting-started.md",
     "about.md",
     "global.css",
     "index.html",
