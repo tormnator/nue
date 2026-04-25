@@ -7,6 +7,31 @@ const AUTO_INCLUDED = ['data', 'design', 'ui'].map(dir => `@shared/${dir}`)
 const ASSET_TYPES = ['.html', '.js', '.ts', '.yaml', '.css']
 
 
+function getDependencyRank(path) {
+  const dir = dirname(path)
+  const depth = dir == '.' ? 0 : dir.split('/').filter(Boolean).length
+
+  if (dir.startsWith('@shared')) return [0, depth]
+  if (dir == '.') return [1, depth]
+  return [2, depth]
+}
+
+
+function sortDependencies(paths) {
+  return paths
+    .map((path, index) => ({ path, index, rank: getDependencyRank(path) }))
+    .sort((left, right) => {
+      const [groupA, depthA] = left.rank
+      const [groupB, depthB] = right.rank
+
+      if (groupA != groupB) return groupA - groupB
+      if (depthA != depthB) return depthA - depthB
+      return left.index - right.index
+    })
+    .map(entry => entry.path)
+}
+
+
 export function listDependencies(basepath, { paths, exclude=[], include=[], is_spa=false }) {
 
   // folder dependency
@@ -27,7 +52,7 @@ export function listDependencies(basepath, { paths, exclude=[], include=[], is_s
     })
   })
 
-  return [...new Set(deps)]
+  return sortDependencies([...new Set(deps)])
 }
 
 

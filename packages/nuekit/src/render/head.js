@@ -90,9 +90,19 @@ export function renderScripts(assets) {
   return scripts.map(s => elem('script', { src: `/${s.dir}/${s.name}.js`, type: 'module' }))
 }
 
+function sortStyleAssets(assets, conf={}) {
+  const base = conf.design?.base
+  if (!base) return assets
+
+  const index = assets.findIndex(file => file.base == base || file.path == base || file.path.endsWith('/' + base))
+  if (index < 0) return assets
+
+  return [assets[index], ...assets.slice(0, index), ...assets.slice(index + 1)]
+}
+
 export async function renderStyles(assets, conf={}) {
   const { inline_css } = conf?.design || {}
-  const css_files = assets.filter(file => file.is_css)
+  const css_files = sortStyleAssets(assets.filter(file => file.is_css), conf)
 
   if (conf.is_prod && inline_css) {
     const css = await inlineCSS(css_files)
