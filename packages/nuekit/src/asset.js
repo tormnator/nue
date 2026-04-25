@@ -99,7 +99,7 @@ export function createAsset(file, site={}) {
 
   async function data() {
     const assets = await getDeps()
-    const app_files = assets.filter(f => f.is_yaml && f.name != 'site' && f.basedir != '@shared')
+    const app_files = assets.filter(f => (f.is_yaml || f.is_json) && f.name != 'site' && f.basedir != '@shared')
     const app_data = await Promise.all(app_files.map(f => f.parse()))
     const shared_data = await parseSharedData(assets)
     const ret = mergeData([...shared_data, conf, ...app_data])
@@ -128,7 +128,7 @@ export function createAsset(file, site={}) {
       const str = await file.text()
 
       cachedObj = file.is_js || file.is_ts ? await import(join(process.cwd(), file.path) + '?' + Math.random())
-        : file.is_json ? JSON.parsek(str)
+        : file.is_json ? JSON.parse(str)
         : file.is_md ? parseNuemark(str)
         : file.is_yaml ? parseYAML(str)
         : parseNue(str)

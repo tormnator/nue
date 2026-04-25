@@ -155,3 +155,25 @@ test('nested app.yaml files cascade by specificity', async () => {
   })
 })
 
+
+test('JSON data participates in the same hierarchy as YAML', async () => {
+
+  const files = [
+    { path: '@shared/data/team.json', text: '{ "name": "shared", "shared_only": true }' },
+    { path: 'team.json', text: '{ "name": "root", "root_only": true }' },
+    { path: 'blog/entry/data.json', text: '{ "name": "page", "page_only": true }' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: {} })
+
+  expect(await asset.data()).toEqual({
+    name: 'page',
+    shared_only: true,
+    root_only: true,
+    page_only: true,
+  })
+})
+
