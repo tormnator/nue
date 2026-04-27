@@ -128,6 +128,18 @@ test('home auto-include', () => {
 })
 
 
+test('home auto-include for root index.html', () => {
+  const deps = listDependencies('index.html', {
+    paths: ['site.yaml', 'globals.js', 'index.html', 'home/home.css', 'home/home.yaml'],
+    exclude: ['@'],
+  })
+
+  expect(deps).toContain('home/home.css')
+  expect(deps).toContain('home/home.yaml')
+  expect(deps).toEqual(['site.yaml', 'globals.js', 'home/home.css', 'home/home.yaml'])
+})
+
+
 test('MPA discovery includes ancestor ui folders', () => {
   const deps = listDependencies('shopping/cart/index.md', {
     paths: [
