@@ -181,7 +181,7 @@ site:
    - Handles all routes within that directory (e.g., `/app/*`)
 
 3. **Home Directory:**
-   - Root `index.md` automatically includes assets from `home/` directory
+  - Root `index.md` and `index.html` automatically include assets from `home/` directory
 
 ### `404.md` or `404.html`
 
@@ -586,7 +586,7 @@ app/index.html            →  /app/ (SPA catchall)
 3. **`@shared/data/`** - Global data (server-side, auto)
 4. **Root level** - Global assets (`site.yaml`, `global.css`, `app.js`)
 5. **Application level** - App-specific assets (`blog/blog.css`, `blog/app.yaml`)
-6. **`home/`** - Home page only (for root `index.md`)
+6. **`home/`** - Home page only (for root `index.md` or `index.html`)
 7. **Page level** - Same directory as page (`blog/post/styles.css`)
 
 ### Asset Types Included
@@ -977,7 +977,7 @@ These have special meaning:
 | `@shared/app/` | ❌ No | Business logic (import map) |
 | `@shared/server/` | ❌ No | Backend API routes |
 | `@shared/test/` | ❌ No | Test files (ignored) |
-| `home/` | ⚡ Conditional | Root index.md only |
+| `home/` | ⚡ Conditional | Root `index.md` or `index.html` only |
 | `{app}/ui/` | ⚡ Conditional | App-specific components |
 
 ### File Extension Quick Reference
