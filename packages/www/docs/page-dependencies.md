@@ -35,6 +35,18 @@ admin/
 └── uilib.html      # Admin UI components
 ```
 
+### Home page level
+Assets in the special `home/` directory are only included for the root home page:
+
+```
+home/
+├── home.css        # Only applies to /
+├── hero.html       # Only applies to /
+└── home.yaml       # Only applies to /
+```
+
+This applies to both root `index.md` and root `index.html`.
+
 ### Page level
 Assets in the same directory as the page:
 

@@ -75,9 +75,11 @@ function isDep(page_path, asset_path, all_paths, is_spa) {
     return dir == '.' ? !all_paths.some(el => extname(el) == '.md') : asset_path.startsWith(dir + '/')
   }
 
-  // index.md -> home dir
+  // Root index pages auto-include the special home directory.
   const pagedir = dirname(page_path)
-  if (pagedir == '.' && basename(page_path) == 'index.md') return dirname(asset_path) == 'home'
+  if (pagedir == '.' && ['index.md', 'index.html'].includes(basename(page_path))) {
+    return dirname(asset_path) == 'home'
+  }
 
   // hierarchical inclusion (handles root ui and app ui)
   const page_dirs = parseDirs(dirname(page_path))

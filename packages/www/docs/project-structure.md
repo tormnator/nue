@@ -148,6 +148,8 @@ If your application has several CSS/JS assets, place them in a `ui` folder withi
 ### Home folder
 Your home page assets can go in a `home` folder to separate them from root assets that are shared across all applications.
 
+Files in `home/` are auto-included only for the root home page: `index.md` or `index.html`. For example, `home/home.css` and `home/home.yaml` load for `/`, but not for other routes.
+
 
 ## File types
 
