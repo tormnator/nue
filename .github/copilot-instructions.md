@@ -1,0 +1,13 @@
+- Use Bun for repo work unless the user explicitly asks for Node.
+- Do not change the existing Node-based test scripts in `packages/nueglow` or `packages/nuemark` unless requested.
+
+- Do Git and GitHub work only against `origin`. Use `upstream` only as read-only reference unless the user explicitly asks otherwise.
+- Before making code, doc, or Git changes, always check the current branch and switch or create the correct branch if needed.
+- For tracked bug fixes or behavior changes, consider creating a GitHub issue on `origin` before implementation unless the user explicitly wants to skip that step.
+- Keep `master` upstream-aligned and use it as the clean reference branch.
+- Use `main` as the fork's official/latest branch.
+- Use `dev` as the active development branch and default parent for normal work.
+- Create short-lived work branches from `dev`.
+- Create `v3-dev` only for future v3-based work from `upstream/3.0` when needed.
+- Prepare upstream PR branches from `master` or another upstream-aligned base, not directly from `dev`.
+- After committing, merge working branches into `dev`, then promote `dev` to `main` when cutting an official update.
