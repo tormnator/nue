@@ -62,7 +62,7 @@ const TAGS = {
     const { attr, data } = this
     const { caption, href, loading = 'lazy' } = data
     const src = data.src || data._ || data.large
-    const alt = data.alt || caption
+    const alt = data.alt || ''
 
     // img tag
     const img_attr = { alt, loading, src, ...parseSize(data) }
@@ -71,8 +71,8 @@ const TAGS = {
     // wrap image inside a link
     if (href) img = elem('a', { href }, img)
 
-    // figcaption
-    const figcaption = caption ? this.renderInline(caption) : this.innerHTML
+    // figcaption: use caption if set, else body content — but not when alt: is set (avoids leaking body as visible text)
+    const figcaption = caption ? this.renderInline(caption) : (!data.alt ? this.innerHTML : '')
     if (figcaption) img += elem('figcaption', figcaption)
 
     // always wrapped inside a figure
