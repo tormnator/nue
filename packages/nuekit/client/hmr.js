@@ -15,6 +15,10 @@ function createConnection() {
       : null
   }
 
+  server.onopen = function() {
+    server.send(JSON.stringify({ type: 'pathname', pathname: location.pathname }))
+  }
+
   // reconnect after 1 second
   server.onclose = function() {
     console.log('HMR reconnecting...')
@@ -37,8 +41,6 @@ async function handleError(asset) {
 
 async function reloadContent(asset) {
   const { url } = asset
-
-  if (url != location.pathname) return location.href = url
 
   // domdiff
   const { mountAll } = await import('./mount.js')
@@ -88,11 +90,8 @@ function reloadSVG(html) {
 function reloadCSS(asset) {
   const { url, content } = asset
   const orig = $(`[href="${url}"]`)
-  const style = createStyle(url, content)
-
-
-  if (orig) orig.replaceWith(style)
-  else document.head.appendChild(style)
+  if (!orig) return
+  orig.replaceWith(createStyle(url, content))
 }
 
 

@@ -2,7 +2,7 @@
 import { extname, join } from 'node:path'
 
 import { generateSitemap, generateFeed } from '../render/feed'
-import { createServer, broadcast } from '../tools/server'
+import { createServer, broadcast, broadcastTo } from '../tools/server'
 import { fswatch } from '../tools/fswatch'
 
 import { getSystemFiles } from '../system'
@@ -39,7 +39,8 @@ export async function serve(site, { silent }) {
         asset.ast = await asset.parse()
         delete asset.ast.root
       }
-      broadcast(asset)
+      const isContentPage = asset.is_md || (asset.is_html && !asset.ast?.is_lib && !asset.ast?.is_dhtml)
+      isContentPage ? broadcastTo(asset, asset.url) : broadcast(asset)
     }
   }
 

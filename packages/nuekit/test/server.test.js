@@ -1,6 +1,6 @@
 
 import { testDir, writeAll, removeAll } from './test-utils'
-import { broadcast, createServer } from '../src/tools/server'
+import { broadcast, broadcastTo, createServer } from '../src/tools/server'
 
 await writeAll([
   ['index.html', '<h1>Home</h1>'],
@@ -107,6 +107,78 @@ test('broadcast', async () => {
 
   const message = await messagePromise
   expect(message).toEqual({ type: 'reload' })
+
+  ws.close()
+})
+
+test('session pathname defaults to null on open', async () => {
+  const ws = new WebSocket(`ws://localhost:${server.port}`)
+  await new Promise((resolve) => { ws.onopen = resolve })
+
+  const messagePromise = new Promise((resolve) => {
+    ws.onmessage = (event) => { resolve(JSON.parse(event.data)) }
+  })
+
+  broadcastTo({ type: 'null-check' }, null)
+
+  const message = await messagePromise
+  expect(message).toEqual({ type: 'null-check' })
+
+  ws.close()
+})
+
+test('message handler sets session pathname', async () => {
+  const ws = new WebSocket(`ws://localhost:${server.port}`)
+  await new Promise((resolve) => { ws.onopen = resolve })
+
+  ws.send(JSON.stringify({ type: 'pathname', pathname: '/about/' }))
+  await new Promise((resolve) => setTimeout(resolve, 20))
+
+  const messagePromise = new Promise((resolve) => {
+    ws.onmessage = (event) => { resolve(JSON.parse(event.data)) }
+  })
+
+  broadcastTo({ type: 'check' }, '/about/')
+
+  const message = await messagePromise
+  expect(message).toEqual({ type: 'check' })
+
+  ws.close()
+})
+
+test('broadcastTo sends only to matching pathname', async () => {
+  const ws = new WebSocket(`ws://localhost:${server.port}`)
+  await new Promise((resolve) => { ws.onopen = resolve })
+
+  ws.send(JSON.stringify({ type: 'pathname', pathname: '/blog/' }))
+  await new Promise((resolve) => setTimeout(resolve, 20))
+
+  const messagePromise = new Promise((resolve) => {
+    ws.onmessage = (event) => { resolve(JSON.parse(event.data)) }
+  })
+
+  broadcastTo({ type: 'update' }, '/blog/')
+
+  const message = await messagePromise
+  expect(message).toEqual({ type: 'update' })
+
+  ws.close()
+})
+
+test('broadcastTo ignores non-matching pathname', async () => {
+  const ws = new WebSocket(`ws://localhost:${server.port}`)
+  await new Promise((resolve) => { ws.onopen = resolve })
+
+  ws.send(JSON.stringify({ type: 'pathname', pathname: '/shopping/' }))
+  await new Promise((resolve) => setTimeout(resolve, 20))
+
+  let received = false
+  ws.onmessage = () => { received = true }
+
+  broadcastTo({ type: 'update' }, '/blog/')
+
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  expect(received).toBe(false)
 
   ws.close()
 })
