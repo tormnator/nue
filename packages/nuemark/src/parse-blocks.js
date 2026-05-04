@@ -7,7 +7,7 @@ import { parseTag } from './parse-tag.js'
 
 export function parseBlocks(lines, capture) {
   const blocks = []
-  let spaces, block
+  let spaces, block, inHtmlComment
 
   // capture things while recursing blocks
   capture = capture || {
@@ -19,6 +19,17 @@ export function parseBlocks(lines, capture) {
   lines.forEach(line => {
     const c = line[0]
     const trimmed = line.trim()
+
+    // multi-line HTML comment: skip inner lines to prevent them from corrupting indentation tracking
+    if (inHtmlComment) {
+      if (trimmed.includes('-->')) inHtmlComment = false
+      return
+    }
+    if (trimmed.startsWith('<!--') && !trimmed.includes('-->')) {
+      inHtmlComment = true
+      return
+    }
+
     const indent = trimmed && line.length - line.trimStart().length
     if (!spaces) spaces = indent
 
