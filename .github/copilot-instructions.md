@@ -2,7 +2,7 @@
 - Do not change the existing Node-based test scripts in `packages/nueglow` or `packages/nuemark` unless requested.
 
 - Default Nue GitHub target is `tormnator/nue` (`origin`). Use it for issues, issue references, discussions, PR targets, and GitHub links unless the user explicitly asks otherwise.
-- Treat `nuejs/nue` (`upstream`) as read-only reference only. This default still applies when the active workspace folder is `archie-proto-v1`.
+- Treat `nuejs/nue` (`upstream`) as read-only reference only. This default still applies when the active workspace folder is `archie-nue`.
 - For new sessions, assume normal Nue work targets the `nue` repo and follows the `dev`-based branch flow unless the user points to another repo or a different release or upstream flow.
 - Before making code, doc, or Git changes, always check the current branch and switch or create the correct branch if needed.
 - For tracked bug fixes or behavior changes, consider creating the issue first unless the user explicitly wants to skip that step.
