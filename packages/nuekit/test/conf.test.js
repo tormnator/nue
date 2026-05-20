@@ -14,6 +14,8 @@ test('site overrides', async () => {
     server:
       dir: epic-server
 
+    platform: test-platform
+
     meta:
       title: Bad
 
@@ -26,6 +28,7 @@ test('site overrides', async () => {
 
   expect(conf).toMatchObject({
     server: { dir: "epic-server" },
+    platform: 'test-platform',
     meta: { title: "Good" },
     port: 666,
     is_prod: true,

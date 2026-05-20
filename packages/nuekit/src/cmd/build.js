@@ -5,6 +5,7 @@ import { tmpdir } from 'os'
 
 import { generateSitemap, generateFeed } from '../render/feed'
 import { createSystemFiles } from '../system'
+import { runPlatformBuild } from '../platform'
 
 export async function build(site, args) {
   const { paths=[], dryrun, silent } = args
@@ -34,6 +35,8 @@ export async function build(site, args) {
     const xml = await generateFeed(assets, conf)
     if (xml) await writeFile(join(dist, 'feed.xml'), xml)
   }
+
+  if (!paths.length) await runPlatformBuild(site, args, subset)
 
   // stats
   if (!silent) {
