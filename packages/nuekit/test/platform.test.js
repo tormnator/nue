@@ -30,8 +30,8 @@ test('SPA fallback manifest', async () => {
   ])
 
   expect(fallbacks).toEqual([
-    { path: 'index.html', url: '/' },
     { path: 'admin/index.html', url: '/admin/' },
+    { path: 'index.html', url: '/' },
   ])
 })
 

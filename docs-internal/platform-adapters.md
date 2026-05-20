@@ -73,3 +73,17 @@ The existing Bun development server is not part of the initial Platform Adapter 
 
 1. Core Platform Adapter foundation: config, registry, build context, runtime detection, fallback manifests, internal docs, and tests.
 2. Cloudflare Pages Platform Adapter: Advanced Mode only, generated runtime artifacts when needed, static asset fallback, Nueserver dispatch, SPA fallback, and GitHub-based deployment validation.
+
+## Cloudflare Pages Adapter
+
+The first concrete adapter targets Cloudflare Pages Advanced Mode. It generates `_worker.js` only when the target-neutral runtime context requires a runtime artifact. Static-only MPA builds do not emit a worker in `auto` mode.
+
+The generated worker owns Cloudflare-specific request orchestration:
+
+1. Dispatch bundled Nueserver routes when a route matches.
+2. Proxy configured backend routes when `server.url` is used.
+3. Fall through to `env.ASSETS.fetch(request)` for static files.
+4. Apply SPA shell fallback for extensionless `GET` and `HEAD` 404s using the core fallback manifest.
+5. Return the static asset 404 otherwise.
+
+The adapter currently passes the platform environment directly to Nueserver as `c.env`. Production universal-model resources such as users, sessions, D1, KV, R2, Durable Objects, Queues, and Analytics Engine remain future adapter work.

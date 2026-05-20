@@ -34,11 +34,27 @@ export async function runPlatformBuild(site, args={}, subset=site.assets) {
   const name = getPlatformName(site.conf.platform)
   if (!name) return
 
-  const adapter = adapters.get(name)
+  const adapter = await getPlatform(name)
   if (!adapter) throw new Error(`Unknown platform: ${name}`)
 
   const context = await createPlatformContext(site, args, subset)
   return await adapter.build?.(context)
+}
+
+async function getPlatform(name) {
+  let adapter = adapters.get(name)
+  if (adapter) return adapter
+
+  if (!/^[a-z][a-z0-9-]*$/.test(name)) throw new Error(`Invalid platform: ${name}`)
+
+  try {
+    const mod = await import(`./${name}.js`)
+    adapter = mod.default && registerPlatform(mod.default)
+    return adapter
+  } catch (error) {
+    if (error.code === 'ERR_MODULE_NOT_FOUND' || error.message?.includes(`/${name}.js`)) return null
+    throw error
+  }
 }
 
 /**
@@ -89,7 +105,7 @@ export async function listSPAFallbacks(assets=[]) {
     }
   }
 
-  return fallbacks
+  return fallbacks.sort((a, b) => b.url.length - a.url.length)
 }
 
 function getFallbackURL(path) {
