@@ -101,7 +101,7 @@ export async function listSPAFallbacks(assets=[]) {
     if (!asset.is_html || asset.base !== 'index.html') continue
     const { is_dhtml=false, root={} } = await asset.parse()
     if (is_dhtml && root.tag === 'body') {
-      fallbacks.push({ path: asset.path, url: asset.url || getFallbackURL(asset.path) })
+      fallbacks.push({ path: asset.path, url: normalizeFallbackURL(asset.url || getFallbackURL(asset.path)) })
     }
   }
 
@@ -111,4 +111,8 @@ export async function listSPAFallbacks(assets=[]) {
 function getFallbackURL(path) {
   const dir = dirname(path).replace(/\\/g, '/')
   return dir === '.' ? '/' : `/${dir}/`
+}
+
+function normalizeFallbackURL(url) {
+  return url.endsWith('/') ? url : `${url}/`
 }

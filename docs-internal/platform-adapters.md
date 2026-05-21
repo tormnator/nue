@@ -87,3 +87,23 @@ The generated worker owns Cloudflare-specific request orchestration:
 5. Return the static asset 404 otherwise.
 
 The adapter currently passes the platform environment directly to Nueserver as `c.env`. Production universal-model resources such as users, sessions, D1, KV, R2, Durable Objects, Queues, and Analytics Engine remain future adapter work.
+
+### Validation Status
+
+The adapter has been validated with automated tests and manual builds:
+
+- Static MPA builds do not emit `_worker.js` in `auto` mode.
+- SPA and server-route builds emit a Pages Advanced Mode worker.
+- Generated workers are imported by tests and exercised with mocked `env.ASSETS`.
+- API routes dispatch before static assets.
+- Static assets fall through to `env.ASSETS.fetch(request)`.
+- SPA fallback handles extensionless 404s and prefers nested app fallbacks before root fallback.
+- File-like 404s, such as `/missing.txt`, do not fall back to an SPA shell.
+
+Manual build inspection has covered a pure MPA site, the `spa` template, and the `full` template. The `full` template output includes static MPA pages, login DHTML output, admin SPA output, and bundled server routes.
+
+### Current Limitations
+
+- Production model resources are not implemented. Routes that depend on `c.env.users`, `c.env.leads`, or similar resources need a future adapter resource layer.
+- Native `nue push` deployment is not implemented. Initial deployment validation should use Cloudflare Pages GitHub integration.
+- Cloudflare `/functions` folder output is intentionally unsupported. This adapter targets Pages Advanced Mode only.

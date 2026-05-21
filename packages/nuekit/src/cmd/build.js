@@ -126,7 +126,7 @@ export function matches(path, patterns) {
 }
 
 export async function minifyJS(code) {
-  const path = join(tmpdir(), `temp-${Date.now()}.js`)
+  const path = join(tmpdir(), `temp-${crypto.randomUUID()}.js`)
   await writeFile(path, code)
 
   const result = await Bun.build({

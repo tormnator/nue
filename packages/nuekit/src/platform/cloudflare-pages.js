@@ -80,7 +80,7 @@ export default {
 }
 
 async function bundleWorker(context) {
-  const path = join(import.meta.dir, `.cloudflare-pages-${Date.now()}.js`)
+  const path = join(import.meta.dir, `.cloudflare-pages-${crypto.randomUUID()}.js`)
   const source = await createWorkerSource(context, path)
   await writeFile(path, source)
 
@@ -88,10 +88,11 @@ async function bundleWorker(context) {
     const result = await Bun.build({
       entrypoints: [path],
       format: 'esm',
+      minify: true,
       target: 'browser',
     })
 
-    if (!result.success) throw new Error('Failed to bundle Cloudflare Pages worker')
+    if (!result.success) throw new Error(result.logs?.join('\n') || 'Failed to bundle Cloudflare Pages worker')
     return await result.outputs[0].text()
 
   } finally {
