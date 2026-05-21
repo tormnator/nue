@@ -62,7 +62,7 @@ async function removeAll() {
 describe('cloudflare-pages platform', async () => {
   afterEach(async () => await removeAll())
 
-  test('static build emits no worker in auto mode', async () => {
+  test('static build emits root 404 but no worker in auto mode', async () => {
     await writeAll([
       ['index.md', '# Hello'],
     ])
@@ -71,6 +71,7 @@ describe('cloudflare-pages platform', async () => {
     await build(site, { silent: true })
 
     expect(await Bun.file(join(testDir, '.dist', 'index.html')).exists()).toBeTrue()
+    expect(await Bun.file(join(testDir, '.dist', '404.html')).exists()).toBeTrue()
     expect(await Bun.file(join(testDir, '.dist', '_worker.js')).exists()).toBeFalse()
   })
 
@@ -85,17 +86,31 @@ describe('cloudflare-pages platform', async () => {
     const worker = await Bun.file(join(testDir, '.dist', '_worker.js')).text()
     expect(worker).toInclude('ASSETS.fetch')
     expect(worker).toInclude('index.html')
+    expect(worker).not.toInclude('assetPaths')
     expect(worker).not.toInclude('nue-cloudflare-pages')
   })
 
-  test('server routes emit bundled worker', async () => {
+  test('existing root 404 page is preserved', async () => {
     await writeAll([
-      ['site.yaml', 'platform: cloudflare-pages\nserver:\n  dir: server'],
+      ['404.html', '<h1>Custom 404</h1>'],
       ['index.md', '# Hello'],
-      ['server/index.js', "get('/api/hello', c => c.json({ hello: true }))"],
     ])
 
-    const site = await createSite({ ...CONF, server: { dir: 'server' }, ignore: ['node_modules', 'server'] })
+    const site = await createSite(CONF)
+    await build(site, { silent: true })
+
+    const file = await Bun.file(join(testDir, '.dist', '404.html')).text()
+    expect(file).toInclude('Custom 404')
+  })
+
+  test('default server routes emit bundled worker', async () => {
+    await writeAll([
+      ['site.yaml', 'platform: cloudflare-pages'],
+      ['index.md', '# Hello'],
+      ['@shared/server/index.js', "get('/api/hello', c => c.json({ hello: true }))"],
+    ])
+
+    const site = await createSite(CONF)
     await build(site, { silent: true })
 
     const worker = await Bun.file(join(testDir, '.dist', '_worker.js')).text()
@@ -162,5 +177,25 @@ describe('cloudflare-pages platform', async () => {
 
     expect(res.status).toBe(404)
     expect(assets.calls).toEqual(['/missing.txt'])
+  })
+
+  test('worker serves known file paths', async () => {
+    await writeAll([
+      ['index.html', '<!doctype dhtml> <body><main/></body>'],
+      ['hello.txt', 'hello'],
+    ])
+
+    const site = await createSite(CONF)
+    await build(site, { silent: true })
+
+    const { default: worker } = await importWorker()
+    const assets = createAssets({ '/hello.txt': new Response('hello', {
+      headers: { 'content-type': 'text/plain' }
+    }) })
+    const res = await worker.fetch(new Request('https://example.com/hello.txt'), { ASSETS: assets })
+
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('hello')
+    expect(assets.calls).toEqual(['/hello.txt'])
   })
 })

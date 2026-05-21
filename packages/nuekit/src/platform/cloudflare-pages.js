@@ -3,6 +3,7 @@ import { mkdir, writeFile, unlink } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 
 const WORKER = '_worker.js'
+const NOT_FOUND = '404.html'
 
 export default {
   name: 'cloudflare-pages',
@@ -10,6 +11,8 @@ export default {
 }
 
 export async function buildCloudflarePages(context) {
+  await ensureNotFoundPage(context)
+
   if (!context.runtime.required) return
 
   const code = await bundleWorker(context)
@@ -35,8 +38,12 @@ ${imports.join('\n')}
 const proxy = ${JSON.stringify(proxy)}
 const spaFallbacks = ${JSON.stringify(manifests.spa_fallbacks)}
 
+function isFilePath(pathname) {
+  return pathname.split('/').pop().includes('.')
+}
+
 function canFallback(request, url) {
-  return ['GET', 'HEAD'].includes(request.method) && !/\\/[^/]+\\.[^/]+$/.test(url.pathname)
+  return ['GET', 'HEAD'].includes(request.method) && !isFilePath(url.pathname)
 }
 
 function getSPAFallback(pathname) {
@@ -79,6 +86,14 @@ export default {
 `
 }
 
+async function ensureNotFoundPage(context) {
+  const path = join(context.dist, NOT_FOUND)
+  if (existsSync(path)) return
+
+  await mkdir(context.dist, { recursive: true })
+  await writeFile(path, '<!doctype html>\n<title>404 Not Found</title>\n<h1>404 Not Found</h1>\n')
+}
+
 async function bundleWorker(context) {
   const path = join(import.meta.dir, `.cloudflare-pages-${crypto.randomUUID()}.js`)
   const source = await createWorkerSource(context, path)
@@ -106,11 +121,13 @@ function getProxyConfig(conf) {
 }
 
 function getServerEntry(conf, root) {
-  if (!conf.server) return null
+  if (conf.server?.url) return null
 
-  const dir = conf.server.dir || '@shared/server'
+  const dir = conf.server?.dir || '@shared/server'
   const path = join(root, dir, 'index.js')
   if (existsSync(path)) return path
+
+  if (!conf.server) return null
 
   throw new Error(`Server entry not found: ${path}`)
 }
