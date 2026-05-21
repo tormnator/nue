@@ -1,4 +1,7 @@
-import { dirname } from 'node:path'
+import { existsSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+
+const DEFAULT_SERVER_DIR = '@shared/server'
 
 export const RUNTIME_REASONS = {
   server_routes: 'server-routes',
@@ -64,7 +67,8 @@ async function getPlatform(name) {
 export async function createPlatformContext(site, args={}, subset=site.assets) {
   const { conf, assets } = site
   const spa_fallbacks = await listSPAFallbacks(assets)
-  const manifests = { spa_fallbacks }
+  const server_entry = getServerEntry(conf, conf.root)
+  const manifests = { server_entry, spa_fallbacks }
   const runtime = detectRuntimeRequirements(conf, manifests)
 
   return {
@@ -84,7 +88,8 @@ export function detectRuntimeRequirements(conf={}, manifests={}) {
   const reasons = []
   const { server } = conf
 
-  if (server) reasons.push(server.url ? RUNTIME_REASONS.server_proxy : RUNTIME_REASONS.server_routes)
+  if (server?.url) reasons.push(RUNTIME_REASONS.server_proxy)
+  else if (server || manifests.server_entry) reasons.push(RUNTIME_REASONS.server_routes)
   if (manifests.spa_fallbacks?.length) reasons.push(RUNTIME_REASONS.spa_fallback)
 
   const policy = getRuntimePolicy(conf.platform)
@@ -92,6 +97,14 @@ export function detectRuntimeRequirements(conf={}, manifests={}) {
   const required = policy === 'always' || policy === 'auto' && detected
 
   return { detected, policy, reasons, required }
+}
+
+function getServerEntry(conf={}, root='.') {
+  if (conf.server?.url) return null
+
+  const dir = conf.server?.dir || DEFAULT_SERVER_DIR
+  const path = join(root, dir, 'index.js')
+  return existsSync(path) ? { dir, path } : null
 }
 
 export async function listSPAFallbacks(assets=[]) {

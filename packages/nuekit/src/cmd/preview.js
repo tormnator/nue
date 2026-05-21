@@ -29,7 +29,7 @@ export async function preview(conf, opts) {
 export async function getFile(dist, url) {
 
   // favicon
-  if (url == '/favicon.ico') return Bun.file(join(import.meta.dir, '../../favicon.ico'))
+  if (url === '/favicon.ico') return Bun.file(join(import.meta.dir, '../../favicon.ico'))
 
   // file
   let path = join(dist, url)
@@ -41,10 +41,26 @@ export async function getFile(dist, url) {
   const file = Bun.file(path)
   if (await file.exists()) return file
 
+  // SPA entry page
+  if (!ext) {
+    const app = url.split('/')[1]
+    const paths = app ? [join(dist, app, 'index.html'), join(dist, 'index.html')] : [join(dist, 'index.html')]
+
+    for (const path of paths) {
+      const file = Bun.file(path)
+      if (await file.exists() && await isSPAShell(file)) return file
+    }
+  }
+
   // 404
   if (!ext) {
     const err_page = Bun.file(join(dist, '404.html'))
     if (await err_page.exists()) return err_page
   }
+}
+
+async function isSPAShell(file) {
+  const html = await file.text()
+  return /<body\b[^>]*\bnue=/.test(html)
 }
 
