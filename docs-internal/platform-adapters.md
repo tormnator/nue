@@ -86,6 +86,8 @@ The generated worker owns Cloudflare-specific request orchestration:
 4. Apply SPA shell fallback for extensionless `GET` and `HEAD` 404s using the core fallback manifest.
 5. Return the static asset 404 otherwise.
 
+The adapter ensures a root `404.html` exists in Cloudflare Pages output. Without that file, Pages assumes implicit SPA behavior and may return the root page for unknown paths before the generated worker can distinguish missing files from app routes.
+
 The adapter currently passes the platform environment directly to Nueserver as `c.env`. Production universal-model resources such as users, sessions, D1, KV, R2, Durable Objects, Queues, and Analytics Engine remain future adapter work.
 
 ### Validation Status
@@ -99,11 +101,14 @@ The adapter has been validated with automated tests and manual builds:
 - Static assets fall through to `env.ASSETS.fetch(request)`.
 - SPA fallback handles extensionless 404s and prefers nested app fallbacks before root fallback.
 - File-like 404s, such as `/missing.txt`, do not fall back to an SPA shell.
+- Wrangler deployment validated a static `blog` template on Cloudflare Pages.
+- Wrangler deployment validated a minimal runtime project on Cloudflare Pages at `https://runtime-check.cf-pages-demo-nue.pages.dev/api/ping`, returning `{ "ok": true }` from a bundled `@shared/server` route.
+- Cloudflare Pages treats projects without a root `404.html` as implicit SPAs; the adapter emits one when missing so `env.ASSETS.fetch(request)` can return static 404s and the worker can apply Nue's explicit SPA fallback only to extensionless routes.
 
 Manual build inspection has covered a pure MPA site, the `spa` template, and the `full` template. The `full` template output includes static MPA pages, login DHTML output, admin SPA output, and bundled server routes.
 
 ### Current Limitations
 
 - Production model resources are not implemented. Routes that depend on `c.env.users`, `c.env.leads`, or similar resources need a future adapter resource layer.
-- Native `nue push` deployment is not implemented. Initial deployment validation should use Cloudflare Pages GitHub integration.
+- Native `nue push` deployment is not implemented. Deployment validation currently uses Wrangler; Cloudflare Pages GitHub integration remains a follow-up check.
 - Cloudflare `/functions` folder output is intentionally unsupported. This adapter targets Pages Advanced Mode only.
