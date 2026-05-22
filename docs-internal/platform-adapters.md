@@ -72,7 +72,10 @@ The existing Bun development server is not part of the initial Platform Adapter 
 ## Initial Milestones
 
 1. Core Platform Adapter foundation: config, registry, build context, runtime detection, fallback manifests, internal docs, and tests.
-2. Cloudflare Pages Platform Adapter: Advanced Mode only, generated runtime artifacts when needed, static asset fallback, Nueserver dispatch, SPA fallback, and GitHub-based deployment validation.
+2. Cloudflare Pages Platform Adapter: Advanced Mode only, generated runtime artifacts when needed, static asset fallback, Nueserver dispatch, SPA fallback, root `404.html` handling, Wrangler deployment validation, and user-facing docs draft.
+3. Cloudflare Pages Git integration deployment: validate dashboard-created Git integration, first deploy, and automatic redeploy after commit/push.
+4. Platform resources: design and implement the first platform-neutral resource layer for values exposed to Nueserver routes through `c.env`.
+5. Final documentation: finish the Cloudflare Pages adapter docs and move them from `docs-internal/` to the public docs site.
 
 ## Cloudflare Pages Adapter
 
@@ -110,5 +113,6 @@ Manual build inspection has covered a pure MPA site, the `spa` template, and the
 ### Current Limitations
 
 - Production model resources are not implemented. Routes that depend on `c.env.users`, `c.env.leads`, or similar resources need a future adapter resource layer.
-- Native `nue push` deployment is not implemented. Deployment validation currently uses Wrangler; Cloudflare Pages GitHub integration remains a follow-up check.
+- Cloudflare Pages Git integration deployment remains a follow-up validation milestone. Deployment validation currently uses Wrangler Direct Upload.
+- Native `nue push` deployment is not implemented.
 - Cloudflare `/functions` folder output is intentionally unsupported. This adapter targets Pages Advanced Mode only.

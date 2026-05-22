@@ -66,6 +66,32 @@ Cloudflare Pages Advanced Mode looks for a file named `_worker.js` in the build 
 
 This is Cloudflare product terminology. It is not a browser Web Worker and it is not a background thread inside the user's browser; it is the deployment's request handler on Cloudflare's edge runtime.
 
+## Before You Deploy
+
+You need a Cloudflare account and a Cloudflare Pages project. Cloudflare Pages can be set up through C3, Direct Upload, or Git integration. Nue's Cloudflare Pages adapter works with built Pages output; the examples below focus on Direct Upload with Wrangler and Git integration.
+
+Choose the Pages setup method before creating the project:
+
+- Direct Upload deploys prebuilt files from your machine or CI. It can use Wrangler or drag and drop. If you create a Direct Upload project, Cloudflare does not let you switch that same project to Git integration later; create a new Pages project if you want automatic Git deployments.
+- Git integration connects a GitHub or GitLab repository and lets Cloudflare build and deploy after pushes. If you create a Git-integrated project, Cloudflare does not let you switch that same project to Direct Upload later. You can disable automatic deployments and manually deploy with Wrangler, but dashboard drag and drop is not available for Git-integrated projects.
+
+Useful Cloudflare entry points:
+
+- [Cloudflare Pages getting started](https://developers.cloudflare.com/pages/get-started/)
+- [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/functions/)
+- [Cloudflare Pages Functions Advanced Mode](https://developers.cloudflare.com/pages/functions/advanced-mode/)
+- [Wrangler](https://developers.cloudflare.com/workers/wrangler/)
+
+For Wrangler deployment, install and authenticate Wrangler first. Cloudflare's examples often show `npx`, but Bun works too:
+
+```bash
+bun add -d wrangler@latest
+bunx wrangler login
+bunx wrangler --version
+```
+
+You can also run `bunx wrangler ...` without adding Wrangler to the project first. Installing it locally is better for repeatable project workflows because the project controls the Wrangler version.
+
 ## What Gets Built
 
 For regular static MPA sites, Nue writes the normal `.dist/` output and does not create `_worker.js` in `auto` mode.
@@ -91,9 +117,9 @@ A body-scoped DHTML `index.html` acts as an SPA entry. For example, `admin/index
 
 Nested SPA entries are preferred before broader root fallbacks, so `/admin/123` resolves to the admin SPA shell before a root SPA fallback.
 
-## Getting Started With Wrangler
+## Deploy With Wrangler
 
-You can validate a Cloudflare Pages deployment directly with Wrangler after you have created a Pages project and logged in with Wrangler. This is useful when you want to test the built `.dist/` output before setting up a GitHub-based deployment.
+You can validate a Cloudflare Pages deployment directly with Wrangler after you have logged in with Wrangler. This creates or deploys to a Direct Upload Pages project. It is useful when you want to test the built `.dist/` output before setting up a GitHub-based deployment.
 
 Start with the `minimal` template:
 
@@ -196,6 +222,42 @@ nue preview
 Extensionless paths such as `/dashboard` should return the app shell, while file-like missing paths such as `/missing.txt` should keep returning 404. Deploy again when the local check behaves as expected, then repeat both checks against the Cloudflare Pages URL. The generated root `404.html` is what keeps Cloudflare Pages from treating `/missing.txt` as an implicit SPA route.
 
 Wrangler may create local `.wrangler` and `.wrangler/cache` folders while you work. Treat those as local deployment state for your project.
+
+## Deploy With Git Integration
+
+Git integration lets Cloudflare build and deploy a Pages project from a GitHub or GitLab repository. Use it when you want deployments to happen automatically after commits are pushed.
+
+This path is the next validation milestone for the adapter. The expected setup is:
+
+1. Create or choose a GitHub repository for the Nue site.
+2. Commit the site source, including `site.yaml` with `platform: cloudflare-pages`.
+3. Make sure the Cloudflare build can run Nue. The repository should provide a build script or dependencies that make `nue build` available in the build environment.
+4. In Cloudflare, go to Workers & Pages, create a Pages application, and choose Connect to Git.
+5. Authorize Cloudflare Pages for the GitHub account or organization, then select the repository.
+6. Configure the Pages project build settings.
+7. Save and deploy from the Cloudflare dashboard.
+8. After the first deployment succeeds, change a file, commit, push, and confirm Cloudflare creates a new deployment automatically.
+
+Use these build settings as the starting point:
+
+| Setting | Value |
+|---|---|
+| Framework preset | None |
+| Build command | `nue build` or a project script that runs `nue build` |
+| Build output directory | `.dist` |
+| Production branch | The branch you want to publish as production, such as `main` |
+
+If the site lives below the repository root, set Cloudflare's root directory to that subdirectory so the install and build steps run from the Nue project folder.
+
+Validate the same routes after deployment:
+
+```bash
+curl https://<project-name>.pages.dev/api/ping
+curl https://<project-name>.pages.dev/dashboard
+curl -i https://<project-name>.pages.dev/missing.txt
+```
+
+The expected results are the same as Wrangler deployment: `/api/ping` returns the server response, `/dashboard` serves the SPA shell when the site has a body-scoped DHTML fallback, and `/missing.txt` returns 404.
 
 ## Current Limitations
 
