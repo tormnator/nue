@@ -391,6 +391,8 @@ This gives reproducible builds.
 
 ## Internal Monorepo Dependency Strategy
 
+For the architectural rationale behind this alias strategy, see [Package Alias Resolution](./package-alias-resolution.md).
+
 Inside the `tormnator/nue` fork repo itself, keep JavaScript source imports stable by preserving the upstream bare package specifiers.
 
 Package manifests in this fork are long-lived scoped manifests, not temporary generated publish manifests.
