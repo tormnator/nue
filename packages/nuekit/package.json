@@ -1,17 +1,21 @@
 {
-  "name": "nuekit",
-  "version": "2.0.0-beta.2+tor.local",
+  "name": "@tormnator/nuekit",
+  "version": "2.0.0-beta.3-tor.1",
   "description": "The UNIX of the Web",
   "homepage": "https://nuejs.org",
   "license": "MIT",
   "type": "module",
   "repository": {
-    "url": "https://github.com/nuejs/nue",
+    "url": "https://github.com/tormnator/nue",
     "directory": "packages/nuekit",
     "type": "git"
   },
   "bin": {
-    "nue": "./src/cli.js"
+    "nue-tor": "./src/cli.js"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "dev"
   },
   "engines": {
     "bun": ">= 1.2.2"
@@ -20,12 +24,12 @@
     "test": "cd test && bun test"
   },
   "dependencies": {
-    "nue-edgeserver": "^0.1.0",
-    "nuestate": "^0.1.0",
-    "nueyaml": "^0.1.0",
-    "nuedom": "^0.1.0",
-    "nuemark": "^0.7.0",
-    "nue-glow": "^0.2.0"
+    "nue-edgeserver": "npm:@tormnator/nue-edgeserver@0.1.0-tor.1",
+    "nuestate": "npm:@tormnator/nuestate@0.1.1-tor.1",
+    "nueyaml": "npm:@tormnator/nueyaml@0.1.0-tor.1",
+    "nuedom": "npm:@tormnator/nuedom@0.1.1-tor.1",
+    "nuemark": "npm:@tormnator/nuemark@0.7.1-tor.1",
+    "nue-glow": "npm:@tormnator/nue-glow@0.2.5-tor.1"
   },
 
   "files": [ "src", "client", "favicon.ico" ]
