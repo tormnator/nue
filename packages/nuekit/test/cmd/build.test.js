@@ -103,6 +103,16 @@ describe('build', async () => {
     expect(home).toInclude('<h1>Hello</h1>')
   })
 
+  test('buildAll clean tolerates missing dist', async () => {
+    const { dist } = CONF
+    const { assets } = await createSite(CONF)
+
+    await buildAll(assets, { dist, clean: true })
+    const results = await fileset(dist)
+
+    expect(await results.read('index.html')).toInclude('<h1>Hello</h1>')
+  })
+
 
   test('build feeds', async () => {
     const site = await createSite(CONF)

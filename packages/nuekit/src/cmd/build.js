@@ -1,5 +1,5 @@
 
-import { mkdir, rmdir, writeFile, unlink } from 'node:fs/promises'
+import { mkdir, rm, writeFile, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'os'
 
@@ -51,7 +51,7 @@ export async function buildAll(subset, args) {
   const { dist, init, verbose, clean } = args
 
   // .dist directory
-  if (clean) await rmdir(dist, { recursive: true, force: true })
+  if (clean) await rm(dist, { recursive: true, force: true })
   await mkdir(dist, { recursive: true })
 
   // .dist/@nue directory
