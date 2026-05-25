@@ -227,27 +227,51 @@ Wrangler may create local `.wrangler` and `.wrangler/cache` folders while you wo
 
 Git integration lets Cloudflare build and deploy a Pages project from a GitHub or GitLab repository. Use it when you want deployments to happen automatically after commits are pushed.
 
-This path is the next validation milestone for the adapter. The expected setup is:
+Until this adapter is available in an official Nue release, a Git-integrated project can consume the published fork package:
+
+```json
+{
+  "type": "module",
+  "scripts": {
+    "build": "nue-tor build"
+  },
+  "dependencies": {
+    "@tormnator/nuekit": "dev"
+  }
+}
+```
+
+Cloudflare should run the package script rather than a globally installed CLI. This lets the build resolve the local `nue-tor` binary from `node_modules/.bin`.
+
+The validated setup is:
 
 1. Create or choose a GitHub repository for the Nue site.
 2. Commit the site source, including `site.yaml` with `platform: cloudflare-pages`.
-3. Make sure the Cloudflare build can run Nue. The repository should provide a build script or dependencies that make `nue build` available in the build environment.
+3. Add a package script that runs the Nue build command available to the project, such as `nue-tor build` for the fork package above.
 4. In Cloudflare, go to Workers & Pages, create a Pages application, and choose Connect to Git.
 5. Authorize Cloudflare Pages for the GitHub account or organization, then select the repository.
 6. Configure the Pages project build settings.
 7. Save and deploy from the Cloudflare dashboard.
 8. After the first deployment succeeds, change a file, commit, push, and confirm Cloudflare creates a new deployment automatically.
+9. Push a secondary branch and confirm Cloudflare creates a Preview deployment for that branch.
 
-Use these build settings as the starting point:
+Use these build settings:
 
 | Setting | Value |
 |---|---|
 | Framework preset | None |
-| Build command | `nue build` or a project script that runs `nue build` |
+| Build command | `bun run build` |
 | Build output directory | `.dist` |
 | Production branch | The branch you want to publish as production, such as `main` |
 
 If the site lives below the repository root, set Cloudflare's root directory to that subdirectory so the install and build steps run from the Nue project folder.
+
+The Git integration path has been validated with a private GitHub repository using `@tormnator/nuekit@dev`, `bun run build`, and a package script of `nue-tor build`. Cloudflare installed dependencies, ran the build, detected `.dist/_worker.js`, compiled the Pages Advanced Mode worker, uploaded the static assets, and deployed the site.
+
+The same project was validated for both production and preview deployments:
+
+- A push to `main` created a production deployment and served updated page content.
+- A push to `dev` created a Preview deployment at `https://7ff529b1.nue-cf-pages-git-integration.pages.dev/` from commit `89b39ac`.
 
 Validate the same routes after deployment:
 
@@ -263,6 +287,6 @@ The expected results are the same as Wrangler deployment: `/api/ping` returns th
 
 Production environment resources are not implemented yet. Local development can provide JSON-backed mock models such as `c.env.users`, but Cloudflare production needs a future adapter resource layer for users, sessions, D1, KV, and related platform services.
 
-Native `nue push` deployment is also not implemented yet. For now, deploy built output with Wrangler or validate deployment through Cloudflare Pages GitHub integration by committing the project and configuring Pages to build with `nue build`.
+Native `nue push` deployment is also not implemented yet. For now, deploy built output with Wrangler or through Cloudflare Pages Git integration by committing the project and configuring Pages to run a project build script such as `bun run build`.
 
 Cloudflare Pages `/functions` folder output is intentionally not supported. Nue uses Pages Advanced Mode so it can keep its own Nueserver routing and SPA fallback behavior in one generated worker.

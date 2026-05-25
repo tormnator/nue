@@ -73,7 +73,7 @@ The existing Bun development server is not part of the initial Platform Adapter 
 
 1. Core Platform Adapter foundation: config, registry, build context, runtime detection, fallback manifests, internal docs, and tests.
 2. Cloudflare Pages Platform Adapter: Advanced Mode only, generated runtime artifacts when needed, static asset fallback, Nueserver dispatch, SPA fallback, root `404.html` handling, Wrangler deployment validation, and user-facing docs draft.
-3. Cloudflare Pages Git integration deployment: validate dashboard-created Git integration, first deploy, and automatic redeploy after commit/push.
+3. Cloudflare Pages Git integration deployment: validated dashboard-created Git integration, first deploy, automatic redeploy after commit/push, and secondary branch Preview deployment.
 4. Platform resources: design and implement the first platform-neutral resource layer for values exposed to Nueserver routes through `c.env`.
 5. Final documentation: finish the Cloudflare Pages adapter docs and move them from `docs-internal/` to the public docs site.
 
@@ -107,12 +107,14 @@ The adapter has been validated with automated tests and manual builds:
 - Wrangler deployment validated a static `blog` template on Cloudflare Pages.
 - Wrangler deployment validated a minimal runtime project on Cloudflare Pages at `https://runtime-check.cf-pages-demo-nue.pages.dev/api/ping`, returning `{ "ok": true }` from a bundled `@shared/server` route.
 - Cloudflare Pages treats projects without a root `404.html` as implicit SPAs; the adapter emits one when missing so `env.ASSETS.fetch(request)` can return static 404s and the worker can apply Nue's explicit SPA fallback only to extensionless routes.
+- Cloudflare Pages Git integration validated a private GitHub demo consuming `@tormnator/nuekit@dev` with `bun run build` and `nue-tor build`.
+- The Git-integrated demo validated production deployment from `main`, automatic redeploy after a pushed commit, and Preview deployment from `dev` at `https://7ff529b1.nue-cf-pages-git-integration.pages.dev/`.
+- The Preview deployment validated `/api/ping` server routing, `/dashboard` extensionless SPA fallback, and `/missing.txt` static 404 behavior.
 
 Manual build inspection has covered a pure MPA site, the `spa` template, and the `full` template. The `full` template output includes static MPA pages, login DHTML output, admin SPA output, and bundled server routes.
 
 ### Current Limitations
 
 - Production model resources are not implemented. Routes that depend on `c.env.users`, `c.env.leads`, or similar resources need a future adapter resource layer.
-- Cloudflare Pages Git integration deployment remains a follow-up validation milestone. Deployment validation currently uses Wrangler Direct Upload.
 - Native `nue push` deployment is not implemented.
 - Cloudflare `/functions` folder output is intentionally unsupported. This adapter targets Pages Advanced Mode only.

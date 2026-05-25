@@ -2,11 +2,24 @@
 
 Date: 2026-05-23
 
-This note is for resuming the platform adapter and Cloudflare Pages deployment work after the first `@tormnator` npm package publication.
+This note records the platform adapter and Cloudflare Pages deployment work after the first `@tormnator` npm package publication.
 
 ## Current State
 
 The first public `@tormnator` Nue package set has been published from Git `dev` branch commit `eccbecd7`.
+
+Cloudflare Pages Git integration has now been validated with a private GitHub demo repository consuming `@tormnator/nuekit@dev`.
+
+Validated deployment paths:
+
+- Production deployment from `main`, including automatic redeploy after pushing commit `c3498ba`.
+- Preview deployment from `dev` at `https://7ff529b1.nue-cf-pages-git-integration.pages.dev/` after pushing commit `89b39ac`.
+
+Validated runtime behavior:
+
+- `/api/ping` returned the bundled `@shared/server` route response.
+- `/dashboard` returned 200 as an extensionless SPA fallback route.
+- `/missing.txt` returned 404 rather than the SPA shell.
 
 For exact package versions, publish order, tags, and validation details, see [First `@tormnator` npm Publish Record](./first-tormnator-npm-publish-record.md).
 
@@ -68,11 +81,9 @@ Cloudflare Pages will only need this if the same safety policy is configured in 
 
 ## Suggested Next Steps
 
-1. Update the minimal Cloudflare Pages demo or target test site to consume `@tormnator/nuekit@dev`.
-2. Run a clean local install/build using `nue-tor build`.
-3. Confirm `.dist` output matches Cloudflare Pages expectations.
-4. Push the test project and verify Cloudflare Pages Git integration can install the package and run the build command.
-5. If Cloudflare uses frozen lockfiles, decide whether the test project should track npm dist-tag `dev` dynamically or commit lockfile updates deliberately.
+1. Promote or rewrite the Cloudflare Pages user docs from `docs-internal/` into the public docs when the adapter scope is approved.
+2. Keep the demo project available as a smoke test for future adapter or package publishing changes.
+3. Decide whether future Git integration demos should track the npm dist-tag `dev` dynamically or commit lockfile updates deliberately.
 
 ## Known Good Smoke Test
 
