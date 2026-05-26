@@ -5,9 +5,12 @@ import { existsSync } from 'fs'
 import { routes, fetch, matches } from 'nue-edgeserver'
 
 import { createEnv } from './model'
+import { createResourceEnv } from './resources'
+
+let import_id = 0
 
 export async function importWorker({ dir, reload }) {
-  const path = join(process.cwd(), dir, 'index.js') + (reload ? '?t=' + Date.now() : '')
+  const path = join(process.cwd(), dir, 'index.js') + (reload ? '?t=' + ++import_id : '')
 
   try {
     routes.length = 0
@@ -26,7 +29,12 @@ export async function createWorker(opts = {}) {
   if (!routes.length) return null
 
   const data_dir = join(process.cwd(), dir, 'data')
-  const env = existsSync(data_dir) ? await createEnv(data_dir) : {}
+  const models = existsSync(data_dir) ? await createEnv(data_dir) : {}
+  const env = createResourceEnv({
+    platform: 'local',
+    mode: 'development',
+    resources: { models }
+  })
 
   console.log(`Backend server started with ${routes.length} routes`, reload ? '(reloadable)' : '')
 

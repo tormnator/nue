@@ -107,7 +107,17 @@ describe('cloudflare-pages platform', async () => {
     await writeAll([
       ['site.yaml', 'platform: cloudflare-pages'],
       ['index.md', '# Hello'],
-      ['@shared/server/index.js', "get('/api/hello', c => c.json({ hello: true }))"],
+      ['@shared/server/index.js', `
+        get('/api/hello', c => c.json({ hello: true }))
+
+        get('/api/env', c => c.json({
+          hasAssets: !!c.env.platform.ASSETS,
+          name: c.env.config.get('PUBLIC_NAME'),
+          secret: c.env.config.require('SECRET_NAME'),
+          publicConfig: c.env.config.public(),
+          runtime: c.env.runtime
+        }))
+      `],
     ])
 
     const site = await createSite(CONF)
@@ -126,6 +136,24 @@ describe('cloudflare-pages platform', async () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ hello: true })
     expect(assets.calls).toEqual([])
+
+    const envRes = await loaded.fetch(new Request('https://example.com/api/env'), {
+      ASSETS: assets,
+      PUBLIC_NAME: 'Nue',
+      SECRET_NAME: 'hidden'
+    })
+
+    expect(envRes.status).toBe(200)
+    expect(await envRes.json()).toEqual({
+      hasAssets: true,
+      name: 'Nue',
+      secret: 'hidden',
+      publicConfig: { PUBLIC_NAME: 'Nue' },
+      runtime: {
+        platform: 'cloudflare-pages',
+        mode: 'production'
+      }
+    })
   })
 
   test('worker falls through to static assets', async () => {

@@ -29,6 +29,7 @@ async function createWorkerSource(context, source_path) {
 
   if (server_entry) {
     imports.push(`import { fetch as dispatch, matches } from 'nue-edgeserver'`)
+    imports.push(`import { createConfigResource, createResourceEnv } from '../server/resources.js'`)
     imports.push(`import ${JSON.stringify(toImportPath(source_path, server_entry))}`)
   }
 
@@ -69,7 +70,17 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
 
-    ${server_entry ? `if (matches(request.method, url.pathname)) return dispatch(request, env)` : ''}
+    ${server_entry ? `if (matches(request.method, url.pathname)) {
+      const nueEnv = createResourceEnv({
+        platform: 'cloudflare-pages',
+        mode: 'production',
+        raw: env,
+        resources: {
+          config: createConfigResource(env)
+        }
+      })
+      return dispatch(request, nueEnv)
+    }` : ''}
     if (proxy && shouldProxy(url.pathname)) return proxyRequest(request, url)
 
     const asset = await env.ASSETS.fetch(request)
