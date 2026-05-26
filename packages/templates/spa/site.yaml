@@ -5,3 +5,9 @@ meta:
 server:
   dir: server
   reload: true
+
+resources:
+  models:
+    users:
+      kind: collection
+      local: server/data/users.json

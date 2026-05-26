@@ -46,3 +46,12 @@ import_map:
 server:
   reload: true
 
+resources:
+  models:
+    users:
+      kind: collection
+      local: @shared/server/data/users.json
+    leads:
+      kind: collection
+      local: @shared/server/data/leads.json
+

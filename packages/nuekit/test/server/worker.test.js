@@ -61,9 +61,17 @@ test('importWorker', async () => {
 
 
 test('createWorker', async () => {
-  await write('data/users.json', '[{ "name": "Jane" }]')
+  await write('models/users.json', '[{ "name": "Jane" }]')
 
-  const worker = await createWorker({ dir: testDir, reload: true })
+  const worker = await createWorker({
+    dir: testDir,
+    reload: true,
+    resources: {
+      models: {
+        users: { kind: 'collection', local: `${testDir}/models/users.json` }
+      }
+    }
+  })
 
   let resp = await worker(new Request('http://localhost/api/users'))
   expect(await resp.json()).toEqual(['jane'])

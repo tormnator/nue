@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { parseYAML } from 'nueyaml'
 
 // configuration properties (separate from data)
-const SITE_CONF = 'site design server collections production port sitemap links platform'.split(' ')
+const SITE_CONF = 'site design server collections resources production port sitemap links platform'.split(' ')
 
 const ALL_CONF = SITE_CONF.concat('include exclude meta content import_map svg'.split(' '))
 

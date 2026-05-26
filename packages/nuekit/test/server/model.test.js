@@ -21,6 +21,37 @@ test('createEnv', async () => {
 
 })
 
+test('createEnv with declared local models', async () => {
+  await writeAll([
+    ['custom/users.json', '[{ "name": "John" }]'],
+    ['other/leads.json', '[{ "name": "Jane" }]'],
+  ])
+
+  const models = await createEnv(testDir, {
+    root: testDir,
+    resources: {
+      models: {
+        users: { kind: 'collection', local: 'custom/users.json' },
+        leads: { kind: 'collection', local: 'other/leads.json' },
+      }
+    }
+  })
+
+  expect((await models.users.get(1))).toMatchObject({ id: 1, name: 'John' })
+  expect((await models.leads.get(1))).toMatchObject({ id: 1, name: 'Jane' })
+})
+
+test('createEnv fails clearly for missing declared local model', async () => {
+  await expect(createEnv(testDir, {
+    root: testDir,
+    resources: {
+      models: {
+        users: { kind: 'collection', local: 'missing/users.json' },
+      }
+    }
+  })).rejects.toThrow('Local model file not found: users:')
+})
+
 
 test('auth flow', async () => {
   await writeAll([

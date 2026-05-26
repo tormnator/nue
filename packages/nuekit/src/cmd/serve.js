@@ -14,7 +14,11 @@ export async function serve(site, { silent }) {
   const { root, ignore, port } = conf
 
   // user server
-  const handler = await getServer(conf?.server)
+  const handler = await getServer({
+    ...(conf.server || {}),
+    resources: conf.resources,
+    root
+  })
 
   // dev server
   const server = createServer({ port, handler }, (url, params) =>
