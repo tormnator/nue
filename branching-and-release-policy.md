@@ -108,6 +108,40 @@ Use GitHub Releases for coordinated package-set releases, not for every npm dist
 - notable limitations
 - links to relevant issues or internal release notes
 
+## Release Notes And Upgrade Guides
+
+Start release notes early for each coherent beta or release milestone. Treat them as living internal drafts until the release is cut.
+
+Use internal release-note drafts to capture:
+
+- notable user-facing changes
+- exact package versions and npm dist-tags when packages are published
+- source commits and branch names used for validation
+- GitHub issue links and decisions that explain the change
+- manual and automated validation results
+- known limitations and deferred work
+- migration notes that may become an upgrade guide
+
+Suggested location:
+
+```text
+docs-internal/releases/<release-name>.md
+```
+
+Create a separate upgrade guide when users need project changes, behavioral migration steps, or compatibility notes that would make release notes too long. Suggested location:
+
+```text
+docs-internal/upgrades/<from>-to-<to>.md
+```
+
+Use the living release-note draft as the source for both npm and GitHub release text:
+
+- npm publish notes should include package names, exact versions, dist-tags, source commit, install command, and validation performed.
+- GitHub Release notes should summarize the same source commit and package set promoted from `main`.
+- npm dist-tag `dev` test publishes do not need GitHub Releases, but they should still be recorded in the internal release-note draft.
+
+Before an official release, confirm that the draft clearly separates completed work from in-progress or deferred work. Do not present topic-branch work as released unless it has landed in the release branch.
+
 ## Official Release Flow
 
 Use this flow when `dev` is ready to become the latest official fork state:
