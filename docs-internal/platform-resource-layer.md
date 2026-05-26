@@ -94,6 +94,23 @@ Before designing universal domain-user, login, session, or authentication helper
 
 The research question is not whether every platform has every primitive. It is whether Nue can define small portable resource contracts while letting adapters map those contracts to platform-specific storage and binding systems.
 
+### Research Snapshot
+
+Initial documentation review shows that the platforms expose similar categories but different operational models:
+
+| Platform | Config and secrets | Object/key-value storage | Database/structured storage | Stateful/session primitives | Provisioning model |
+|---|---|---|---|---|---|
+| Cloudflare Pages | Environment variables and secrets are bindings on `env`; variables can be strings or JSON; secrets are encrypted and accessed the same way at runtime. | KV for global key-value, R2 for blobs, both available as Pages bindings. | D1 is SQLite-compatible serverless SQL and can be bound to Pages Functions. | Durable Objects provide strongly consistent state and coordination, but require a Worker/DO setup separate from the Pages project; D1 can also store session rows. | Resources and bindings can be configured in the dashboard or Wrangler configuration; Pages bindings must already exist and require redeploy to take effect. |
+| Netlify | Environment variables can be scoped by build/function/runtime and by deploy context; secret handling is available through Netlify's environment tooling. | Netlify Blobs provide stores with JSON/blob APIs, deploy-specific stores, optional strong consistency, and last-write-wins behavior for overlapping writes. | Netlify Database is managed Postgres with migrations, database branching, and local development support. | No single universal session primitive; sessions/auth can use app code, database, blobs, identity/auth integrations, or third-party services. | UI, CLI, and API can manage env vars; Netlify Database can be initialized through CLI and applies migrations during deploy; Blobs are zero-configuration for sites. |
+| Vercel | Environment variables are project/team scoped by production, preview, development, custom environment, and branch; CLI supports pull/run/add/update. | Vercel Blob supports object storage with public/private stores, conditional writes, and CLI management. Edge Config is read-optimized global key-value for frequently read, rarely changed config. | Vercel's current database story is Marketplace storage such as Neon, Upstash Redis, Supabase, and other providers; old Vercel KV moved to Upstash Redis. | No single universal session primitive; Redis/Postgres/third-party auth are provider choices. | Dashboard, CLI, REST APIs, and Marketplace installs can provision resources and inject environment variables. |
+
+Implications:
+
+- A portable `config` resource is realistic across all three platforms.
+- A portable `models.collection` contract is possible only if the contract is deliberately small and adapters can choose SQL, key-value, or blob storage behind it.
+- A universal auth/session model should wait. The storage and consistency tradeoffs differ too much to bake a core `users.login()` contract into this first layer.
+- Provisioning should stay outside the first resource contract. Beta 3 should validate configured resources; later adapter tooling can create resources through provider CLIs or APIs.
+
 ## Proposed `c.env` Shape
 
 Routes should receive a shaped environment object with four categories:
@@ -286,6 +303,29 @@ For the first config slice:
 - `env.ASSETS` remains an adapter implementation detail for static asset fetches and should not be exposed as a normalized route resource by default.
 - Declared models should be mapped into `c.env.models` by Cloudflare-specific resource implementations.
 
+### Cloudflare-First Implementation Choice
+
+For beta 3, the Cloudflare implementation should prefer D1 for mutable domain collections rather than KV.
+
+Rationale:
+
+- The current `full` template needs collection behavior: create, list, get by id, update, and delete.
+- The same collection abstraction should scale from a few records to many records without changing route code.
+- D1 gives the adapter a queryable, transactional backing store with clearer schema/migration semantics than KV.
+- KV remains useful for cache-like or small key-value resources, but it is not the best default for mutable app collections.
+- Durable Objects are compelling for coordination and strongly consistent state, but they require additional setup and should not be the first resource backing for templates.
+
+Recommended beta 3 Cloudflare mapping:
+
+| Declaration | Cloudflare backing | Notes |
+|---|---|---|
+| `resources.config` | Pages environment variables and secrets | Expose via `c.env.config`; secrets are accessible to server code but never returned by `public()`. |
+| `resources.models.<name>` with `kind: collection` | D1 binding | Provide the local model-style methods needed by templates: `getAll`, `size`, `create`, `get`, item `update`, and item `remove`. |
+| Template domain-user login/session demo | D1 tables for users and sessions, or project-local model code using the D1 collection layer | Keep it outside core; do not define universal auth semantics yet. |
+| Raw platform access | `c.env.platform` | Contains the raw Cloudflare `env` object for explicit platform-specific route code. |
+
+For beta 3, the developer should create and bind the D1 database through Cloudflare dashboard or Wrangler. Nue can validate that the named binding exists and can fail clearly if it does not. Automatic D1 creation, schema generation, migrations, and JSON data import can be designed later.
+
 Later Cloudflare resource mappings may wrap:
 
 | Cloudflare binding | Possible normalized resource |
@@ -378,8 +418,9 @@ A focused beta 3 implementation can be:
 3. Add resource declaration parsing for developer-defined models in `site.yaml`.
 4. Update local server worker creation to pass JSON models through the resource factory as `c.env.models`.
 5. Update the Cloudflare Pages worker generation to pass raw Cloudflare `env` through the resource factory and expose it under `c.env.platform`.
-6. Implement enough Cloudflare model mapping for the `spa` and `full` templates to work.
-7. Add tests for local resource shaping, config access, model namespacing, and Cloudflare worker dispatch receiving the shaped env.
+6. Implement a D1-backed Cloudflare collection resource for declared `kind: collection` models.
+7. Adapt enough template-local domain-user/session code for the `spa` and `full` templates to work through `c.env.models` without making auth a core platform feature.
+8. Add tests for local resource shaping, config access, model namespacing, and Cloudflare worker dispatch receiving the shaped env.
 
 This establishes the production boundary even if the template route API changes from `c.env.users` to `c.env.models.users`.
 
@@ -390,11 +431,11 @@ This establishes the production boundary even if the template route API changes 
 - Should `PUBLIC_*` be enough for beta 3, or should public config require an explicit allowlist?
 - Should local config read only `site.yaml` for beta 3, or should a later phase add `.env` support?
 - Can domain-user/login/session/authentication helpers be designed universally across Cloudflare, Netlify, Vercel, and similar platforms?
-- Which storage backing should the Cloudflare implementation use for small collections, large collections, and sessions?
+- What exact D1 schema/migration story should the Cloudflare collection resource use for template demos?
 - Should adapter tooling eventually provision platform resources through provider APIs, or only validate resources configured by the developer?
 - Can local JSON files become production seed data, and if so, how does that interact with SQL schemas and migrations?
 - How should TypeScript developers get resource types in route files?
 
 ## Decision For Now
 
-Proceed with a small config/resource-factory slice plus `c.env.models` namespacing. Treat the current JSON domain model as local/template behavior that should move out of core. Expose raw Cloudflare bindings directly under `c.env.platform`, and defer production users/sessions/storage semantics until platform capability research is complete.
+Proceed with a small config/resource-factory slice plus `c.env.models` namespacing. Treat the current JSON domain model as local/template behavior that should move out of core. Expose raw Cloudflare bindings directly under `c.env.platform`. For the Cloudflare beta 3 implementation, use D1 as the first production backing for mutable `kind: collection` models and keep domain-user/login/session semantics in template or project code until a separate auth design exists.
