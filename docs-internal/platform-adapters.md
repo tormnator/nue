@@ -69,6 +69,8 @@ The existing Bun development server is not part of the initial Platform Adapter 
 
 `c.env` remains the future seam for adapter-provided resources and the universal model. Milestone 1 defines the platform boundary only. Production implementations for users, sessions, D1, KV, or other storage belong in later adapter work.
 
+See [Platform Resource Layer](./platform-resource-layer.md) for the beta 3 resource-layer design draft.
+
 ## Initial Milestones
 
 1. Core Platform Adapter foundation: config, registry, build context, runtime detection, fallback manifests, internal docs, and tests.
