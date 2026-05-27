@@ -285,7 +285,25 @@ The expected results are the same as Wrangler deployment: `/api/ping` returns th
 
 ## Current Limitations
 
-Production environment resources are not implemented yet. Local development can provide JSON-backed mock models such as `c.env.users`, but Cloudflare production needs a future adapter resource layer for users, sessions, D1, KV, and related platform services.
+Cloudflare D1-backed collection models are in progress for the beta 3 resource layer. Portable model declarations live under top-level `resources`, while Cloudflare binding details live under `platform.resources`:
+
+```yaml
+resources:
+  models:
+    users:
+      kind: collection
+      local: server/data/users.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users
+```
+
+For Cloudflare Pages, collection models are currently backed by D1. `binding` is the runtime binding variable name configured in the Cloudflare dashboard or Wrangler, such as `DB`, and `table` is the D1 table for that model. The Cloudflare resource block is not needed for local development; local development can use the platform-independent JSON-backed model declaration. Production users, sessions, migrations, D1 provisioning, KV, R2, Durable Objects, Queues, and related platform services still need follow-up design and implementation.
 
 Native `nue push` deployment is also not implemented yet. For now, deploy built output with Wrangler or through Cloudflare Pages Git integration by committing the project and configuring Pages to run a project build script such as `bun run build`.
 

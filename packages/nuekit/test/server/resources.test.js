@@ -1,5 +1,8 @@
 
-import { createConfigResource, createResourceEnv } from '../../src/server/resources'
+import {
+  createConfigResource,
+  createResourceEnv
+} from '../../src/server/resources'
 
 test('config resource exposes safe config methods', () => {
   const config = createConfigResource({

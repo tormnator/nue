@@ -50,14 +50,26 @@ async function getPlatform(name) {
 
   if (!/^[a-z][a-z0-9-]*$/.test(name)) throw new Error(`Invalid platform: ${name}`)
 
+  const mod = await importPlatform(name, `./${name}/index.js`) || await importPlatform(name, `./${name}.js`)
+  adapter = mod?.default && registerPlatform(mod.default)
+  return adapter
+}
+
+async function importPlatform(name, path) {
   try {
-    const mod = await import(`./${name}.js`)
-    adapter = mod.default && registerPlatform(mod.default)
-    return adapter
+    return await import(path)
   } catch (error) {
-    if (error.code === 'ERR_MODULE_NOT_FOUND' || error.message?.includes(`/${name}.js`)) return null
+    if (isMissingAdapterEntry(error, name, path)) return null
     throw error
   }
+}
+
+function isMissingAdapterEntry(error, name, path) {
+  if (error.code !== 'ERR_MODULE_NOT_FOUND') return false
+
+  const entry = path.endsWith('/index.js') ? `${name}/index.js` : `${name}.js`
+  const message = error.message?.replace(/\\/g, '/') || ''
+  return message.includes(entry)
 }
 
 /**

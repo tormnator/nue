@@ -183,9 +183,26 @@ resources:
     leads:
       kind: collection
       local: @shared/server/data/leads.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users
+      leads:
+        binding: DB
+        table: leads
 ```
 
-An adapter may add adapter-specific interpretation, defaults, or validation in its own code space. For Cloudflare Pages, a future version might map a declared model to D1, KV, or another binding, but that mapping should be explicit enough that the adapter knows where the data lives and how to construct `c.env.models`.
+The top-level `resources` block is the platform-independent app contract. It says which resources route code expects and which local files can back development mocks. The selected `platform` block holds adapter-specific production binding details. For Cloudflare Pages, `platform.resources.models.<name>.binding` is the developer-chosen Cloudflare runtime binding variable name, such as `DB`, and `table` is the D1 table backing that model.
+
+Cloudflare Pages collection models are D1-backed in the beta 3 implementation. The YAML does not need to say `D1` while that is the only supported Cloudflare implementation for `kind: collection`; the adapter owns that choice and validates that the configured binding is D1-compatible at request time.
+
+Cloudflare platform resource configuration is not required for local development. Local development can use the platform-independent `resources.models.<name>.local` declarations without a Cloudflare binding. The Cloudflare configuration is needed when building or deploying routes that expect production Cloudflare model resources.
+
+An adapter may add adapter-specific interpretation, defaults, or validation in its own code space. For Cloudflare Pages, the adapter maps a declared model to the binding/table configured under `platform.resources`. If Cloudflare later supports multiple collection backings for the same Nue resource contract, the adapter can introduce an explicit backend field such as `type`, but beta 3 should avoid that extra schema until it is needed.
 
 Longer term, platform adapters may live in per-platform folders or outside Nuekit as plugins. The resource declaration shape should prepare for that, but beta 3 does not need to implement the plugin system.
 
@@ -320,11 +337,11 @@ Recommended beta 3 Cloudflare mapping:
 | Declaration | Cloudflare backing | Notes |
 |---|---|---|
 | `resources.config` | Pages environment variables and secrets | Expose via `c.env.config`; secrets are accessible to server code but never returned by `public()`. |
-| `resources.models.<name>` with `kind: collection` | D1 binding | Provide the local model-style methods needed by templates: `getAll`, `size`, `create`, `get`, item `update`, and item `remove`. |
+| `resources.models.<name>` with `kind: collection` plus `platform.resources.models.<name>.binding/table` | D1 binding | Provide the local model-style methods needed by templates: `getAll`, `size`, `create`, `get`, item `update`, and item `remove`. |
 | Template domain-user login/session demo | D1 tables for users and sessions, or project-local model code using the D1 collection layer | Keep it outside core; do not define universal auth semantics yet. |
 | Raw platform access | `c.env.platform` | Contains the raw Cloudflare `env` object for explicit platform-specific route code. |
 
-For beta 3, the developer should create and bind the D1 database through Cloudflare dashboard or Wrangler. Nue can validate that the named binding exists and can fail clearly if it does not. Automatic D1 creation, schema generation, migrations, and JSON data import can be designed later.
+For beta 3, the developer should create and bind the D1 database through Cloudflare dashboard or Wrangler, then put that binding variable name in `platform.resources.models.<name>.binding`. Nue can validate that the named binding exists and is D1-compatible, and can fail clearly if it does not. Automatic D1 creation, schema generation, migrations, and JSON data import can be designed later.
 
 Later Cloudflare resource mappings may wrap:
 
@@ -426,7 +443,7 @@ This establishes the production boundary even if the template route API changes 
 
 ## Open Questions
 
-- What exact `site.yaml` schema should resource declarations use?
+- Should Cloudflare collection model bindings remain implicit-D1, or should a later adapter version add an explicit backend field such as `type: D1` when there are multiple Cloudflare backings?
 - Should raw platform access remain `c.env.platform`, or should any future adapter require additional namespacing?
 - Should `PUBLIC_*` be enough for beta 3, or should public config require an explicit allowlist?
 - Should local config read only `site.yaml` for beta 3, or should a later phase add `.env` support?
@@ -438,4 +455,4 @@ This establishes the production boundary even if the template route API changes 
 
 ## Decision For Now
 
-Proceed with a small config/resource-factory slice plus `c.env.models` namespacing. Treat the current JSON domain model as local/template behavior that should move out of core. Expose raw Cloudflare bindings directly under `c.env.platform`. For the Cloudflare beta 3 implementation, use D1 as the first production backing for mutable `kind: collection` models and keep domain-user/login/session semantics in template or project code until a separate auth design exists.
+Proceed with a small config/resource-factory slice plus `c.env.models` namespacing. Treat the current JSON domain model as local/template behavior that should move out of core. Keep platform-independent resource declarations under `resources`, and keep Cloudflare binding/table details under `platform.resources`. Expose raw Cloudflare bindings directly under `c.env.platform`. For the Cloudflare beta 3 implementation, use D1 as the first production backing for mutable `kind: collection` models and keep domain-user/login/session semantics in template or project code until a separate auth design exists.

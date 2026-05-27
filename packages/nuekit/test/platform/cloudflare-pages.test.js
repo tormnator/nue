@@ -47,6 +47,55 @@ function createAssets(responses={}) {
   }
 }
 
+function createD1(rows=[]) {
+  const items = rows.map(row => ({ ...row, data: JSON.stringify(row.data || {}) }))
+  let lastId = items.reduce((max, item) => Math.max(max, item.id), 0)
+
+  return {
+    prepare(sql) {
+      const params = []
+
+      return {
+        bind(...values) {
+          params.push(...values)
+          return this
+        },
+
+        async all() {
+          return { results: items.toSorted((a, b) => b.created - a.created) }
+        },
+
+        async first() {
+          if (sql.startsWith('SELECT COUNT(*)')) return { count: items.length }
+          return items.find(item => item.id == params[0]) || null
+        },
+
+        async run() {
+          if (sql.startsWith('INSERT')) {
+            const [created, data] = params
+            const id = ++lastId
+            items.unshift({ id, created, data })
+            return { meta: { last_row_id: id } }
+          }
+
+          if (sql.startsWith('UPDATE')) {
+            const [data, id] = params
+            const item = items.find(item => item.id == id)
+            if (item) item.data = data
+          }
+
+          if (sql.startsWith('DELETE')) {
+            const index = items.findIndex(item => item.id == params[0])
+            if (index >= 0) items.splice(index, 1)
+          }
+
+          return { meta: {} }
+        }
+      }
+    }
+  }
+}
+
 async function writeAll(items) {
   for (const [path, content] of items) {
     const fullpath = join(testDir, path)
@@ -105,7 +154,19 @@ describe('cloudflare-pages platform', async () => {
 
   test('default server routes emit bundled worker', async () => {
     await writeAll([
-      ['site.yaml', 'platform: cloudflare-pages'],
+      ['site.yaml', `
+        resources:
+          models:
+            leads:
+              kind: collection
+        platform:
+          name: cloudflare-pages
+          resources:
+            models:
+              leads:
+                binding: DB
+                table: leads
+      `],
       ['index.md', '# Hello'],
       ['@shared/server/index.js', `
         get('/api/hello', c => c.json({ hello: true }))
@@ -117,10 +178,33 @@ describe('cloudflare-pages platform', async () => {
           publicConfig: c.env.config.public(),
           runtime: c.env.runtime
         }))
+
+        get('/api/leads', async c => {
+          const lead = await c.env.models.leads.create({ name: 'Jane' })
+          return c.json({
+            size: await c.env.models.leads.size(),
+            lead: await c.env.models.leads.get(lead.id)
+          })
+        })
       `],
     ])
 
-    const site = await createSite(CONF)
+    const site = await createSite({
+      ...CONF,
+      resources: {
+        models: {
+          leads: { kind: 'collection' }
+        }
+      },
+      platform: {
+        name: 'cloudflare-pages',
+        resources: {
+          models: {
+            leads: { binding: 'DB', table: 'leads' }
+          }
+        }
+      }
+    })
     await build(site, { silent: true })
 
     const worker = await Bun.file(join(testDir, '.dist', '_worker.js')).text()
@@ -131,7 +215,10 @@ describe('cloudflare-pages platform', async () => {
 
     const { default: loaded } = await importWorker()
     const assets = createAssets()
-    const res = await loaded.fetch(new Request('https://example.com/api/hello'), { ASSETS: assets })
+    const res = await loaded.fetch(new Request('https://example.com/api/hello'), {
+      ASSETS: assets,
+      DB: createD1()
+    })
 
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ hello: true })
@@ -139,6 +226,7 @@ describe('cloudflare-pages platform', async () => {
 
     const envRes = await loaded.fetch(new Request('https://example.com/api/env'), {
       ASSETS: assets,
+      DB: createD1(),
       PUBLIC_NAME: 'Nue',
       SECRET_NAME: 'hidden'
     })
@@ -153,6 +241,17 @@ describe('cloudflare-pages platform', async () => {
         platform: 'cloudflare-pages',
         mode: 'production'
       }
+    })
+
+    const leadsRes = await loaded.fetch(new Request('https://example.com/api/leads'), {
+      ASSETS: createAssets(),
+      DB: createD1()
+    })
+
+    expect(leadsRes.status).toBe(200)
+    expect(await leadsRes.json()).toMatchObject({
+      size: 1,
+      lead: { id: 1, name: 'Jane' }
     })
   })
 
