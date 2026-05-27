@@ -17,12 +17,12 @@ post('/api/logout', async (c) => {
 })
 
 post('/api/leads', async (c) => {
-  const { users } = c.env.models
+  const { leads } = c.env.models
   const country = c.req.header('cf-ipcountry')
   const data = await c.req.json()
-  const user = await users.create({ ...data, country })
-  console.log('created', user)
-  return c.json(user)
+  const lead = await leads.create({ ...data, country })
+  console.log('created', lead)
+  return c.json(lead)
 })
 
 // authenticated requests
