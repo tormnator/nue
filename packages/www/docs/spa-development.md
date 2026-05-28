@@ -122,7 +122,7 @@ Route handlers connect your UI to business models:
 
 ```javascript
 get('/users', async (c) => {
-  const { users } = c.env
+  const { users } = c.env.models
   return c.json(await users.getAll())
 })
 ```
@@ -155,7 +155,7 @@ This model becomes available automatically with simple CRUD methods:
 
 ```javascript
 // In your route handlers
-const { users } = c.env
+const { users } = c.env.models
 
 // Get all records
 await users.getAll()

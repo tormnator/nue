@@ -1,6 +1,6 @@
 # Cloudflare Pages Platform Adapter
 
-> **User-facing documentation draft.** This file is written as user-facing documentation, but it lives in `docs-internal/` until the adapter is ready to publish. Promote or rewrite it into `packages/www/docs/` only after the feature scope and production-resource story are approved.
+> **User-facing documentation draft.** This file is written as user-facing documentation, but it lives in `docs-internal/platform-adapters/` until the adapter is ready to publish. Promote or rewrite it into `packages/www/docs/` only after the feature scope and production-resource story are approved.
 
 The Cloudflare Pages Platform Adapter prepares a Nue site for deployment to Cloudflare Pages. It keeps static sites static by default and generates a Pages Advanced Mode worker only when your project needs runtime behavior.
 
@@ -149,7 +149,18 @@ The `--branch` value is your Cloudflare Pages preview branch name. Replace `prev
 
 If you have not specified a Pages project before, Wrangler asks whether to create a new project or use an existing project. Creating a project from this prompt creates the Cloudflare Pages project in your Cloudflare account, asks for the project name, asks for the production branch name, uploads the files from `.dist/`, and creates the deployment. You do not need to create the project in the Cloudflare dashboard first.
 
+You can also create the Pages project explicitly before the first deploy:
+
+```bash
+bunx wrangler pages project create <project-name> --production-branch=main
+bunx wrangler pages deploy .dist --project-name <project-name> --branch=preview
+```
+
 The project name becomes part of the Pages URL. For example, a project named `cf-pages-demo-nue` can receive URLs such as `https://cf-pages-demo-nue.pages.dev`, deployment-specific preview URLs, and branch aliases such as `https://preview.cf-pages-demo-nue.pages.dev`. The production branch name is the branch Wrangler uses when you deploy without `--branch`; it can be `production`, `main`, or any branch name you choose for that Pages project.
+
+Runtime bindings such as D1 databases, KV namespaces, and R2 buckets must already exist and be bound to the Pages project before routes can use them. Configure bindings in the Cloudflare dashboard under the Pages project settings, or with a Pages Wrangler configuration file. Binding changes apply to new deployments, so redeploy the site after adding or changing a binding.
+
+If you use a Pages Wrangler configuration file, keep `wrangler.jsonc`, `wrangler.json`, or `wrangler.toml` in the project root so Wrangler can read it during local development and deployment. The config file is deployment metadata, not a public static asset. Nue skips the standard Wrangler config filenames when building `.dist/`; add any one-off helper files, such as seed SQL, to `site.skip` or keep them outside the site root.
 
 For a runtime check, add a small server route:
 
@@ -223,6 +234,127 @@ Extensionless paths such as `/dashboard` should return the app shell, while file
 
 Wrangler may create local `.wrangler` and `.wrangler/cache` folders while you work. Treat those as local deployment state for your project.
 
+## Use D1 Collection Models
+
+Cloudflare D1-backed collection models let server routes use the same model API on Cloudflare Pages that local development uses with JSON files. The portable model declaration lives under top-level `resources`; Cloudflare-specific binding details live under `platform.resources`.
+
+For example, a `users` collection can use `server/data/users.json` locally and D1 in Cloudflare Pages:
+
+```yaml
+resources:
+  models:
+    users:
+      kind: collection
+      local: server/data/users.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users
+```
+
+Server routes can stay platform-neutral:
+
+```js
+get('/users', async (c) => {
+  const { users } = c.env.models
+  return c.json(await users.getAll())
+})
+
+get('/users/:id', async (c) => {
+  const { users } = c.env.models
+  const user = await users.get(c.req.param('id'))
+  return user ? c.json(user) : c.json({ error: 'User not found' }, 404)
+})
+```
+
+Create a D1 database with Wrangler:
+
+```bash
+bunx wrangler d1 create <database-name>
+```
+
+Wrangler prints a database ID and a binding snippet. Add the binding to a Pages Wrangler configuration file in the site root. The `name` must match the Cloudflare Pages project you deploy to, and `pages_build_output_dir` should point to Nue's `.dist` folder:
+
+```jsonc
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "<project-name>",
+  "compatibility_date": "2026-05-28",
+  "pages_build_output_dir": ".dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "<database-name>",
+      "database_id": "<database-id>"
+    }
+  ]
+}
+```
+
+The `binding` value in `wrangler.jsonc` must match the `platform.resources.models.<name>.binding` value in `site.yaml`. The `table` value in `site.yaml` must match the D1 table name.
+
+Create the table before deploying routes that read from it. The current collection storage expects `id`, `created`, and `data` columns:
+
+```sql
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  created INTEGER NOT NULL,
+  data TEXT NOT NULL CHECK (json_valid(data))
+);
+
+CREATE INDEX IF NOT EXISTS users_created_idx ON users (created DESC);
+```
+
+`created` stores JavaScript epoch milliseconds. `data` stores the model object as serialized JSON text; D1 can query it with SQLite JSON functions such as `json_extract()`.
+
+For a quick manual setup, put the schema in a SQL file and execute it against the remote D1 database:
+
+```bash
+bunx wrangler d1 execute <database-name> --remote --file d1-schema.sql
+```
+
+For seed data, put the JSON payload in the `data` column:
+
+```sql
+INSERT INTO users (created, data) VALUES
+  (1710000003000, json('{"name":"Sarah Chen","email":"sarah.chen@example.com","status":"active"}')),
+  (1710000002000, json('{"name":"Marcus Johnson","email":"marcus.j@example.com","status":"active"}'));
+```
+
+Using `--file` is more reliable than long inline SQL commands when seed data contains quoted JSON, especially on Windows shells:
+
+```bash
+bunx wrangler d1 execute <database-name> --remote --file d1-seed.sql
+```
+
+Keep one-off SQL files outside the site root or list them in `site.skip` so they are not copied to `.dist`:
+
+```yaml
+site:
+  skip: [d1-schema.sql, d1-seed.sql]
+```
+
+Build and deploy after the Pages project, D1 database, binding, and table exist:
+
+```bash
+nue build --clean
+bunx wrangler pages deploy .dist --project-name <project-name> --branch=preview
+```
+
+Then verify the deployed routes:
+
+```bash
+curl https://preview.<project-name>.pages.dev/users
+curl https://preview.<project-name>.pages.dev/users/1
+curl -i https://preview.<project-name>.pages.dev/users/999999
+```
+
+Expected results are a D1-backed users array, a single user for an existing ID, and a 404 JSON response for a missing ID. If the route fails because the binding or table is missing, confirm that the D1 binding exists for the Pages environment you deployed to and redeploy after changing bindings.
+
 ## Deploy With Git Integration
 
 Git integration lets Cloudflare build and deploy a Pages project from a GitHub or GitLab repository. Use it when you want deployments to happen automatically after commits are pushed.
@@ -285,7 +417,25 @@ The expected results are the same as Wrangler deployment: `/api/ping` returns th
 
 ## Current Limitations
 
-Production environment resources are not implemented yet. Local development can provide JSON-backed mock models such as `c.env.users`, but Cloudflare production needs a future adapter resource layer for users, sessions, D1, KV, and related platform services.
+Cloudflare D1-backed collection models are in progress for the beta 3 resource layer. Portable model declarations live under top-level `resources`, while Cloudflare binding details live under `platform.resources`:
+
+```yaml
+resources:
+  models:
+    users:
+      kind: collection
+      local: server/data/users.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users
+```
+
+For Cloudflare Pages, collection models are currently backed by D1. `binding` is the runtime binding variable name configured in the Cloudflare dashboard or a Pages Wrangler configuration file, such as `DB`, and `table` is the D1 table for that model. The configured table must already exist with `id`, `created`, and `data` columns. In the current implementation, `created` is an integer JavaScript timestamp and `data` is serialized JSON stored as text; D1 can query JSON text with SQLite JSON functions, but this is not a native JSON column type. The Cloudflare resource block is not needed for local development; local development can use the platform-independent JSON-backed model declaration. Production users, sessions, migrations, D1 provisioning, JSON seed import, KV, R2, Durable Objects, Queues, and related platform services still need follow-up design and implementation.
 
 Native `nue push` deployment is also not implemented yet. For now, deploy built output with Wrangler or through Cloudflare Pages Git integration by committing the project and configuring Pages to run a project build script such as `bun run build`.
 

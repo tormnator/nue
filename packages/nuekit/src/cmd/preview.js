@@ -14,7 +14,11 @@ export async function preview(conf, opts) {
   if (!has_index) return console.error('run `nue build` first')
 
   // user server
-  const handler = await getServer(conf?.server)
+  const handler = await getServer({
+    ...(conf.server || {}),
+    resources: conf.resources,
+    root: conf.root
+  })
 
   // dev server
   const server = createServer({ port, handler }, url => getFile(dist, url))

@@ -36,6 +36,8 @@ test('site overrides', async () => {
 
   expect(conf.ignore).toContain('functions')
   expect(conf.ignore).toContain('epic-server')
+  expect(conf.ignore).toContain('wrangler.json')
+  expect(conf.ignore).toContain('wrangler.jsonc')
   expect(conf.ignore.length).toBeGreaterThan(10)
 
   await removeAll()
@@ -65,7 +67,7 @@ test('simple override', () => {
 
 test('mergeData', () => {
   const data = mergeData([
-    { sitename: 'Acme', port: 4000, meta: { title: 'Old', desc: 'Old' } },
+    { sitename: 'Acme', port: 4000, resources: { models: {} }, meta: { title: 'Old', desc: 'Old' } },
     { meta: { title: 'New' }, team: [], desc: 'New' }
   ])
 
@@ -75,6 +77,30 @@ test('mergeData', () => {
     desc: "New",
     team: [],
   })
+})
+
+test('resources config', async () => {
+  const CONF = trim(`
+    resources:
+      models:
+        users:
+          kind: collection
+          local: server/data/users.json
+  `)
+
+  await writeAll([['site.yaml', CONF]])
+  const conf = await readSiteConf({ root: testDir })
+
+  expect(conf.resources).toEqual({
+    models: {
+      users: {
+        kind: 'collection',
+        local: 'server/data/users.json'
+      }
+    }
+  })
+
+  await removeAll()
 })
 
 

@@ -29,6 +29,8 @@ async function createWorkerSource(context, source_path) {
 
   if (server_entry) {
     imports.push(`import { fetch as dispatch, matches } from 'nue-edgeserver'`)
+    imports.push(`import { createConfigResource, createResourceEnv } from '../../server/resources.js'`)
+    imports.push(`import { createModelResources } from './resources.js'`)
     imports.push(`import ${JSON.stringify(toImportPath(source_path, server_entry))}`)
   }
 
@@ -37,6 +39,8 @@ ${imports.join('\n')}
 
 const proxy = ${JSON.stringify(proxy)}
 const spaFallbacks = ${JSON.stringify(manifests.spa_fallbacks)}
+const resources = ${JSON.stringify(conf.resources || {})}
+const platformResources = ${JSON.stringify(getPlatformResources(conf))}
 
 function isFilePath(pathname) {
   return pathname.split('/').pop().includes('.')
@@ -69,7 +73,18 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
 
-    ${server_entry ? `if (matches(request.method, url.pathname)) return dispatch(request, env)` : ''}
+    ${server_entry ? `if (matches(request.method, url.pathname)) {
+      const nueEnv = createResourceEnv({
+        platform: 'cloudflare-pages',
+        mode: 'production',
+        raw: env,
+        resources: {
+          config: createConfigResource(env),
+          models: createModelResources(env, resources, platformResources)
+        }
+      })
+      return dispatch(request, nueEnv)
+    }` : ''}
     if (proxy && shouldProxy(url.pathname)) return proxyRequest(request, url)
 
     const asset = await env.ASSETS.fetch(request)
@@ -118,6 +133,10 @@ async function bundleWorker(context) {
 function getProxyConfig(conf) {
   const { url, routes=[] } = conf.server || {}
   return url ? { routes, url } : null
+}
+
+function getPlatformResources(conf) {
+  return typeof conf.platform === 'object' ? conf.platform.resources || {} : {}
 }
 
 function getServerEntry(conf, root) {

@@ -1,6 +1,6 @@
 
 import { readdir, mkdir, readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 
 const SESSIONS_PATH = join(process.cwd(), '.nue', 'sessions.json')
 const NOW = Date.now()
@@ -99,7 +99,42 @@ async function createUserModel(items) {
 
 
 
-export async function createEnv(dir) {
+async function createModelFromFile(name, path) {
+  let text
+
+  try {
+    text = await readFile(path, 'utf8')
+  } catch (error) {
+    if (error.code === 'ENOENT') throw new Error(`Local model file not found: ${name}: ${path}`)
+    throw error
+  }
+
+  const items = JSON.parse(text)
+  const model = name === 'users' ? await createUserModel(items) : createModel(items)
+  console.log(`Model "${name}" loaded (${ await model.size() } records)`)
+  return model
+}
+
+function resolveLocalPath(root, path) {
+  return isAbsolute(path) ? path : join(root, path)
+}
+
+async function createDeclaredEnv(models, root) {
+  const env = {}
+
+  for (const [name, conf] of Object.entries(models)) {
+    if (conf.kind !== 'collection') throw new Error(`Unsupported local model kind: ${name}.${conf.kind}`)
+    if (!conf.local) throw new Error(`Missing local model path: ${name}`)
+    env[name] = await createModelFromFile(name, resolveLocalPath(root, conf.local))
+  }
+
+  return env
+}
+
+export async function createEnv(dir, opts={}) {
+  const { resources, root=process.cwd() } = opts
+  if (resources?.models) return await createDeclaredEnv(resources.models, root)
+
   const files = await readdir(dir)
   const env = {}
 
@@ -107,9 +142,7 @@ export async function createEnv(dir) {
     if (file.endsWith('.json')) {
       const type = file.replace('.json', '')
       const path = join(dir, file)
-      const items = JSON.parse(await readFile(path, 'utf8'))
-      const model = env[type] = type == 'users' ? await createUserModel(items) : createModel(items)
-      console.log(`Model "${type}" loaded (${ await model.size() } records)`)
+      env[type] = await createModelFromFile(type, path)
     }
   }
 

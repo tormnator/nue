@@ -46,3 +46,23 @@ import_map:
 server:
   reload: true
 
+resources:
+  models:
+    users:
+      kind: collection
+      local: @shared/server/data/users.json
+    leads:
+      kind: collection
+      local: @shared/server/data/leads.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users
+      leads:
+        binding: DB
+        table: leads
+

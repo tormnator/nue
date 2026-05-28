@@ -5,9 +5,12 @@ import { existsSync } from 'fs'
 import { routes, fetch, matches } from 'nue-edgeserver'
 
 import { createEnv } from './model'
+import { createResourceEnv } from './resources'
 
-export async function importWorker({ dir, reload }) {
-  const path = join(process.cwd(), dir, 'index.js') + (reload ? '?t=' + Date.now() : '')
+let import_id = 0
+
+export async function importWorker({ dir, reload, root=process.cwd() }) {
+  const path = join(root, dir, 'index.js') + (reload ? '?t=' + ++import_id : '')
 
   try {
     routes.length = 0
@@ -20,18 +23,23 @@ export async function importWorker({ dir, reload }) {
 }
 
 export async function createWorker(opts = {}) {
-  const { dir='@shared/server', reload } = opts
+  const { dir='@shared/server', reload, resources, root=process.cwd() } = opts
 
-  await importWorker({ dir, reload })
+  await importWorker({ dir, reload, root })
   if (!routes.length) return null
 
-  const data_dir = join(process.cwd(), dir, 'data')
-  const env = existsSync(data_dir) ? await createEnv(data_dir) : {}
+  const data_dir = join(root, dir, 'data')
+  const models = (resources?.models || existsSync(data_dir)) ? await createEnv(data_dir, { resources, root }) : {}
+  const env = createResourceEnv({
+    platform: 'local',
+    mode: 'development',
+    resources: { models }
+  })
 
   console.log(`Backend server started with ${routes.length} routes`, reload ? '(reloadable)' : '')
 
   return async function(req) {
-    if (reload)  await importWorker({ dir, reload })
+    if (reload)  await importWorker({ dir, reload, root })
     const url = new URL(req.url)
     const { method, body } = req
 

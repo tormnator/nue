@@ -23,13 +23,13 @@ Nueserver provides a simple HTTP server with global route handlers. No classes, 
 
 ```javascript
 get('/api/users', async (c) => {
-  const users = await c.env.users.getAll()
+  const users = await c.env.models.users.getAll()
   return c.json(users)
 })
 
 post('/api/users', async (c) => {
   const data = await c.req.json()
-  const user = await c.env.users.create(data)
+  const user = await c.env.models.users.create(data)
   return c.json(user, 201)
 })
 
