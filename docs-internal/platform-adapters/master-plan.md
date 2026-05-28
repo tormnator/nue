@@ -93,7 +93,7 @@ Not completed yet:
 Immediate next actions:
 
 1. Keep issue #28 scoped to the current resource env/config/models/D1 slice.
-2. Prepare a tiny Cloudflare D1 schema/setup note for validation.
+2. Prepare [Cloudflare D1 Validation Note](./cloudflare-d1-validation.md) for the schema/setup path.
 3. Run real Cloudflare D1 deployment validation through Wrangler Direct Upload from the local branch.
 4. Update issue #28 with validation results, limitations, and the planned M4b persistence-layer follow-up.
 5. Decide whether to merge into `dev`.
@@ -159,7 +159,7 @@ The current implementation assumes D1 tables with `id`, `created`, and `data`. S
 - Completed: Fix full template `POST /api/leads` to use `leads.create()`.
 - Completed: Validate tests, package dry-run, template builds, and mock worker smoke path.
 - In Progress: Keep issue #28 open until real D1 validation and limitation docs are complete.
-- Planned: Validate against real Cloudflare Pages D1 through Wrangler Direct Upload before npm publish.
+- Planned: Validate against real Cloudflare Pages D1 through Wrangler Direct Upload before npm publish, using [Cloudflare D1 Validation Note](./cloudflare-d1-validation.md).
 - Planned: Update issue #28 with commits, tests, limitations, and follow-up issues.
 - Planned: Decide whether production auth/session remains out of scope and gets its own issue.
 - Planned: Hand off broader persistence/provider/domain-model questions to M4b.
