@@ -1,6 +1,6 @@
 # Cloudflare Pages Platform Adapter
 
-> **User-facing documentation draft.** This file is written as user-facing documentation, but it lives in `docs-internal/` until the adapter is ready to publish. Promote or rewrite it into `packages/www/docs/` only after the feature scope and production-resource story are approved.
+> **User-facing documentation draft.** This file is written as user-facing documentation, but it lives in `docs-internal/platform-adapters/` until the adapter is ready to publish. Promote or rewrite it into `packages/www/docs/` only after the feature scope and production-resource story are approved.
 
 The Cloudflare Pages Platform Adapter prepares a Nue site for deployment to Cloudflare Pages. It keeps static sites static by default and generates a Pages Advanced Mode worker only when your project needs runtime behavior.
 

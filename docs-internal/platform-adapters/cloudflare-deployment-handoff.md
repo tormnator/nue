@@ -21,11 +21,11 @@ Validated runtime behavior:
 - `/dashboard` returned 200 as an extensionless SPA fallback route.
 - `/missing.txt` returned 404 rather than the SPA shell.
 
-For exact package versions, publish order, tags, and validation details, see [First `@tormnator` npm Publish Record](./first-tormnator-npm-publish-record.md).
+For exact package versions, publish order, tags, and validation details, see [First `@tormnator` npm Publish Record](../first-tormnator-npm-publish-record.md).
 
-For versioning, publish policy, and release workflow, see [npm Versioning and Publishing Policy](./npm-versioning-publishing-policy.md).
+For versioning, publish policy, and release workflow, see [npm Versioning and Publishing Policy](../npm-versioning-publishing-policy.md).
 
-For why package manifests use npm aliases while JavaScript imports stay unscoped, see [Package Alias Resolution](./package-alias-resolution.md).
+For why package manifests use npm aliases while JavaScript imports stay unscoped, see [Package Alias Resolution](../package-alias-resolution.md).
 
 ## Package to Consume
 
@@ -81,7 +81,7 @@ Cloudflare Pages will only need this if the same safety policy is configured in 
 
 ## Suggested Next Steps
 
-1. Promote or rewrite the Cloudflare Pages user docs from `docs-internal/` into the public docs when the adapter scope is approved.
+1. Promote or rewrite the Cloudflare Pages user docs from `docs-internal/platform-adapters/` into the public docs when the adapter scope is approved.
 2. Keep the demo project available as a smoke test for future adapter or package publishing changes.
 3. Decide whether future Git integration demos should track the npm dist-tag `dev` dynamically or commit lockfile updates deliberately.
 

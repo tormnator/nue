@@ -6,6 +6,17 @@
 
 Platform Adapters let Nue prepare build output for a target platform without making Nue core depend on that platform. Core code uses deployment-neutral language. Target-specific concepts, files, bindings, and deployment rules belong inside adapter implementations.
 
+For milestone status, task tracking, validation state, and next actions, see [Platform Adapters Master Plan](./master-plan.md).
+
+## Project Rules
+
+- Keep Nue core target-neutral in naming, APIs, and source structure.
+- Keep target-specific behavior inside the relevant platform adapter.
+- Use `dev` as the integration branch for normal Nue work.
+- Keep short-lived feature branches isolated until validation is strong enough to merge.
+- Publish npm `dev` dist-tag packages from Git `dev`, not from arbitrary topic branches, unless an explicit one-off exception is approved and documented.
+- Update [Platform Adapters Master Plan](./master-plan.md) when a milestone completes, a decision changes, or a new branch of work appears.
+
 ## Terminology
 
 | Term | Meaning |
@@ -71,6 +82,8 @@ The existing Bun development server is not part of the initial Platform Adapter 
 
 See [Platform Resource Layer](./platform-resource-layer.md) for the beta 3 resource-layer design draft.
 
+`packages/nuekit/src/server/model.js` is current local/template mock behavior, not the universal model layer. It may stay for local development now, but should not grow into production auth/session semantics. Long term, the strongly coupled `users.login/logout/authenticate` behavior should move to template/project code or an optional package.
+
 ## Initial Milestones
 
 1. Core Platform Adapter foundation: config, registry, build context, runtime detection, fallback manifests, internal docs, and tests.
@@ -78,6 +91,8 @@ See [Platform Resource Layer](./platform-resource-layer.md) for the beta 3 resou
 3. Cloudflare Pages Git integration deployment: validated dashboard-created Git integration, first deploy, automatic redeploy after commit/push, and secondary branch Preview deployment.
 4. Platform resources: design and implement the first platform-neutral resource layer for values exposed to Nueserver routes through `c.env`.
 5. Final documentation: finish the Cloudflare Pages adapter docs and move them from `docs-internal/` to the public docs site.
+
+The active status for these milestones is tracked in [Platform Adapters Master Plan](./master-plan.md).
 
 ## Cloudflare Pages Adapter
 

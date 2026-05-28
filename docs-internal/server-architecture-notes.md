@@ -78,7 +78,7 @@ get('/profile/:id', async (c) => {
 ### 2. Platform Adapter Mechanism
 **Status**: Not yet in Nue. Currently CF-only in intent.
 
-**Update (May 2026):** The accepted feature name is **Platform Adapter**. Core implementation should use target-neutral terminology (`platform`, runtime requirements, manifests, environment resources) and keep all target-specific vocabulary inside adapter implementations. The first implementation milestone is the core Platform Adapter foundation; the second is a Cloudflare Pages adapter using Pages Advanced Mode only. See `platform-adapters.md` for the active design notes.
+**Update (May 2026):** The accepted feature name is **Platform Adapter**. Core implementation should use target-neutral terminology (`platform`, runtime requirements, manifests, environment resources) and keep all target-specific vocabulary inside adapter implementations. The first implementation milestone is the core Platform Adapter foundation; the second is a Cloudflare Pages adapter using Pages Advanced Mode only. See [Platform Adapters](./platform-adapters/platform-adapters.md) for the active design notes.
 
 **Key insight**: The server is *already* platform-agnostic. CF coupling exists only in:
 - Dev-time CF header mocks in `worker.js` (not a production concern)
