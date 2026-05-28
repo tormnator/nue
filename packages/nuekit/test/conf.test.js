@@ -36,6 +36,8 @@ test('site overrides', async () => {
 
   expect(conf.ignore).toContain('functions')
   expect(conf.ignore).toContain('epic-server')
+  expect(conf.ignore).toContain('wrangler.json')
+  expect(conf.ignore).toContain('wrangler.jsonc')
   expect(conf.ignore.length).toBeGreaterThan(10)
 
   await removeAll()

@@ -10,7 +10,7 @@ const SITE_CONF = 'site design server collections resources production port site
 const ALL_CONF = SITE_CONF.concat('include exclude meta content import_map svg'.split(' '))
 
 // default skip list
-const SKIP = `node_modules .toml .rs .lock package.json .lockb lock.yaml README.md Makefile`.split(' ')
+const SKIP = `node_modules .toml .rs .lock package.json wrangler.json wrangler.jsonc .lockb lock.yaml README.md Makefile`.split(' ')
 
 
 export async function readSiteConf(args={}) {
