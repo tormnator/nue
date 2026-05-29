@@ -477,6 +477,7 @@ Before real publish commands:
 ```
 
 - Run the relevant tests before pack/publish checks.
+- If publishing `@tormnator/nuekit` after starter template or `nue create` changes, run `bun run templates:zip`, validate `packages/templates/*.zip`, and record which template source testers should use. The default `nue create` source is the official `main` branch; npm dist-tag `dev` testers who need unreleased templates should pass the raw `dev` template URL or a local `packages/templates` checkout.
 - After the first publish path is stable, review legacy Jest configuration in package manifests and remove or migrate stale config if Bun remains the intended test runner.
 - Run `bun publish --dry-run --access public --tag dev` or `npm pack --dry-run` in each package and inspect included files.
 - Verify `files` lists include the files needed for Cloudflare adapter work and do not include private/local state.

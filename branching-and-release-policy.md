@@ -63,6 +63,7 @@ Before promoting `dev` to `main`:
 - Confirm npm dist-tag `dev` packages, if any, have been externally validated.
 - Update internal release/publishing notes enough that the release can be reconstructed later.
 - Make sure docs describe the actual behavior.
+- If templates or `nue create` changed, regenerate and validate committed template zips on the branch being promoted so the default official templates match `main`.
 - Confirm no known blocker would make `main` a misleading official baseline.
 
 Practical test: if future work branches from `main`, `main` should contain the baseline you would want that work to inherit.
@@ -115,6 +116,7 @@ Start release notes early for each coherent beta or release milestone. Treat the
 Use internal release-note drafts to capture:
 
 - notable user-facing changes
+- template zip/source behavior when `nue create` or starter templates change
 - exact package versions and npm dist-tags when packages are published
 - source commits and branch names used for validation
 - GitHub issue links and decisions that explain the change
