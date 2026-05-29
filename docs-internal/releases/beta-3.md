@@ -19,6 +19,7 @@ Use these status labels while drafting:
 - `Landed`: merged into the release preparation branch.
 - `Validated`: tested with automated tests and/or real deployments.
 - `In progress`: implemented or designed on a topic branch but not yet merged into the release branch.
+- `Planned`: expected follow-up work that has not started yet.
 - `Deferred`: intentionally out of scope for beta 3.
 
 ## Highlights
@@ -28,7 +29,9 @@ Use these status labels while drafting:
 - Cloudflare Pages Git integration validation with production and preview deployments.
 - `nue build --clean` now tolerates a missing `.dist` directory.
 - Branching, npm publishing, and GitHub Release policy clarified for the fork.
-- Platform resource layer design started for `c.env`, with local resource declarations and `c.env.models` shape in progress.
+- Platform resource layer design completed for `c.env`, with local resource declarations, `c.env.config`, `c.env.models`, `c.env.platform`, and runtime metadata.
+- Cloudflare D1-backed collection resources for declared model resources.
+- Explicit, portable template zip generation and `nue create` source selection for official, dev, and local templates.
 
 ## Landed Or Validated Work
 
@@ -106,52 +109,98 @@ Key policy points:
 - npm dist-tag `latest` and GitHub Releases should align with `main`.
 - GitHub Releases are created only from `main`.
 
-## In-Progress Release Candidates
-
-These items are candidates for beta 3 release notes, but must not be presented as released until they land in the selected release branch.
-
 ### Platform Resource Layer Design
 
-Status: In progress
+Status: Landed
 Related issue: #27
-Branches: `design/platform-resource-layer`, `feat/resource-layer-core`
 
-The platform resource layer defines how server routes access deployment-provided capabilities through `c.env` without making Nue core depend on a single hosting platform.
+The platform resource layer design defines how server routes access deployment-provided capabilities through `c.env` without making Nue core depend on a single hosting platform.
 
-Current direction:
+The design establishes:
 
 - `c.env.config` for normalized configuration access.
 - `c.env.models` for app/site domain models declared by the developer.
 - `c.env.platform` for raw platform bindings as an explicit escape hatch.
 - `c.env.runtime` for lightweight runtime metadata.
+- A boundary between core resource shaping, adapter-specific platform mappings, and app/template domain behavior.
 
-### Core Resource Environment Shaping
+Issue #27 is closed as design-complete. Follow-up persistence/provider/domain-model work remains planned under M4b.
 
-Status: In progress
+### Resource Environment And D1 Collections
+
+Status: Landed and validated
 Related issue: #28
-Branch: `feat/resource-layer-core`
 
-Implemented on the topic branch:
+Beta 3 now includes the first platform resource implementation slice.
+
+Implemented behavior:
 
 - Target-neutral `createResourceEnv()` helper.
 - `createConfigResource()` with `get`, `require`, and `public` methods.
 - Local server route env shaping with JSON-backed models under `c.env.models`.
+- Site-level `resources.models` declarations for local model resources.
 - Cloudflare Pages server routes receive `c.env.config`, `c.env.platform`, and `c.env.runtime`.
+- Cloudflare Pages can map declared `kind: collection` models to D1-backed resources.
 - Template route examples moved from top-level `c.env.users` / `c.env.leads` to `c.env.models.users` / `c.env.models.leads`.
 
-### Local Resource Declarations
+Validated behavior:
 
-Status: In progress
-Related issue: #28
-Branch: `feat/resource-layer-core`
+- Full Nuekit tests passed before merge to `dev`.
+- Focused Cloudflare resource tests passed.
+- Package dry-run confirmed moved Cloudflare adapter files are included.
+- SPA and full templates build with Cloudflare worker output.
+- Real Cloudflare Pages D1 validation confirmed D1-backed `users` routes through Wrangler Direct Upload.
 
-Implemented on the topic branch:
+Known scope:
 
-- `resources` is treated as site-level config.
-- Templates declare local JSON-backed model resources in `site.yaml`.
-- Local model loading supports declared `resources.models.<name>.local` paths.
-- Existing data-directory scanning remains as fallback.
-- Missing declared local model files fail with clearer errors.
+- D1 tables must already exist with `id`, `created`, and `data` columns.
+- Nue does not yet create schemas, run migrations, import JSON seed data, or implement production auth/session semantics.
+
+### Template Zip Workflow And `nue create` Sources
+
+Status: Landed and validated
+Related issue: #29
+
+Template folders are now treated as the source of truth, and committed template zips are explicit release artifacts for remote `nue create` usage.
+
+Implemented behavior:
+
+- `bun run templates:zip` regenerates `packages/templates/*.zip` from live template folders.
+- `scripts/build-template-zips.js` writes deterministic ZIP files with stable ordering and timestamps.
+- Generated ZIPs use UTF-8 filename metadata, preserve empty directories, and skip generated folders such as `.dist` and `node_modules`.
+- `.github/workflows/build-template-zips.yml` is now a manual branch-scoped workflow that uses Bun, validates generated zips, and commits refreshed artifacts.
+- `nue create` defaults to official templates from `https://github.com/tormnator/nue/raw/main/packages/templates`.
+- `nue create <template> <source>` accepts a remote template base URL or a local `packages/templates` checkout.
+- Local checkout mode prefers live template folders over local zips and skips generated folders such as `.dist`.
+
+User-visible examples:
+
+```bash
+nue create spa
+nue create spa https://github.com/tormnator/nue/raw/dev/packages/templates
+nue create spa ./packages/templates
+```
+
+Validation:
+
+- `bun run templates:zip` regenerated all committed template zips.
+- ZIP metadata and archive listings were inspected on Windows.
+- Empty-directory and non-ASCII filename smoke checks passed during implementation.
+- Local zip fallback smoke test passed with `nue create spa ./zips`.
+- Full Nuekit suite passed on `dev`: `175 pass`, `3 skip`, `0 fail`.
+
+## In-Progress Release Candidates
+
+These items are candidates for beta 3 release notes, but must not be presented as released until they land in the selected release branch.
+
+### Lightweight Persistence Layer
+
+Status: Planned
+Related follow-up: M4b in the platform adapters master plan
+
+The next resource-layer step is to design a small persistence/provider boundary above local JSON models and platform-specific storage such as D1. This should not become a full ORM, migration framework, auth system, or universal data model.
+
+Open questions include provider selection, whether any persistence manager is exposed on `c.env`, whether persisted objects keep item methods such as `update()` and `remove()`, and how template/app domain behavior such as users, login, and sessions should sit above storage providers.
 
 ## Possible Upgrade Notes
 
@@ -183,13 +232,49 @@ resources:
       local: server/data/users.json
 ```
 
-The exact Cloudflare production mapping is still in progress.
+For Cloudflare Pages in beta 3, declared collection models can map to D1 through `platform.resources`:
+
+```yaml
+resources:
+  models:
+    users:
+      kind: collection
+      local: server/data/users.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users
+```
+
+The configured D1 table must already exist with the expected beta 3 collection schema.
 
 ### Cloudflare Pages Adapter
 
 Projects targeting Cloudflare Pages should expect Advanced Mode worker output when runtime features are detected. Static-only builds should remain static.
 
 If a project depends on platform-specific bindings, route code should prefer `c.env.platform.<binding>` once the resource layer is adopted.
+
+### Template Creation Sources
+
+By default, `nue create` downloads starter template zips from the fork's official `main` branch.
+
+Developers evaluating the npm dist-tag `dev` package line should use templates that match the code they are testing:
+
+```bash
+nue create spa https://github.com/tormnator/nue/raw/dev/packages/templates
+```
+
+Developers working from a local checkout can use live template folders directly:
+
+```bash
+nue create spa ./packages/templates
+```
+
+Local checkout mode skips generated folders such as `.dist`.
 
 ## Package Versions
 
@@ -209,12 +294,13 @@ Before final beta 3 release notes are cut:
 - Run package dry runs or pack checks before npm publishing.
 - Validate install commands against published packages.
 - Validate Cloudflare Pages build/deploy behavior if adapter/runtime behavior changed.
+- If starter templates or `nue create` changed, regenerate and validate committed template zips for the branch being released.
 - Record exact commits and package versions.
 - Confirm the release notes only claim work that landed in the release branch.
 
 ## Known Limitations And Deferred Work
 
-- Cloudflare D1-backed production collections are not complete yet.
+- Cloudflare D1-backed collection resources require pre-existing D1 tables with the beta 3 schema.
 - Universal auth/session semantics are deferred.
 - Automatic platform resource provisioning is deferred.
 - JSON-to-production data seeding and SQL migrations are deferred.
@@ -230,7 +316,10 @@ Issues and branches to review before finalizing:
 - #26 `nue build --clean` missing `.dist` fix
 - #27 Platform resource layer design
 - #28 Resource factory, config, and Cloudflare D1 collections
+- #29 Template zip generation and `nue create` source selection
 - `docs/cloudflare-git-validation`
 - `fix/build-clean-missing-dist`
 - `design/platform-resource-layer`
 - `feat/resource-layer-core`
+- `feat/cloudflare-d1-collections`
+- `feat/template-zip-workflow`
