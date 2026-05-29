@@ -1,27 +1,34 @@
 name: Build template zips
 on:
-  push:
-    branches: [ master, 2.0 ]
-    paths:
-      - 'packages/templates/**'
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
   build-templates:
+    if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: oven-sh/setup-bun@v2
       - name: Create template zips
+        run: bun run templates:zip
+      - name: Validate template zips
         run: |
-          cd packages/templates
-          zip -r minimal.zip minimal/
-          zip -r blog.zip blog/
-          zip -r spa.zip spa/
-          zip -r full.zip full/
+          set -euo pipefail
+          for template in blog full minimal spa; do
+            tar -tf "packages/templates/$template.zip" > /dev/null
+          done
+          tmp="$(mktemp -d)"
+          mkdir "$tmp/zips"
+          cp packages/templates/spa.zip "$tmp/zips/spa.zip"
+          (cd "$tmp" && bun "$GITHUB_WORKSPACE/packages/nuekit/src/cli.js" create spa "$tmp/zips")
+          test -f "$tmp/spa/site.yaml"
       - name: Commit zips
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add packages/templates/*.zip
           git diff --quiet && git diff --staged --quiet || git commit -m "Update template zips"
-          git push
+          git push origin HEAD:${{ github.ref_name }}

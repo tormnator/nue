@@ -40,7 +40,7 @@ Design, implement, validate, and document Nue's Platform Adapter feature, includ
 | Completed | [M2: Cloudflare Pages Platform Adapter](#m2-cloudflare-pages-platform-adapter) | Implement Cloudflare Pages Advanced Mode output, generated worker behavior, asset fallback, Nueserver dispatch, SPA fallback, root 404 behavior, and user-doc draft. |
 | Completed | [M3: Cloudflare Pages Git Integration And npm Dev Package Path](#m3-cloudflare-pages-git-integration-and-npm-dev-package-path) | Validate Git-integrated Cloudflare Pages deployment using published `@tormnator` packages and document npm publishing workflow. |
 | Completed | [M4: Platform Resources](#m4-platform-resources) | Implement issue #28 resource factory/config/model declarations, local `c.env.models`, Cloudflare `c.env.platform`, and D1 collection resources. |
-| Planned | [M4a: Update Template Zip-files Workflow](#m4a-update-template-zip-files-workflow) | Update Template Zip-files Workflow |
+| Completed | [M4a: Update Template Zip-files Workflow](#m4a-update-template-zip-files-workflow) | Update Template Zip-files Workflow |
 | Planned | [M4b: Lightweight Persistence Layer](#m4b-lightweight-persistence-layer) | Design and implement the follow-up persistence provider/manager layer without making adapters own app/domain model semantics. |
 | Planned | [M5: Final Documentation And Release Preparation](#m5-final-documentation-and-release-preparation) | Finish public docs, release notes, merge sequencing, and npm `dev` publish after validation. |
 
@@ -54,25 +54,25 @@ Status vocabulary:
 
 ## Current Snapshot
 
-Recently closed issue:
+Recently completed issues:
 
+- Issue #27: Design platform resource layer for `c.env`.
+  - State: design acceptance criteria satisfied by [Platform Resource Layer](./platform-resource-layer.md) and the issue #28 implementation slice; ready to close as design-complete.
 - Issue #28: Implement resource factory, config, and Cloudflare D1 collections.
-- State: closed on 2026-05-28 after validation summary was posted.
+  - State: closed on 2026-05-28 after validation summary was posted.
+- Issue #29: Make template zip generation explicit, portable, and branch-aware.
+  - State: implementation complete on `feat/template-zip-workflow`; ready to close after merge to `dev`.
 
-Ready-to-merge branch:
+Current branch:
 
-- `feat/cloudflare-d1-collections`
-- Tracking: `origin/feat/cloudflare-d1-collections`
-- Current top commits:
-  - `3b9827de Document Cloudflare D1 setup flow`
-  - `b0465aed Skip Wrangler config files in builds`
-  - `800c3a85 Add Cloudflare D1 validation note`
+- `feat/template-zip-workflow`
+- Purpose: M4a template zip workflow and `nue create` source-selection fix.
 
-Completed validation on this branch:
+Completed validation for M4 and M4a:
 
 | Area | Status | Notes |
 |---|---|---|
-| Full Nuekit tests | Completed | `171 pass, 0 fail`, `174 tests across 28 files` |
+| Full Nuekit tests | Completed | M4: `171 pass, 0 fail`, `174 tests across 28 files`; M4a: `175 pass, 0 fail`, `178 tests across 28 files` |
 | Focused Cloudflare tests | Completed | `12 pass, 0 fail` |
 | Whitespace check | Completed | `git diff --check` clean |
 | Package dry-run | Completed | Moved Cloudflare adapter folder included |
@@ -83,12 +83,16 @@ Completed validation on this branch:
 | Live D1 route recheck | Completed | 2026-05-28 recheck confirmed `/users`, `/users/1`, `/users/999999`, `/missing.txt`, and `/123` behavior |
 | Cloudflare user-doc draft D1 setup | Completed | Added app-developer setup flow for Pages project creation, D1 database/table creation, Wrangler config, seed SQL, deploy, and smoke checks |
 | Issue #28 GitHub close-out | Completed | Validation summary posted and issue closed on 2026-05-28 |
+| Issue #29 GitHub tracking | Completed | Issue created with reasoning, planned changes, user-visible changes, and validation notes |
+| Template zip workflow | Completed | Local `bun run templates:zip`, manual branch-scoped GitHub Action, zip validation, UTF-8 names, empty directory support, and regenerated artifacts |
+| `nue create` template source selection | Completed | Defaults to fork `main`; accepts dev/raw remote URLs and local `packages/templates` checkouts |
 | npm publish with issue #28 changes | Postponed | Defer until after M4a or the next public/dev package cut; needed for post-publish Git integration validation, not direct D1 validation |
 
 Not completed yet:
 
-- Merge of completed M4 resource branch stack into `dev`.
-- M4a template zip workflow fix.
+- Merge of completed M4a template workflow branch into `dev`.
+- Close issue #27 as design-complete.
+- Close issue #29 after merge/push.
 - npm publish containing the completed M4 changes.
 - Post-publish Cloudflare Git integration validation consuming the npm `dev` package.
 - Public documentation promotion.
@@ -97,12 +101,12 @@ Not completed yet:
 
 Immediate next actions:
 
-1. Commit this master-plan status update on `feat/cloudflare-d1-collections`.
-2. Merge the completed M4 branch stack into `dev`.
-3. Run the full test suite on `dev`, then push `dev` if validation passes.
-4. Start M4a: update or document the template zip workflow so `nue create` uses current template content.
-5. Postpone npm `dev` publish and Cloudflare Git integration validation until after M4a or the next package cut.
-6. Start M4b after M4a is handled or deliberately paused.
+1. Commit M4a on `feat/template-zip-workflow`, including the master-plan status update.
+2. Push `feat/template-zip-workflow`, merge it into `dev`, run validation on `dev`, and push `dev`.
+3. Post close-out comments and close issue #29.
+4. Post a design-complete close-out comment on issue #27 and close it; M4b remains the follow-up for persistence/provider/domain-model design and implementation.
+5. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
+6. Start M4b tomorrow; do not start M4b in the current session.
 
 ## Milestones And Tasks
 
@@ -180,15 +184,15 @@ Issue #28 closed after:
 
 ### M4a: Update Template Zip-files Workflow
 
-This milestone addresses what the workflow for creating and updating the site templates' zip-file versions should be. Here are my rough notes to be cleaned up and expanded upon:
+This milestone addresses template source freshness for `nue create`. Template folders are the source of truth. Zip files are release artifacts for remote template creation and must match the branch/version a developer intentionally uses.
 
-1. Whenever we update the template itself, the zip-file also needs to be updated. How is the zip-file created, do we have a command, or do we have documentation for this?
-   - The zip-files are updated using `.github\workflows\build-template-zips.yml`. How is this file used, how can we make it work with @tormnator?
-2. The nue CLI's help content should be updated to show `nue create` options.
-3. What determines where the zip-file is located when running the CLI?
-   - `nue create spa [local-path]`: zip is loaded from `local-path\spa.zip`
-   - When local-path is not provided, then zip is loaded from the web at baseUrl and baseurl is currently hardcoded as `https://github.com/nuejs/nue/raw/master/packages/templates` in the CLI. But, with minor changes to the CLI source code it will be possible to provide a different baseurl. For instance we could modify create.js to detect a local dir vs a web url in the dir parameter and then load from local or from web based on the outcome.
-4. We could modify `C:\Tools\Bin\nue.ps1` to automatically add the `C:\Git\nue\packages\templates` path if the current command is `nue create`. This assumes that we're keeping the local .zip files up to date.
+- Completed: Added a local `bun run templates:zip` command that regenerates `packages/templates/*.zip` from the live template folders.
+- Completed: Updated `.github/workflows/build-template-zips.yml` to be a manual GitHub Actions workflow that uses the same local command. Run it deliberately on the branch whose template artifacts should be refreshed, such as `main` for official templates or `dev` for dev-tag testing.
+- Completed: Updated `nue create` so the default remote source is `tormnator/nue` `main`, and the optional second argument can be either a remote template URL or a local template checkout.
+- Completed: Prefer live local template folders over local zip files when a local checkout is passed, while skipping generated folders such as `.dist`.
+- Completed: Updated CLI help and docs so developers know how to create from official templates, dev branch templates, or a local checkout.
+- Completed: Regenerated current template zips from the updated live template folders.
+- Completed: Validated local folder creation, regenerated zip extraction, and focused create tests.
 
 ### M4b: Lightweight Persistence Layer
 

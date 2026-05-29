@@ -72,7 +72,19 @@ Create a new project from a starter template:
 nue create blog
 ```
 
-This extracts a downloaded template to a new directory. Issue `nue` from the directory and the newly created site is served at http://localhost:4000
+This extracts the template to a new directory. Issue `nue` from the directory and the newly created site is served at http://localhost:4000
+
+By default, `nue create` downloads templates from the official `main` branch. To create from development templates, pass a template source as the second argument. The source can be a remote template URL or a local checkout's `packages/templates` directory:
+
+```bash
+# create from the dev branch template zips
+nue create spa https://github.com/tormnator/nue/raw/dev/packages/templates
+
+# create from live template folders in a local checkout
+nue create spa ./packages/templates
+```
+
+When the source is a local checkout, Nue uses the live template folder when it exists and skips generated folders such as `.dist`. If no live folder exists, it falls back to `<template>.zip` in that directory.
 
 
 ## Global options

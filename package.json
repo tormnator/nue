@@ -1,5 +1,8 @@
 {
   "name": "nue-monorepo",
   "private": true,
-  "workspaces": [ "packages/*" ]
+  "workspaces": [ "packages/*" ],
+  "scripts": {
+    "templates:zip": "bun scripts/build-template-zips.js"
+  }
 }
