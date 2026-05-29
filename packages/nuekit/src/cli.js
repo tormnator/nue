@@ -109,6 +109,13 @@ Examples
   # preview on specific port
   nue preview --port 8080
 
+  # create from the official template zips
+  nue create spa
+
+  # create from a dev branch or local checkout
+  nue create spa https://github.com/tormnator/nue/raw/dev/packages/templates
+  nue create spa ./packages/templates
+
   # more examples
   https://nuejs.org/docs/cli
 
