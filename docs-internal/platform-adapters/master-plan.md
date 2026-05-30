@@ -92,8 +92,8 @@ Completed validation for M4 and M4a:
 
 Not completed yet:
 
-- Review and commit the M4b implementation branch.
-- Update issue #30 with validation details and close it after merge.
+- Review and merge the M4b implementation branch.
+- Close issue #30 after the merge is confirmed.
 - npm publish containing the completed M4 changes.
 - Post-publish Cloudflare Git integration validation consuming the npm `dev` package.
 - Public documentation promotion.
@@ -102,9 +102,9 @@ Not completed yet:
 
 Immediate next actions:
 
-1. Review and commit `feat/lightweight-persistence-layer` after expanded validation.
-2. Post validation details to issue #30 after approval.
-3. Merge M4b back to `dev` after review and approval.
+1. Review `feat/lightweight-persistence-layer` after expanded validation and commit `26adefa4`.
+2. Merge M4b back to `dev` after review and approval.
+3. Close issue #30 after the merge is confirmed.
 4. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
 
 ## Milestones And Tasks
@@ -205,7 +205,8 @@ This milestone implements the lightweight collection boundary and moves full-tem
 - Completed: Validate focused server/resource tests, full Nuekit tests, `spa` and `full` template builds, and a full-template Cloudflare-style D1 worker smoke.
 - Completed: Run expanded validation with the existing `spa` Cloudflare D1 validation project locally and on Cloudflare, then with a fresh `full` template validation project locally and on Cloudflare.
 - Completed: Fix validation-found full-template login response leak so returned public users omit `password`; local and D1-focused tests cover the response shape.
-- Planned: Update issue #30 after review and merge the implementation branch back to `dev` after approval.
+- Completed: Commit the M4b implementation as `26adefa4` and post validation details to issue #30.
+- Planned: Merge the implementation branch back to `dev` after review and approval, then close issue #30.
 
 ### M5: Final Documentation And Release Preparation
 
