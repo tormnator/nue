@@ -51,6 +51,46 @@ export function createConfigResource(source={}, opts={}) {
   return { get, require, public: publicConfig }
 }
 
+export function createCollectionResource(provider) {
+  function toResourceItem(item) {
+    if (!item) return null
+
+    return {
+      ...item,
+
+      async update(data) {
+        const { update, remove, ...current } = this
+        const next = { ...current, ...data }
+        const saved = await provider.update(this.id, next)
+        Object.assign(this, saved || next)
+        return this
+      },
+
+      async remove() {
+        await provider.remove(this.id)
+      }
+    }
+  }
+
+  async function getAll() {
+    return (await provider.list()).map(toResourceItem)
+  }
+
+  async function size() {
+    return await provider.count()
+  }
+
+  async function create(data) {
+    return toResourceItem(await provider.create(data))
+  }
+
+  async function get(id) {
+    return toResourceItem(await provider.get(id))
+  }
+
+  return { getAll, size, create, get }
+}
+
 export function createResourceEnv(opts={}) {
   const { platform='local', mode='development', raw, resources={} } = opts
   const { runtime={}, ...rest } = resources

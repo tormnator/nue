@@ -67,8 +67,8 @@ Recently completed issues:
 
 Current branch:
 
-- `design/m4b-lightweight-persistence`
-- Purpose: M4b lightweight persistence design, tracking cleanup, and implementation issue preparation.
+- `feat/lightweight-persistence-layer`
+- Purpose: M4b lightweight persistence implementation and expanded local/Cloudflare validation.
 
 Completed validation for M4 and M4a:
 
@@ -92,9 +92,8 @@ Completed validation for M4 and M4a:
 
 Not completed yet:
 
-- Complete M4b implementation tracked in issue #30.
-- Create the M4b implementation branch from `dev` after design/tracking docs are accepted.
-- Implement the lightweight persistence layer and full-template login-session changes.
+- Review and commit the M4b implementation branch.
+- Update issue #30 with validation details and close it after merge.
 - npm publish containing the completed M4 changes.
 - Post-publish Cloudflare Git integration validation consuming the npm `dev` package.
 - Public documentation promotion.
@@ -103,9 +102,9 @@ Not completed yet:
 
 Immediate next actions:
 
-1. Finish the M4b design/tracking split on `design/m4b-lightweight-persistence`.
-2. After approval, create `feat/lightweight-persistence-layer` from `dev` and start implementation.
-3. Complete the M4b implementation in three checkpoints: collection/provider boundary, full-template login sessions, then validation/docs.
+1. Review and commit `feat/lightweight-persistence-layer` after expanded validation.
+2. Post validation details to issue #30 after approval.
+3. Merge M4b back to `dev` after review and approval.
 4. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
 
 ## Milestones And Tasks
@@ -200,10 +199,13 @@ This milestone implements the lightweight collection boundary and moves full-tem
 
 - Completed: Create the M4b design artifact on `design/m4b-lightweight-persistence`.
 - Completed: Create issue #30, [Implement lightweight collection resources and full-template login sessions](https://github.com/tormnator/nue/issues/30).
-- Planned: Create `feat/lightweight-persistence-layer` from `dev` after design/tracking docs are accepted.
-- Planned: Implement the shared collection resource boundary for local JSON/in-memory and Cloudflare D1 collections.
-- Planned: Move full-template login/logout/authenticate behavior into template-local code backed by `users` and `loginSessions` collections.
-- Planned: Validate `spa` and `full` template flows, then update master plan, beta 3 notes, and Cloudflare user-doc limitations.
+- Completed: Create `feat/lightweight-persistence-layer` from the accepted design commit.
+- Completed: Implement the shared collection resource boundary for local JSON/in-memory and Cloudflare D1 collections.
+- Completed: Move full-template login/logout/authenticate behavior into template-local code backed by `users` and `loginSessions` collections.
+- Completed: Validate focused server/resource tests, full Nuekit tests, `spa` and `full` template builds, and a full-template Cloudflare-style D1 worker smoke.
+- Completed: Run expanded validation with the existing `spa` Cloudflare D1 validation project locally and on Cloudflare, then with a fresh `full` template validation project locally and on Cloudflare.
+- Completed: Fix validation-found full-template login response leak so returned public users omit `password`; local and D1-focused tests cover the response shape.
+- Planned: Update issue #30 after review and merge the implementation branch back to `dev` after approval.
 
 ### M5: Final Documentation And Release Preparation
 

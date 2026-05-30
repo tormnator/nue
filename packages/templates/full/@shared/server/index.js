@@ -1,18 +1,25 @@
 
 
+import { createLoginSessionModel } from './login-sessions.js'
+
+function createLoginSession(c) {
+  const { users, loginSessions } = c.env.models
+  return createLoginSessionModel({ users, loginSessions })
+}
+
 // login
 post('/api/login', async (c) => {
-  const { users } = c.env.models
+  const session = createLoginSession(c)
   const { email, password } = await c.req.json()
 
-  const ret = await users.login(email, password)
+  const ret = await session.login(email, password)
   return ret ? c.json(ret) : c.json({ error: 'Invalid credentials' }, 401)
 })
 
 post('/api/logout', async (c) => {
-  const { users } = c.env.models
+  const session = createLoginSession(c)
   const sessionId = c.req.header('Authorization')?.replace('Bearer ', '')
-  await users.logout(sessionId)
+  await session.logout(sessionId)
   return c.json({ success: true })
 })
 
@@ -27,9 +34,9 @@ post('/api/leads', async (c) => {
 
 // authenticated requests
 use('/api/admin/*', async (c, next) => {
-  const { users } = c.env.models
+  const session = createLoginSession(c)
   const sessionId = c.req.header('Authorization')?.replace('Bearer ', '')
-  if (await users.authenticate(sessionId)) await next()
+  if (await session.authenticate(sessionId)) await next()
   else return c.json({ error: 'Invalid session' }, 401)
 })
 

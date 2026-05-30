@@ -51,6 +51,9 @@ resources:
     users:
       kind: collection
       local: @shared/server/data/users.json
+    loginSessions:
+      kind: collection
+      local: @shared/server/data/login-sessions.json
     leads:
       kind: collection
       local: @shared/server/data/leads.json
@@ -62,6 +65,9 @@ platform:
       users:
         binding: DB
         table: users
+      loginSessions:
+        binding: DB
+        table: login_sessions
       leads:
         binding: DB
         table: leads

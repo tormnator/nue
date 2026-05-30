@@ -1,11 +1,15 @@
 
-import { readdir, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import { isAbsolute, join } from 'node:path'
 
-const SESSIONS_PATH = join(process.cwd(), '.nue', 'sessions.json')
+import { createCollectionResource } from './resources.js'
+
 const NOW = Date.now()
 const DAY = 86400000
 
+function sameId(a, b) {
+  return String(a) === String(b)
+}
 
 function createModel(items) {
 
@@ -14,87 +18,38 @@ function createModel(items) {
     el.id = i + 1
   })
 
-  async function create(obj) {
+  async function create(data) {
     const id = items.length + 1
     const created = Date.now()
-    const item = { id, created, ...obj }
+    const item = { id, created, ...data }
     items.unshift(item)
     return item
   }
 
-  // implemented with true event sourcing later
-  async function getAll() {
+  async function list() {
     return items
   }
 
-  async function size() {
+  async function count() {
     return items.length
   }
 
   async function get(id) {
-    const item = items.find(el => el.id == id)
-    return {
-      ...item,
-
-      async update(data) {
-        Object.assign(item, data)
-        return item
-      },
-
-      async remove() {
-        const i = items.indexOf(item)
-        items.splice(i, 1)
-      }
-    }
+    return items.find(el => sameId(el.id, id)) || null
   }
 
-  return { getAll, size, create, get }
-}
-
-
-async function saveSessions(sessions) {
-  await mkdir(join(process.cwd(), '.nue'), { recursive: true })
-  await writeFile(SESSIONS_PATH, JSON.stringify([...sessions], null, 2))
-}
-
-async function readSessions() {
-  try {
-    const data = await readFile(SESSIONS_PATH, 'utf-8')
-    return new Set(JSON.parse(data))
-  } catch {
-    return new Set()
-  }
-}
-
-
-
-// specialized models
-async function createUserModel(items) {
-  const users = createModel(items)
-  const sessions = await readSessions()
-
-  async function login(email, password) {
-    const user = (await users.getAll()).find(el => el.email == email)
-
-    // mock: plaintext passwords. production uses hashed
-    if (user?.password == password) {
-      const sessionId = crypto.randomUUID()
-      sessions.add(sessionId)
-      await saveSessions(sessions)
-      return { sessionId, user }
-    }
+  async function update(id, data) {
+    const item = items.find(el => sameId(el.id, id))
+    if (item) Object.assign(item, data)
+    return item
   }
 
-  async function authenticate(sessionId) {
-    return sessions.has(sessionId)
+  async function remove(id) {
+    const i = items.findIndex(el => sameId(el.id, id))
+    if (i >= 0) items.splice(i, 1)
   }
 
-  async function logout(sessionId) {
-    sessions.delete(sessionId)
-    await saveSessions(sessions)
-  }
-
-  return { ...users, login, logout, authenticate }
+  return createCollectionResource({ list, count, create, get, update, remove })
 }
 
 
@@ -110,7 +65,7 @@ async function createModelFromFile(name, path) {
   }
 
   const items = JSON.parse(text)
-  const model = name === 'users' ? await createUserModel(items) : createModel(items)
+  const model = createModel(items)
   console.log(`Model "${name}" loaded (${ await model.size() } records)`)
   return model
 }

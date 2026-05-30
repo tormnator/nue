@@ -195,12 +195,25 @@ These items are candidates for beta 3 release notes, but must not be presented a
 
 ### Lightweight Persistence Layer
 
-Status: Planned
-Related follow-up: M4b in the platform adapters master plan
+Status: In progress
+Related issue: #30
 
-The next resource-layer step is to design a small persistence/provider boundary above local JSON models and platform-specific storage such as D1. This should not become a full ORM, migration framework, auth system, or universal data model.
+The M4b topic branch implements a small persistence/provider boundary above local JSON models and platform-specific storage such as D1. This does not become a full ORM, migration framework, auth system, or universal data model.
 
-Open questions include provider selection, whether any persistence manager is exposed on `c.env`, whether persisted objects keep item methods such as `update()` and `remove()`, and how template/app domain behavior such as users, login, and sessions should sit above storage providers.
+Implemented branch behavior:
+
+- Local JSON/in-memory collections and Cloudflare D1 collections now share a platform-neutral `createCollectionResource(provider)` wrapper.
+- Route-facing model resources keep the beta 3-compatible `getAll`, `size`, `create`, `get`, item `update`, and item `remove` API under `c.env.models`.
+- Nue core no longer gives special login/auth behavior to a model merely because it is named `users`.
+- The full template now owns its demo login-session behavior in template-local code backed by `users` and `loginSessions` collection resources.
+
+Branch validation:
+
+- Full Nuekit suite: `178 pass`, `3 skip`, `0 fail`.
+- `spa` and `full` template builds completed with the local Nuekit CLI.
+- Full-template Cloudflare-style D1 worker smoke covered login, admin list/detail/delete, public lead creation, logout, and post-logout admin denial.
+
+Known scope remains unchanged: production auth/session semantics, D1 schema creation, migrations, JSON seed import, and additional platform backings remain follow-up work.
 
 ## Possible Upgrade Notes
 
