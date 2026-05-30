@@ -417,7 +417,7 @@ The expected results are the same as Wrangler deployment: `/api/ping` returns th
 
 ## Current Limitations
 
-Cloudflare D1-backed collection models are in progress for the beta 3 resource layer. Portable model declarations live under top-level `resources`, while Cloudflare binding details live under `platform.resources`:
+Cloudflare D1-backed collection models are part of the beta 3 resource layer. Portable model declarations live under top-level `resources`, while Cloudflare binding details live under `platform.resources`:
 
 ```yaml
 resources:
@@ -435,7 +435,7 @@ platform:
         table: users
 ```
 
-For Cloudflare Pages, collection models are currently backed by D1. `binding` is the runtime binding variable name configured in the Cloudflare dashboard or a Pages Wrangler configuration file, such as `DB`, and `table` is the D1 table for that model. The configured table must already exist with `id`, `created`, and `data` columns. In the current implementation, `created` is an integer JavaScript timestamp and `data` is serialized JSON stored as text; D1 can query JSON text with SQLite JSON functions, but this is not a native JSON column type. The Cloudflare resource block is not needed for local development; local development can use the platform-independent JSON-backed model declaration. Production users, sessions, migrations, D1 provisioning, JSON seed import, KV, R2, Durable Objects, Queues, and related platform services still need follow-up design and implementation.
+For Cloudflare Pages, collection models are currently backed by D1. `binding` is the runtime binding variable name configured in the Cloudflare dashboard or a Pages Wrangler configuration file, such as `DB`, and `table` is the D1 table for that model. The configured table must already exist with `id`, `created`, and `data` columns. In the current implementation, `created` is an integer JavaScript timestamp and `data` is serialized JSON stored as text; D1 can query JSON text with SQLite JSON functions, but this is not a native JSON column type. The Cloudflare resource block is not needed for local development; local development can use the platform-independent JSON-backed model declaration. Production auth/session semantics, migrations, D1 provisioning, JSON seed import, KV, R2, Durable Objects, Queues, and related platform services still need follow-up design and implementation.
 
 Native `nue push` deployment is also not implemented yet. For now, deploy built output with Wrangler or through Cloudflare Pages Git integration by committing the project and configuring Pages to run a project build script such as `bun run build`.
 

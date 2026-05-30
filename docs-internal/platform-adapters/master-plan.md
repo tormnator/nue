@@ -1,12 +1,14 @@
 # Platform Adapters Master Plan
 
-Last updated: 2026-05-28
+Last updated: 2026-05-29
 
 ## Purpose
 
 This document is the working status and schedule plan for the Platform Adapter effort. It tracks milestones, tasks, current state, validation, and next actions.
 
 Design details, requirements, rules, terminology, and open questions belong in [Platform Adapters](./platform-adapters.md) and [Platform Resource Layer](./platform-resource-layer.md). Keep this document focused on what is planned, in progress, completed, canceled, or waiting.
+
+The Milestones section should be a table with one milestone per row. The Milestones And Tasks section should be a compressed outline of milestones and tasks, allowing only a condensed description at the top of each milestone. If a milestone needs to document more details in this document, first consider if the details better fit in another document. If the need is still there, add the milestone details in a subsection of the Milestone Details section, creating it if needed.
 
 ## Contents
 <!-- Start Document Outline -->
@@ -41,7 +43,7 @@ Design, implement, validate, and document Nue's Platform Adapter feature, includ
 | Completed | [M3: Cloudflare Pages Git Integration And npm Dev Package Path](#m3-cloudflare-pages-git-integration-and-npm-dev-package-path) | Validate Git-integrated Cloudflare Pages deployment using published `@tormnator` packages and document npm publishing workflow. |
 | Completed | [M4: Platform Resources](#m4-platform-resources) | Implement issue #28 resource factory/config/model declarations, local `c.env.models`, Cloudflare `c.env.platform`, and D1 collection resources. |
 | Completed | [M4a: Update Template Zip-files Workflow](#m4a-update-template-zip-files-workflow) | Update Template Zip-files Workflow |
-| Planned | [M4b: Lightweight Persistence Layer](#m4b-lightweight-persistence-layer) | Design and implement the follow-up persistence provider/manager layer without making adapters own app/domain model semantics. |
+| In Progress | [M4b: Lightweight Persistence Layer](#m4b-lightweight-persistence-layer) | Design and implement the follow-up persistence provider/collection layer without making adapters own app/domain model semantics. |
 | Planned | [M5: Final Documentation And Release Preparation](#m5-final-documentation-and-release-preparation) | Finish public docs, release notes, merge sequencing, and npm `dev` publish after validation. |
 
 Status vocabulary:
@@ -65,8 +67,8 @@ Recently completed issues:
 
 Current branch:
 
-- `feat/template-zip-workflow`
-- Purpose: M4a template zip workflow and `nue create` source-selection fix.
+- `feat/lightweight-persistence-layer`
+- Purpose: M4b lightweight persistence implementation and expanded local/Cloudflare validation.
 
 Completed validation for M4 and M4a:
 
@@ -90,9 +92,8 @@ Completed validation for M4 and M4a:
 
 Not completed yet:
 
-- Merge of completed M4a template workflow branch into `dev`.
-- Close issue #27 as design-complete.
-- Close issue #29 after merge/push.
+- Review and merge the M4b implementation branch.
+- Close issue #30 after the merge is confirmed.
 - npm publish containing the completed M4 changes.
 - Post-publish Cloudflare Git integration validation consuming the npm `dev` package.
 - Public documentation promotion.
@@ -101,12 +102,10 @@ Not completed yet:
 
 Immediate next actions:
 
-1. Commit M4a on `feat/template-zip-workflow`, including the master-plan status update.
-2. Push `feat/template-zip-workflow`, merge it into `dev`, run validation on `dev`, and push `dev`.
-3. Post close-out comments and close issue #29.
-4. Post a design-complete close-out comment on issue #27 and close it; M4b remains the follow-up for persistence/provider/domain-model design and implementation.
-5. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
-6. Start M4b tomorrow; do not start M4b in the current session.
+1. Review `feat/lightweight-persistence-layer` after expanded validation and commit `26adefa4`.
+2. Merge M4b back to `dev` after review and approval.
+3. Close issue #30 after the merge is confirmed.
+4. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
 
 ## Milestones And Tasks
 
@@ -196,20 +195,18 @@ This milestone addresses template source freshness for `nue create`. Template fo
 
 ### M4b: Lightweight Persistence Layer
 
-This milestone follows issue #28. It should design and implement a small platform-neutral persistence layer that can sit above local and platform-specific providers without becoming an ORM, migration framework, auth system, or universal data model.
+This milestone implements the lightweight collection boundary and moves full-template demo login sessions into template-owned domain code. Design details are in [Lightweight Persistence Layer Design And Plan](./lightweight-persistence-layer.md); execution details are tracked in issue #30.
 
-The goal is to separate three concerns that are currently mixed in local model code: concrete storage providers, generic persistence operations, and app/template domain models. Platform adapters should provide storage capabilities; app or template code should own domain behavior such as users, login, sessions, and authentication.
-
-- Planned: Create a follow-up issue for the lightweight persistence layer after issue #28 is validated or deliberately paused.
-- Planned: Settle provisional terminology such as persistence provider, persistence manager, and domain model.
-- Planned: Define the smallest useful persistence API for JSON-like records without freezing the current `getAll`, `size`, `create`, `get`, `update`, and `remove` shape prematurely.
-- Planned: Decide whether persisted objects should keep methods such as `item.update()` and `item.remove()`.
-- Planned: Decide whether any persistence manager is exposed on `c.env`, passed only to domain-model factories, or kept internal.
-- Planned: Define how platform-specific provider selection should work when an adapter supports multiple backings such as D1, KV, or Durable Objects.
-- Planned: Align local JSON-backed development resources and Cloudflare D1-backed resources behind the chosen persistence boundary.
-- Planned: Move or redesign specialized `users.login/logout/authenticate` behavior so it belongs to template/app domain code rather than core or every adapter.
-- Planned: Keep schema creation, migrations, JSON seed import, and production auth/session strategy as explicit follow-up designs unless this milestone intentionally scopes in a minimal piece.
-- Planned: Validate the resulting design against the `spa` and `full` template needs without claiming broad universal data-model support.
+- Completed: Create the M4b design artifact on `design/m4b-lightweight-persistence`.
+- Completed: Create issue #30, [Implement lightweight collection resources and full-template login sessions](https://github.com/tormnator/nue/issues/30).
+- Completed: Create `feat/lightweight-persistence-layer` from the accepted design commit.
+- Completed: Implement the shared collection resource boundary for local JSON/in-memory and Cloudflare D1 collections.
+- Completed: Move full-template login/logout/authenticate behavior into template-local code backed by `users` and `loginSessions` collections.
+- Completed: Validate focused server/resource tests, full Nuekit tests, `spa` and `full` template builds, and a full-template Cloudflare-style D1 worker smoke.
+- Completed: Run expanded validation with the existing `spa` Cloudflare D1 validation project locally and on Cloudflare, then with a fresh `full` template validation project locally and on Cloudflare.
+- Completed: Fix validation-found full-template login response leak so returned public users omit `password`; local and D1-focused tests cover the response shape.
+- Completed: Commit the M4b implementation as `26adefa4` and post validation details to issue #30.
+- Planned: Merge the implementation branch back to `dev` after review and approval, then close issue #30.
 
 ### M5: Final Documentation And Release Preparation
 

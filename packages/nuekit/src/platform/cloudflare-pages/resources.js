@@ -1,3 +1,5 @@
+import { createCollectionResource } from '../../server/resources.js'
+
 function assertIdentifier(name, value) {
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(value)) throw new Error(`Invalid ${name}: ${value}`)
 }
@@ -7,28 +9,17 @@ function assertD1Binding(name, value) {
 }
 
 function serializeData(item) {
-  const { id, created, update, remove, ...data } = item
+  const { id, created, ...data } = item
   return JSON.stringify(data)
 }
 
-function toItem(row, collection) {
+function toItem(row) {
   if (!row) return null
 
   return {
     id: row.id,
     created: row.created,
-    ...JSON.parse(row.data || '{}'),
-
-    async update(data) {
-      const next = { ...this, ...data }
-      await collection.update(next)
-      Object.assign(this, data)
-      return this
-    },
-
-    async remove() {
-      await collection.remove(row.id)
-    }
+    ...JSON.parse(row.data || '{}')
   }
 }
 
@@ -37,12 +28,12 @@ export function createD1CollectionResource(db, opts={}) {
   if (!db) throw new Error(`Missing D1 database for collection: ${table}`)
   assertIdentifier('D1 table name', table)
 
-  async function getAll() {
+  async function list() {
     const { results=[] } = await db.prepare(`SELECT id, created, data FROM ${table} ORDER BY created DESC`).all()
-    return results.map(row => toItem(row, collection))
+    return results.map(toItem)
   }
 
-  async function size() {
+  async function count() {
     const row = await db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first()
     return row?.count || 0
   }
@@ -51,24 +42,24 @@ export function createD1CollectionResource(db, opts={}) {
     const created = Date.now()
     const serialized = JSON.stringify(data)
     const result = await db.prepare(`INSERT INTO ${table} (created, data) VALUES (?, ?)`).bind(created, serialized).run()
-    return toItem({ id: result.meta.last_row_id, created, data: serialized }, collection)
+    return toItem({ id: result.meta.last_row_id, created, data: serialized })
   }
 
   async function get(id) {
     const row = await db.prepare(`SELECT id, created, data FROM ${table} WHERE id = ?`).bind(id).first()
-    return toItem(row, collection)
+    return toItem(row)
   }
 
-  async function update(item) {
-    await db.prepare(`UPDATE ${table} SET data = ? WHERE id = ?`).bind(serializeData(item), item.id).run()
+  async function update(id, data) {
+    await db.prepare(`UPDATE ${table} SET data = ? WHERE id = ?`).bind(serializeData(data), id).run()
+    return data
   }
 
   async function remove(id) {
     await db.prepare(`DELETE FROM ${table} WHERE id = ?`).bind(id).run()
   }
 
-  const collection = { getAll, size, create, get, update, remove }
-  return collection
+  return createCollectionResource({ list, count, create, get, update, remove })
 }
 
 export function createModelResources(env={}, resources={}, platformResources={}) {
