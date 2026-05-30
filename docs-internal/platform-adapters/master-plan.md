@@ -43,7 +43,7 @@ Design, implement, validate, and document Nue's Platform Adapter feature, includ
 | Completed | [M3: Cloudflare Pages Git Integration And npm Dev Package Path](#m3-cloudflare-pages-git-integration-and-npm-dev-package-path) | Validate Git-integrated Cloudflare Pages deployment using published `@tormnator` packages and document npm publishing workflow. |
 | Completed | [M4: Platform Resources](#m4-platform-resources) | Implement issue #28 resource factory/config/model declarations, local `c.env.models`, Cloudflare `c.env.platform`, and D1 collection resources. |
 | Completed | [M4a: Update Template Zip-files Workflow](#m4a-update-template-zip-files-workflow) | Update Template Zip-files Workflow |
-| In Progress | [M4b: Lightweight Persistence Layer](#m4b-lightweight-persistence-layer) | Design and implement the follow-up persistence provider/collection layer without making adapters own app/domain model semantics. |
+| Completed | [M4b: Lightweight Persistence Layer](#m4b-lightweight-persistence-layer) | Design and implement the follow-up persistence provider/collection layer without making adapters own app/domain model semantics. |
 | Planned | [M5: Final Documentation And Release Preparation](#m5-final-documentation-and-release-preparation) | Finish public docs, release notes, merge sequencing, and npm `dev` publish after validation. |
 
 Status vocabulary:
@@ -92,8 +92,6 @@ Completed validation for M4 and M4a:
 
 Not completed yet:
 
-- Review and merge the M4b implementation branch.
-- Close issue #30 after the merge is confirmed.
 - npm publish containing the completed M4 changes.
 - Post-publish Cloudflare Git integration validation consuming the npm `dev` package.
 - Public documentation promotion.
@@ -102,10 +100,8 @@ Not completed yet:
 
 Immediate next actions:
 
-1. Review `feat/lightweight-persistence-layer` after expanded validation and commit `26adefa4`.
-2. Merge M4b back to `dev` after review and approval.
-3. Close issue #30 after the merge is confirmed.
-4. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
+1. Postpone npm `dev` publish and Cloudflare Git integration validation until the next package cut.
+2. Keep public documentation promotion queued for the final beta 3 documentation pass.
 
 ## Milestones And Tasks
 
@@ -206,7 +202,7 @@ This milestone implements the lightweight collection boundary and moves full-tem
 - Completed: Run expanded validation with the existing `spa` Cloudflare D1 validation project locally and on Cloudflare, then with a fresh `full` template validation project locally and on Cloudflare.
 - Completed: Fix validation-found full-template login response leak so returned public users omit `password`; local and D1-focused tests cover the response shape.
 - Completed: Commit the M4b implementation as `26adefa4` and post validation details to issue #30.
-- Planned: Merge the implementation branch back to `dev` after review and approval, then close issue #30.
+- Completed: Merge M4b into `dev` as `8679b45e`, run post-merge Nuekit tests, and close issue #30.
 
 ### M5: Final Documentation And Release Preparation
 
