@@ -31,6 +31,8 @@ Use these status labels while drafting:
 - Branching, npm publishing, and GitHub Release policy clarified for the fork.
 - Platform resource layer design completed for `c.env`, with local resource declarations, `c.env.config`, `c.env.models`, `c.env.platform`, and runtime metadata.
 - Cloudflare D1-backed collection resources for declared model resources.
+- Lightweight collection resource boundary shared by local JSON/in-memory models and Cloudflare D1-backed models.
+- Full-template demo login sessions moved into template-owned code backed by `users` and `loginSessions` collections.
 - Explicit, portable template zip generation and `nue create` source selection for official, dev, and local templates.
 
 ## Landed Or Validated Work
@@ -124,7 +126,7 @@ The design establishes:
 - `c.env.runtime` for lightweight runtime metadata.
 - A boundary between core resource shaping, adapter-specific platform mappings, and app/template domain behavior.
 
-Issue #27 is closed as design-complete. Follow-up persistence/provider/domain-model work remains planned under M4b.
+Issue #27 is closed as design-complete. The follow-up lightweight persistence/provider boundary landed under issue #30; production auth/session semantics and platform provisioning remain deferred.
 
 ### Resource Environment And D1 Collections
 
@@ -189,31 +191,36 @@ Validation:
 - Local zip fallback smoke test passed with `nue create spa ./zips`.
 - Full Nuekit suite passed on `dev`: `175 pass`, `3 skip`, `0 fail`.
 
-## In-Progress Release Candidates
-
-These items are candidates for beta 3 release notes, but must not be presented as released until they land in the selected release branch.
-
 ### Lightweight Persistence Layer
 
-Status: In progress
-Related issue: #30
+Status: Landed and validated
+Related issue: #30, closed
 
-The M4b topic branch implements a small persistence/provider boundary above local JSON models and platform-specific storage such as D1. This does not become a full ORM, migration framework, auth system, or universal data model.
+M4b implements a small persistence/provider boundary above local JSON models and platform-specific storage such as D1. This does not become a full ORM, migration framework, auth system, or universal data model.
 
-Implemented branch behavior:
+Implemented behavior:
 
 - Local JSON/in-memory collections and Cloudflare D1 collections now share a platform-neutral `createCollectionResource(provider)` wrapper.
 - Route-facing model resources keep the beta 3-compatible `getAll`, `size`, `create`, `get`, item `update`, and item `remove` API under `c.env.models`.
 - Nue core no longer gives special login/auth behavior to a model merely because it is named `users`.
 - The full template now owns its demo login-session behavior in template-local code backed by `users` and `loginSessions` collection resources.
+- Full-template login responses return a public user object that omits `password`.
 
-Branch validation:
+Validation:
 
+- Merged into `dev` as `8679b45e`; issue #30 is closed.
 - Full Nuekit suite: `178 pass`, `3 skip`, `0 fail`.
 - `spa` and `full` template builds completed with the local Nuekit CLI.
 - Full-template Cloudflare-style D1 worker smoke covered login, admin list/detail/delete, public lead creation, logout, and post-logout admin denial.
+- Existing `spa` D1 validation project passed local worker/D1 smoke and live Cloudflare validation at `https://d1-validation.nue-d1-validation.pages.dev`.
+- Fresh `full` template validation project passed local worker/D1 smoke and live Cloudflare validation at `https://full-validation.nue-d1-validation.pages.dev` using isolated D1 tables `full_users`, `full_login_sessions`, and `full_leads`.
+- Post-merge Nuekit suite on `dev`: `178 pass`, `3 skip`, `0 fail`.
 
 Known scope remains unchanged: production auth/session semantics, D1 schema creation, migrations, JSON seed import, and additional platform backings remain follow-up work.
+
+## In-Progress Release Candidates
+
+No additional beta 3 release candidates are currently tracked here after M4b landed. Add new topic branches to this section only until they land in the selected release branch.
 
 ## Possible Upgrade Notes
 
@@ -314,6 +321,7 @@ Before final beta 3 release notes are cut:
 ## Known Limitations And Deferred Work
 
 - Cloudflare D1-backed collection resources require pre-existing D1 tables with the beta 3 schema.
+- Full-template login sessions are a demo/template implementation, not production auth.
 - Universal auth/session semantics are deferred.
 - Automatic platform resource provisioning is deferred.
 - JSON-to-production data seeding and SQL migrations are deferred.
@@ -330,9 +338,11 @@ Issues and branches to review before finalizing:
 - #27 Platform resource layer design
 - #28 Resource factory, config, and Cloudflare D1 collections
 - #29 Template zip generation and `nue create` source selection
+- #30 Lightweight collection resources and full-template login sessions
 - `docs/cloudflare-git-validation`
 - `fix/build-clean-missing-dist`
 - `design/platform-resource-layer`
 - `feat/resource-layer-core`
 - `feat/cloudflare-d1-collections`
 - `feat/template-zip-workflow`
+- `feat/lightweight-persistence-layer`
