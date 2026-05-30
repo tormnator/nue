@@ -6,6 +6,13 @@
 
 <h1>Admin login</h1>
 
+<div class="note">
+  Demo login only. The template has one seeded user and no UI for managing
+  users. Use admin@example.com / demo123. Login stores a bearer session id in
+  localStorage; replace auth and login-session handling before using this with
+  real users or private data.
+</div>
+
 <form :onsubmit="submit" class="thin">
   <div class="error note" :if="failure">
     Failure
