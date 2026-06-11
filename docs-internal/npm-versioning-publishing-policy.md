@@ -1,5 +1,12 @@
 # npm Versioning and Publishing Policy for `@tormnator/nue`
 
+> Obsolete: this document has been superseded by
+> `docs-internal/release-and-publishing-policy.md`.
+>
+> Keep this file temporarily as historical reference. New release-cycle,
+> versioning, changelog, npm publishing, and GitHub Release decisions should be
+> documented in the Release and Publishing Policy instead.
+
 ## Context
 
 This repo is my fork of Nue: `tormnator/nue`.
