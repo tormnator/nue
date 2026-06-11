@@ -510,35 +510,6 @@ Published packages:
 
 Package-specific tags can be added later if needed, but coordinated release notes are simpler during the current phase.
 
-## GitHub Actions Publishing
-
-Start with manual publishing until the package graph and release process are stable.
-
-Manual flow:
-
-```bash
-# update package versions
-# build/test packages
-bun publish --access public --tag dev
-```
-
-Use `npm publish` only as a fallback path, or when publishing from already-prepared tarballs/manifests that no longer contain `workspace:` specs.
-
-Later, automate with GitHub Actions.
-
-Possible future automated flow:
-
-```
-1. Update package versions in repo.
-2. Commit version changes.
-3. Push tag or create GitHub release.
-4. GitHub Action runs tests/build.
-5. GitHub Action publishes changed packages to npm.
-6. GitHub Action uses npm Trusted Publishing if practical.
-```
-
-Trusted Publishing is preferable to long-lived npm tokens when using GitHub Actions, because it avoids storing a permanent npm automation token in repository secrets.
-
 ## Cloudflare Pages Deployment Pattern
 
 For test sites tracking the current development release:
@@ -595,7 +566,7 @@ Output directory:
 
 Publish public fork packages to npm under the `@tormnator` scope. These packages are Tor's forked Nue packages, not official upstream Nue releases.
 
-Use SemVer-compatible prerelease versions with `-tor.N`. Do not use build metadata such as `+fork.local`. The `tor.N` suffix is the fork release counter for a given base version; increment only `tor.N` for frequent fork iterations, packaging fixes, adapter test releases, and small corrections. Bump PATCH, MINOR, MAJOR, or the beta line only when the individual package has a meaningful package-level change.
+Use SemVer-compatible prerelease versions with `-tor.N`. The `tor.N` suffix is the fork release counter for a given base version; increment only `tor.N` for frequent fork iterations, packaging fixes, adapter test releases, and small corrections. Bump PATCH, MINOR, MAJOR, or the beta line only when the individual package has a meaningful package-level change.
 
 First coordinated `@tormnator` package versions:
 
