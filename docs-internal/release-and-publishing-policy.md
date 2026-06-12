@@ -179,6 +179,13 @@ Rules:
 When a package has a changelog, its package `README.md` should link to that
 changelog so npm visitors can find release history from the npm package page.
 
+The root `README.md` currently points to `packages/nuekit/README.md`. Treat
+edits there as both GitHub repo-front-page content and `@tormnator/nuekit` npm
+package-page content. Prefer durable release links over long per-cycle
+narrative: link to the root changelog, relevant package changelog, and public
+release notes. Add or update a short current-release note only when it helps
+both GitHub visitors and npm visitors understand the published package line.
+
 ## Package Versioning
 
 Publish fork packages publicly under the `@tormnator` npm scope. These packages
@@ -275,12 +282,43 @@ Before publishing from the Git `dev` branch to npm dist-tag `dev`:
 - Work from committed code on Git `dev` branch.
 - Use a clean working tree, except for unrelated untracked planning notes that
   are intentionally excluded.
-- Run relevant tests.
+- Run release-candidate tests for every package being published and every
+  package that depends on it.
 - Run package dry runs or pack checks.
 - Confirm package manifests and internal dependency versions.
 - Confirm package changelog entries exist for packages being published.
 - Record the source commit and exact package versions before or immediately
   after publishing.
+
+Recommended release-candidate test baseline:
+
+```bash
+bun install --frozen-lockfile
+
+cd packages/nueyaml && bun test
+cd ../nueglow && bun test
+cd ../nuedom && bun test
+cd ../nuestate/test && bun test
+cd ../../nueserver && bun test
+cd ../nuemark/test && bun test
+cd ../../nuekit/test && bun test
+```
+
+Run additional focused tests for the changed area. For example, platform adapter
+changes should include the relevant Nuekit platform tests plus a local build of
+an affected template or demo site. If starter templates or `nue create` changed,
+regenerate template zips before the final test pass:
+
+```bash
+bun run templates:zip
+```
+
+Then inspect package contents before real publishing. Run from each package
+directory in publish order:
+
+```bash
+bun publish --dry-run --access public --tag dev
+```
 
 Prefer Bun for publishing:
 
@@ -296,6 +334,17 @@ Important Bun nuance: the first publication of a new package name can receive
 the npm dist-tag `latest` in addition to the requested `dev` tag. After that
 first publish, continue moving npm dist-tag `dev` and treat exact versions as
 the operational control for validation.
+
+Before a real publish, confirm npm identity and scope visibility without putting
+secrets in docs, scripts, chat, or logs:
+
+```bash
+npm whoami
+npm view @tormnator/nuekit versions --json
+```
+
+If npm login, browser authentication, OTP, or token setup is required, perform
+that directly in the terminal.
 
 ### Publish Order
 
@@ -325,6 +374,61 @@ For each published package, record:
 Record this in the release details document and package changelog. Do not create
 a GitHub Release for every npm dist-tag `dev` validation publish.
 
+### Validate Published `dev` Packages
+
+After publishing, verify the registry state for every published package:
+
+```bash
+npm dist-tag ls @tormnator/nuekit
+npm view @tormnator/nuekit@dev version
+```
+
+Create or update a clean external consumer project and install the package line
+as a consumer would. For fast validation sites, depend on npm dist-tag `dev` and
+use a non-frozen install so the latest validation package can resolve:
+
+```json
+{
+  "scripts": {
+    "check": "nue-tor --version",
+    "build": "nue-tor build"
+  },
+  "dependencies": {
+    "nuekit": "npm:@tormnator/nuekit@dev"
+  }
+}
+```
+
+```bash
+bun install --minimum-release-age=0
+bun run check
+bun run build
+```
+
+The `--minimum-release-age=0` flag is only needed on machines with Bun's minimum
+release age safety setting enabled and when validating freshly published
+packages.
+
+For Cloudflare Pages Git integration validation, use a dedicated demo repo or a
+release validation branch with these settings:
+
+```text
+Framework preset: None
+Build command: bun run build
+Build output directory: .dist
+```
+
+Validate the behavior that matters for the changed release surface. Issue #25
+used this baseline for the Cloudflare Pages package path:
+
+- clean `bun install` and `bun run build` from the external repo;
+- `.dist` contains expected output, including `_worker.js` when runtime is
+  required and root `404.html`;
+- deployed `/api/ping` returns the server response;
+- deployed `/dashboard` returns the SPA shell through extensionless fallback;
+- deployed `/missing.txt` returns 404;
+- pushing a source change triggers a new Cloudflare Pages deployment.
+
 ## End A Release Cycle
 
 Use this workflow when the release is ready to become an official fork update.
@@ -333,34 +437,94 @@ Use this workflow when the release is ready to become an official fork update.
 2. Finalize the release details document.
 3. Create or finalize public release notes from the release details document.
 4. Finalize root changelog and package changelogs.
-5. Update package README changelog links for packages whose changelogs were
-   created during the cycle.
+5. Review README release visibility. Update package README changelog links for
+   packages whose changelogs were created during the cycle, and update the root
+   README/`packages/nuekit/README.md` release links or short release note when
+   the release should be visible from the GitHub front page.
 6. Finalize package versions, package manifests, and internal dependency
    versions.
-7. Run relevant tests and package dry runs.
-8. If templates or `nue create` changed, regenerate and validate committed
-   template zips on the branch being promoted.
-9. Validate npm dist-tag `dev` packages with real consumers when installable
-   validation packages were published.
-10. Promote Git `dev` branch to Git `main` branch according to
-   `docs-internal/branching-policy.md`.
-11. Publish missing official packages from `main`, or move npm dist-tag `latest`
-    to exact package versions that were already validated from npm dist-tag
-    `dev`.
-12. Create a Git tag for the `main` commit used by the GitHub Release.
-13. Create the GitHub Release from `main`.
-14. Record the final source commit, package versions, validation results, known
+7. If templates or `nue create` changed, regenerate committed template zips on
+   Git `dev` branch and validate the affected template or demo site.
+8. Run release-candidate tests and package dry runs. Use the Mid-Cycle npm
+   Publishing preconditions as the baseline, then add focused tests for changed
+   areas.
+9. Commit all final release-cycle changes on Git `dev` branch and push Git
+   `dev` branch to `origin`.
+10. When exact installable package versions need external validation before the
+    official release, publish them from Git `dev` branch to npm dist-tag `dev`
+    and validate them with real consumers. Follow
+    [Mid-Cycle npm Publishing](#mid-cycle-npm-publishing), including the
+    post-publish validation steps.
+11. Promote Git `dev` branch to Git `main` branch according to
+    `docs-internal/branching-policy.md`.
+12. Publish or promote official package versions from Git `main` branch. Follow
+    [Official npm Publishing](#official-npm-publishing).
+13. Create a Git tag for the `main` commit used by the GitHub Release.
+14. Create the GitHub Release from `main`.
+15. Record the final source commit, package versions, validation results, known
     limitations, and release links.
 
 ## Official npm Publishing
 
 Official package publishing or promotion happens from a clean Git `main` branch
-checkout at the commit used for the release.
+checkout at the commit used for the release. This matters for auditability: the
+package artifacts, package manifests, changelogs, Git tag, and GitHub Release
+should all point back to the same official source state.
 
 Prefer promoting already validated exact package versions to npm dist-tag
 `latest` when those exact versions were previously published from Git `dev`
 branch and externally validated. Publish missing packages from `main` only when
 promotion cannot be used.
+
+"Missing packages" means exact package versions that are required for the
+coordinated release but do not yet exist on npm. This can happen when a package
+was not published to npm dist-tag `dev`, when final source or packaging changes
+landed after the last `dev` publish, or when the official release intentionally
+uses a different package version than the validation publish.
+
+Promotion is a registry operation and is not technically tied to the current Git
+checkout, but perform it from the clean Git `main` release checkout anyway so the
+operator can verify and record the release state consistently. Only promote an
+exact package version when the package content being promoted matches the source
+state being released or when any difference is explicitly recorded as harmless.
+
+Before publishing or promoting, verify the branch and registry state:
+
+```bash
+git switch main
+git pull --ff-only origin main
+git status --short --branch
+
+npm whoami
+npm view @tormnator/nuekit versions --json
+npm dist-tag ls @tormnator/nuekit
+```
+
+To promote an already validated exact package version to npm dist-tag `latest`:
+
+```bash
+npm dist-tag add @tormnator/nuekit@2.0.0-beta.3-tor.2 latest
+npm dist-tag ls @tormnator/nuekit
+```
+
+Repeat for each package being promoted. Record the exact package version and the
+post-promotion `npm dist-tag ls` result in the release details document.
+
+To publish an exact official package version that is not yet on npm, run the
+release-candidate tests and dry run first, then publish from that package
+directory in publish order:
+
+```bash
+bun publish --dry-run --access public --tag latest
+bun publish --access public --tag latest
+npm dist-tag ls @tormnator/nuekit
+```
+
+Use `npm publish --access public --tag latest` only as a fallback or when
+publishing already-prepared manifests or tarballs. Never publish from uncommitted
+package manifests. If a real publish fails midway through the package set, do
+not rerun blindly; inspect npm for the exact versions already published and
+continue only with the missing packages.
 
 Production-like consumers should pin exact package versions and use frozen
 installs. Fast validation sites may use npm dist-tag `dev` with non-frozen

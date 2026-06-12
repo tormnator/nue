@@ -23,7 +23,7 @@ Validated runtime behavior:
 
 For exact package versions, publish order, tags, and validation details, see [First `@tormnator` npm Publish Record](../first-tormnator-npm-publish-record.md).
 
-For versioning, publish policy, and release workflow, see [npm Versioning and Publishing Policy](../npm-versioning-publishing-policy.md).
+For versioning, publish policy, and release workflow, see [npm Versioning and Publishing Policy](./npm-versioning-publishing-policy.md).
 
 For why package manifests use npm aliases while JavaScript imports stay unscoped, see [Package Alias Resolution](../package-alias-resolution.md).
 

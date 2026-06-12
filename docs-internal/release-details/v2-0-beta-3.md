@@ -132,7 +132,7 @@ Adds a target-neutral platform adapter foundation to Nuekit. No Cloudflare-speci
 **Branch:** `cloudflare-pages-platform-adapter`  
 **Test results:** 153 pass, 3 skip, 0 fail (at milestone close); 10 pass on Cloudflare-specific platform suite
 
-Adds the `cloudflare-pages` adapter under `packages/nuekit/src/platform/cloudflare-pages/`. Targets Pages Advanced Mode only. Emits `_worker.js` by bundling `nue-edgeserver` as the route dispatch runtime.
+Adds the `cloudflare-pages` adapter under `packages/nuekit/src/platform/cloudflare-pages/`. Targets Pages Advanced Mode only. Emits `_worker.js` by bundling `nue-edgeserver` as the route dispatch runtime. A user-facing documentation draft has been captured in `docs-internal/platform-adapters/cloudflare-pages-user-docs-draft.md`.
 
 **Worker generation:**
 - `_worker.js` is emitted only when runtime is required (server routes, proxy config, or SPA fallbacks detected).
@@ -594,11 +594,10 @@ The worker uses `matches(request.method, url.pathname)` to determine if the requ
 
 ### Fork Policy Documentation Committed During Beta 3
 
-Three significant internal policy documents were committed during the cycle:
+Two significant internal policy documents were committed during the cycle:
 
 1. **Branching policy** — `BRANCHING.md` / `docs-internal/` (commit `98cb4da`, 2026-05-25). Defines roles of `master`, `main`, `dev`, npm dist-tags, and GitHub Releases.
-2. **npm versioning and publishing policy** — `docs-internal/npm-versioning-publishing-policy.md` (commit `0d33c94`, 2026-05-23). Defines `@tormnator` scope, `-tor.N` versioning, publish order, and dist-tag semantics.
-3. **Release and publishing policy (RPP)** — `docs-internal/release-and-publishing-policy.md` (commits `d1d8e8e`, `6f581c2`, 2026-06-11). Governs CRI, release notes, changelogs, GitHub Releases, upgrade guides, and final review checklist.
+2. **Release and publishing policy (RPP)** — `docs-internal/release-and-publishing-policy.md` (commits `d1d8e8e`, `6f581c2`, 2026-06-11). Governs CRI, release notes, changelogs, GitHub Releases, upgrade guides, and final review checklist.
 
 ### Upstream PR Drafts (Branch `tor/upstream-pr-drafts`)
 
@@ -700,6 +699,5 @@ These items must be resolved before the official Beta 3 release is complete:
 | Platform adapter master plan (internal) | `docs-internal/platform-adapters/` |
 | Lightweight persistence design (internal) | `docs-internal/platform-adapters/lightweight-persistence-layer.md` |
 | Branching policy | `BRANCHING.md` / `docs-internal/` |
-| npm versioning and publishing policy (internal) | `docs-internal/npm-versioning-publishing-policy.md` |
 | Release and publishing policy (internal) | `docs-internal/release-and-publishing-policy.md` |
 

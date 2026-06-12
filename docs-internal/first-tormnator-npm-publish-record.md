@@ -8,7 +8,7 @@ Source branch: Git `dev` branch
 
 Source commit: `eccbecd7`
 
-Primary policy: [npm Versioning and Publishing Policy](./npm-versioning-publishing-policy.md)
+Primary policy: [Release and Publishing Policy](./release-and-publishing-policy.md)
 
 Alias architecture note: [Package Alias Resolution](./package-alias-resolution.md)
 

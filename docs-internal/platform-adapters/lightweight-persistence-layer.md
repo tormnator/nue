@@ -15,7 +15,7 @@ Primary inputs:
 - [Platform Adapters Master Plan](./master-plan.md), especially M4b.
 - [Platform Resource Layer](./platform-resource-layer.md), especially the `c.env` shape and D1 collection mapping.
 - [Model Resources Status And Persistence Plan](./model-resources-status-plan-260528.md).
-- [Beta 3 Release Notes Draft](../releases/beta-3.md), especially the planned lightweight persistence section and known limitations.
+- [Beta 3 Release Notes Draft](../obsolete/beta-3-draft.md), especially the planned lightweight persistence section and known limitations. Note, this file has been replaced by [Beta 3 Release Details](../release-details/v2-0-beta-3.md).
 
 Current implementation facts checked at M4b start:
 
