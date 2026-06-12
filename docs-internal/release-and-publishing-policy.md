@@ -7,7 +7,7 @@ For branch roles and merge flow, see `docs-internal/branching-policy.md`.
 
 ## Goals
 
-- Keep release work reconstructable from committed documents.
+- Keep release work reconstructable from committed release details.
 - Keep release notes, changelogs, package versions, npm dist-tags, Git tags,
   and GitHub Releases intentionally aligned.
 - Support fast validation publishes without treating every validation package as
@@ -30,8 +30,8 @@ Rules:
 
 - Use lowercase letters, digits, and hyphens only.
 - Do not use periods or underscores.
-- Use the same CRI for release-facing docs, changelog links, GitHub Release
-  naming/linking, and release-note URLs.
+- Use the same CRI for release details, release-facing docs, changelog links,
+  GitHub Release naming/linking, and release-note URLs.
 
 Examples:
 
@@ -49,7 +49,8 @@ SemVer-compatible versions such as `2.0.0`, `2.0.0-beta.3`, or
 
 | Artifact | Role |
 |---|---|
-| Public release notes | User-facing source of truth for a release cycle. |
+| Release details | Internal living source of truth for reconstructing a release cycle. |
+| Public release notes | User-facing source of truth for a released cycle. |
 | Root `CHANGELOG.md` | Chronological index of notable repo releases. |
 | Package `CHANGELOG.md` | Chronological index of package-specific changes and publishes. |
 | Package `README.md` | npm-facing entry point; links to the package changelog when one exists. |
@@ -59,9 +60,51 @@ SemVer-compatible versions such as `2.0.0`, `2.0.0-beta.3`, or
 | Git tag | Immutable repository point used by GitHub Releases. |
 | GitHub Release | Short public record for a coordinated release, linked to release notes. |
 
+## Release Details
+
+Create one internal release details document per release cycle:
+
+```text
+docs-internal/release-details/{CRI}.md
+```
+
+Example:
+
+```text
+docs-internal/release-details/v2-0-beta-3.md
+```
+
+Treat the release details document as the internal living source of truth for
+reconstructing the cycle. It should collect the detailed material needed to
+produce public release notes, changelogs, package publish records, GitHub
+Release text, and later audits.
+
+Create a skeletal release details document when the cycle begins. Do not leave
+the cycle to a blank page. A useful starting shape includes:
+
+- status and CRI;
+- cycle boundaries;
+- package versions;
+- release highlight candidates;
+- added, changed, fixed, removed, and security notes;
+- validation log;
+- npm publish log;
+- known issues and deferred work;
+- changelog candidates;
+- source material.
+
+During the cycle, record relevant source changes, validation results, package
+version decisions, npm publishes, issue links, known gaps, and release risks in
+the release details document.
+
+The release details document is intentionally more detailed than public release
+notes. Preserve useful engineering context there, then curate the user-facing
+release notes from it at the end of the cycle.
+
 ## Release Notes
 
-Create one public release notes document per release cycle:
+Create one public release notes document per release cycle before the cycle is
+officially released:
 
 ```text
 packages/www/docs/releases/{CRI}.md
@@ -84,12 +127,16 @@ cycle. They should describe what changed, who should care, how to install or
 upgrade, package versions, validation, known issues, and links to deeper guides
 when needed.
 
+Public release notes should be derived from the release details document, but
+they should not copy it wholesale. Keep them high-level, user-friendly, and
+focused on release impact.
+
 Patch releases normally update the existing major-minor release notes document
 under a patch updates section. Create a separate patch release notes document
 only when the patch is large enough to need its own public page.
 
-Use `docs-internal/release-notes-template.md` as the starting point for new
-release notes.
+Use `docs-internal/release-notes-template.md` and the release details document
+as the starting point for new release notes.
 
 ## Changelogs
 
@@ -109,7 +156,8 @@ The root `CHANGELOG.md` records notable repo-level releases. Each released entry
 should link to the release notes document for the CRI.
 
 Use the root changelog for release summaries, not detailed implementation notes.
-Detailed notes belong in the release notes document.
+Detailed engineering notes belong in the release details document. User-facing
+context belongs in the release notes document.
 
 ### Package Changelogs
 
@@ -176,8 +224,8 @@ publish point.
 Use this workflow when a coherent release cycle begins.
 
 1. Choose the CRI.
-2. Create or update `packages/www/docs/releases/{CRI}.md` from
-   `docs-internal/release-notes-template.md`.
+2. Create `docs-internal/release-details/{CRI}.md` as the skeletal living
+    release details document for the cycle.
 3. Add or update the root `CHANGELOG.md` `Unreleased` section or draft release
    entry.
 4. Identify which packages are expected to change or publish during the cycle.
@@ -185,28 +233,29 @@ Use this workflow when a coherent release cycle begins.
    changes.
 6. Add package README changelog links when package changelogs exist.
 7. Record planned validation targets, known risks, and expected package publish
-   needs in the release notes.
+    needs in the release details document.
 
-Use internal drafts when needed, but do not let the internal draft replace the
-public release notes. The public release notes are the release-facing source of
-truth.
+The public release notes document may be drafted early, but it is not required
+at cycle start. It must exist and be finalized before the coordinated release is
+published.
 
 ## Maintain A Release Cycle
 
 For each source or documentation change during the cycle, decide whether it is:
 
-- user-facing and should be recorded in release notes;
+- user-facing and should be reflected in release details and later release
+  notes;
 - repo-level and notable enough for the root changelog;
 - package-specific and relevant to a package changelog;
 - validation-related and should be recorded with commit/version details;
 - internal-only and not release-notable.
 
-Update release notes continuously as work lands, validations complete, package
+Update release details continuously as work lands, validations complete, package
 versions are published, and known issues change.
 
-Release notes should clearly separate completed, in-progress, planned, deferred,
-and known-limitation items. Do not present topic-branch work as released unless
-it has landed in the selected release branch.
+Release details should clearly separate completed, in-progress, planned,
+deferred, and known-limitation items. Do not present topic-branch work as landed
+unless it has landed in the selected release branch.
 
 ## Mid-Cycle npm Publishing
 
@@ -273,33 +322,34 @@ For each published package, record:
 - validation target;
 - validation result.
 
-Record this in the release notes and package changelog. Do not create a GitHub
-Release for every npm dist-tag `dev` validation publish.
+Record this in the release details document and package changelog. Do not create
+a GitHub Release for every npm dist-tag `dev` validation publish.
 
 ## End A Release Cycle
 
 Use this workflow when the release is ready to become an official fork update.
 
 1. Finish and validate the coherent milestone on Git `dev` branch.
-2. Finalize public release notes.
-3. Finalize root changelog and package changelogs.
-4. Update package README changelog links for packages whose changelogs were
+2. Finalize the release details document.
+3. Create or finalize public release notes from the release details document.
+4. Finalize root changelog and package changelogs.
+5. Update package README changelog links for packages whose changelogs were
    created during the cycle.
-5. Finalize package versions, package manifests, and internal dependency
+6. Finalize package versions, package manifests, and internal dependency
    versions.
-6. Run relevant tests and package dry runs.
-7. If templates or `nue create` changed, regenerate and validate committed
+7. Run relevant tests and package dry runs.
+8. If templates or `nue create` changed, regenerate and validate committed
    template zips on the branch being promoted.
-8. Validate npm dist-tag `dev` packages with real consumers when installable
+9. Validate npm dist-tag `dev` packages with real consumers when installable
    validation packages were published.
-9. Promote Git `dev` branch to Git `main` branch according to
+10. Promote Git `dev` branch to Git `main` branch according to
    `docs-internal/branching-policy.md`.
-10. Publish missing official packages from `main`, or move npm dist-tag `latest`
+11. Publish missing official packages from `main`, or move npm dist-tag `latest`
     to exact package versions that were already validated from npm dist-tag
     `dev`.
-11. Create a Git tag for the `main` commit used by the GitHub Release.
-12. Create the GitHub Release from `main`.
-13. Record the final source commit, package versions, validation results, known
+12. Create a Git tag for the `main` commit used by the GitHub Release.
+13. Create the GitHub Release from `main`.
+14. Record the final source commit, package versions, validation results, known
     limitations, and release links.
 
 ## Official npm Publishing
@@ -370,8 +420,11 @@ Before publishing a coordinated release, confirm:
 
 - CRI is consistent across release notes, changelog links, Git tag, and GitHub
   Release text.
+- Release details are finalized and include source commits, package versions,
+  validation results, publish records, known limitations, and release links.
 - npm package versions are SemVer-compatible and independent per package.
-- Release notes list exact package versions and install guidance.
+- Public release notes are derived from release details and list exact package
+  versions and install guidance.
 - Root changelog links to the release notes.
 - Each published package has a package changelog entry for the cycle.
 - Package README files link to package changelogs where those changelogs exist.
