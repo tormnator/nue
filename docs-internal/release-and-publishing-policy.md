@@ -5,6 +5,27 @@ information, publishes npm packages, and creates GitHub Releases.
 
 For branch roles and merge flow, see `docs-internal/branching-policy.md`.
 
+## Table of Contents
+
+<!-- Start Document Outline -->
+
+* [Goals](#goals)
+* [Core Terms](#core-terms)
+* [Release Details](#release-details)
+* [Release Notes](#release-notes)
+* [Changelogs](#changelogs)
+* [Package Versioning](#package-versioning)
+* [Start A Release Cycle](#start-a-release-cycle)
+* [Maintain A Release Cycle](#maintain-a-release-cycle)
+* [Mid-Cycle npm Publishing](#mid-cycle-npm-publishing)
+* [End A Release Cycle](#end-a-release-cycle)
+* [Official npm Publishing](#official-npm-publishing)
+* [Git Tags And GitHub Releases](#git-tags-and-github-releases)
+* [Upgrade Guides](#upgrade-guides)
+* [Final Review Checklist](#final-review-checklist)
+
+<!-- End Document Outline -->
+
 ## Goals
 
 - Keep release work reconstructable from committed release details.
@@ -275,6 +296,12 @@ packages. Common examples:
 
 Do not use mid-cycle publishing merely to mark ordinary progress.
 
+Before choosing package versions for a publish, review each package changelog
+against package source changes since that package's previous npm publish. Use
+[Package Versioning](#package-versioning) to propose the next package version
+string, then update the package manifest and any internal dependency versions
+needed for that exact package set.
+
 ### Preconditions
 
 Before publishing from the Git `dev` branch to npm dist-tag `dev`:
@@ -285,8 +312,10 @@ Before publishing from the Git `dev` branch to npm dist-tag `dev`:
 - Run release-candidate tests for every package being published and every
   package that depends on it.
 - Run package dry runs or pack checks.
-- Confirm package manifests and internal dependency versions.
-- Confirm package changelog entries exist for packages being published.
+- Confirm each package changelog describes the source changes since the
+  package's previous npm publish and supports the proposed version string.
+- Confirm package manifests and internal dependency versions match the proposed
+  exact package versions.
 - Record the source commit and exact package versions before or immediately
   after publishing.
 
@@ -367,6 +396,8 @@ For each published package, record:
 - npm dist-tag;
 - source commit;
 - branch published from;
+- version decision source, usually the package changelog entry and release
+  details note;
 - dry-run or pack-check result;
 - validation target;
 - validation result.
@@ -441,8 +472,7 @@ Use this workflow when the release is ready to become an official fork update.
    packages whose changelogs were created during the cycle, and update the root
    README/`packages/nuekit/README.md` release links or short release note when
    the release should be visible from the GitHub front page.
-6. Finalize package versions, package manifests, and internal dependency
-   versions.
+6. Review each package changelog against source changes since that package's previous npm publish. Use [Package Versioning](#package-versioning) to propose final package version strings. Finalize package manifests and internal dependency versions for those exact versions.
 7. If templates or `nue create` changed, regenerate committed template zips on
    Git `dev` branch and validate the affected template or demo site.
 8. Run release-candidate tests and package dry runs. Use the Mid-Cycle npm

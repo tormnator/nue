@@ -1,6 +1,6 @@
-# Release Notes Draft — Nue 2.0 Beta 3 (v2-0-beta-3)
+# Release Details — Nue 2.0 Beta 3 (v2-0-beta-3)
 
-**Document type:** Release Notes Draft (RND) — internal working document  
+**Document type:** Release Details — internal working document  
 **Status:** Draft — not for public release  
 **CRI:** v2-0-beta-3  
 **Draft date:** 2026-06-11  
@@ -8,11 +8,36 @@
 **Target release:** Full `@tormnator` package set with version-incremented packages for significant changes  
 **Release branch:** `dev` → `main` (promotion pending; final `main` SHA TBD)  
 **Release notes canonical location:** `packages/www/docs/releases/v2-0-beta-3.md` (rendered URL TBD — see note below)  
-**Intended audience for this RND:** Release author. Used to produce: (1) final public release notes, (2) root `CHANGELOG.md`, (3) package-level `CHANGELOG.md` files.
+**Intended audience for this document:** Release author. Used to produce: (1) final public release notes, (2) root `CHANGELOG.md`, (3) package-level `CHANGELOG.md` files.
 
 > **Release notes URL note:** The canonical rendered URL per RPP convention would be `https://www.nuejs.org/docs/releases/v2-0-beta-3`. However, because this is a fork and the official Nue website cannot be updated at this time, the public release notes should instead be referenced via the tormnator GitHub location: `https://github.com/tormnator/nue/blob/main/packages/www/docs/releases/v2-0-beta-3.md`. A website deployment to Cloudflare (which would enable the nuejs.org URL) may happen in a future cycle (Beta 4).
 
 ---
+
+## Table of Contents
+
+<!-- Start Document Outline -->
+
+* [Purpose](#purpose)
+* [Release Overview](#release-overview)
+* [Beta 3 Cycle Boundaries](#beta-3-cycle-boundaries)
+* [Package Versions](#package-versions)
+* [Highlights](#highlights)
+* [Added](#added)
+* [Fixed](#fixed)
+* [Changed](#changed)
+* [Deprecated](#deprecated)
+* [Removed](#removed)
+* [Security](#security)
+* [Upgrade Notes](#upgrade-notes)
+* [Known Issues and Deferred Work](#known-issues-and-deferred-work)
+* [Open Issues Carried Into Next Cycle](#open-issues-carried-into-next-cycle)
+* [Validation Summary](#validation-summary)
+* [In-Depth Notes](#in-depth-notes)
+* [Remaining Open Items Before Final Release](#remaining-open-items-before-final-release)
+* [Source Material](#source-material)
+
+<!-- End Document Outline -->
 
 ## Purpose
 
@@ -601,7 +626,7 @@ Two significant internal policy documents were committed during the cycle:
 
 ### Upstream PR Drafts (Branch `tor/upstream-pr-drafts`)
 
-An audit note consolidating the Issue #1–#4 asset precedence fixes, plus draft PR body text for upstream `nuejs/nue` submission, was committed to branch `tor/upstream-pr-drafts` (not merged to `dev`). No upstream PR submission is planned at this time. This branch should be documented in the release notes as existing working material for a future upstream contribution cycle.
+An audit note consolidating the Issue #1–#4 asset precedence fixes, plus draft PR body text for upstream `nuejs/nue` submission, was committed to branch `tor/upstream-pr-drafts` (not merged to `dev`). No upstream PR submission is planned at this time.
 
 - Audit note: `notes/2026-04-25-nuekit-precedence-audit.md`
 - PR draft directory: `notes/pr-drafts/`
@@ -658,7 +683,7 @@ These items must be resolved before the official Beta 3 release is complete:
 7. **Root `CHANGELOG.md`** — Create initial `CHANGELOG.md` at repo root per RPP.
 8. **Package README changelog links** — Add changelog links to `README.md` of packages that receive new `CHANGELOG.md` files.
 9. **Template ZIP regeneration** — Run `bun run templates:zip` on the `main` promotion commit and commit refreshed ZIPs if templates changed.
-10. **Final release notes file** — Create `packages/www/docs/releases/v2-0-beta-3.md` from this RND.
+10. **Final release notes file** — Create `packages/www/docs/releases/v2-0-beta-3.md` from this document.
 
 ---
 
