@@ -376,6 +376,12 @@ Validate the behavior that matters for the changed release surface. Issue #25 us
 
 Use this workflow when the release is ready to become an official fork update.
 
+Source-state terms used below:
+
+- **npm publish source commit**: the clean `main` commit used to publish package artifacts.
+- **release record commit**: the committed docs/changelogs that record publish and validation results.
+- **Git tag target commit**: the final `main` commit the coordinated release tag points at.
+
 1. Finish and validate the coherent milestone on Git `dev` branch.
 2. Finalize the release details document.
 3. Create or finalize public release notes from the release details document.
@@ -386,11 +392,18 @@ Use this workflow when the release is ready to become an official fork update.
 8. Run release-candidate tests and package dry runs. Use the Mid-Cycle npm Publishing preconditions as the baseline, then add focused tests for changed areas.
 9. Commit all final release-cycle changes on Git `dev` branch and push Git `dev` branch to `origin`.
 10. When exact installable package versions need external validation before the official release, publish them from Git `dev` branch to npm dist-tag `dev` and validate them with real consumers. Follow [Mid-Cycle npm Publishing](#mid-cycle-npm-publishing), including the post-publish validation steps.
-11. Promote Git `dev` branch to Git `main` branch according to `docs-internal/branching-policy.md`.
+11. Run the promotion preflight below, then promote Git `dev` branch to Git `main` branch according to `docs-internal/branching-policy.md`.
 12. Publish or promote official package versions from Git `main` branch. Follow [Official npm Publishing](#official-npm-publishing).
-13. Create a Git tag for the `main` commit used by the GitHub Release.
-14. Create the GitHub Release from `main`.
-15. Record the final source commit, package versions, validation results, known limitations, and release links.
+13. Run external consumer validation against the official npm package versions when package content changed.
+14. Finalize and commit release records on `main`: package versions, npm publish source commits, validation results, known limitations, and planned release links.
+15. Create a Git tag for the final `main` release record commit, then create the GitHub Release from that tag.
+16. Fast-forward Git `dev` to the final Git `main` commit and push Git `dev`.
+
+Promotion preflight:
+
+- Verify `dev`, `main`, `origin/dev`, and `origin/main` before promotion.
+- Prefer fast-forward promotion when `main` is already an ancestor of `dev`. If `main` has unique commits, use a normal merge that preserves both histories and records the divergence in the release details.
+- Do not force-push `main` or discard unique `main` commits during release promotion.
 
 ## Official npm Publishing
 
@@ -433,11 +446,15 @@ npm dist-tag ls @tormnator/nuekit
 
 Use `npm publish --access public --tag latest` only as a fallback or when publishing already-prepared manifests or tarballs. Never publish from uncommitted package manifests. If a real publish fails midway through the package set, do not rerun blindly; inspect npm for the exact versions already published and continue only with the missing packages.
 
+After a successful publish, npm reads can lag briefly. Do not rerun a publish because an immediate `npm view` returns stale data. Recheck with `npm view <package> versions --json --prefer-online`, `npm view <package>@<version> version --prefer-online`, and `npm dist-tag ls <package>` until the exact version and dist-tag agree.
+
 Production-like consumers should pin exact package versions and use frozen installs. Fast validation sites may use npm dist-tag `dev` with non-frozen installs when tracking the current validation package line is intentional.
 
 ## Git Tags And GitHub Releases
 
 GitHub Releases are based on Git tags. Create GitHub Releases only from Git `main` branch.
+
+The GitHub repository default branch should be `main`. If GitHub Release API output reports an unexpected `targetCommitish`, verify the pushed tag itself and its peeled commit instead of treating `targetCommitish` as authoritative.
 
 For coordinated source releases, prefer a Git tag based on the CRI, for example:
 
@@ -457,7 +474,7 @@ GitHub Release content should include:
 
 - short summary;
 - CRI;
-- source commit;
+- npm publish source commit and Git tag target commit;
 - exact npm package versions published or promoted;
 - validation performed;
 - notable limitations or known issues;
@@ -492,4 +509,4 @@ Before publishing a coordinated release, confirm:
 - Relevant tests were run.
 - External install/deploy validation was completed when npm packages changed.
 - Known issues and deferred work are clearly labeled.
-- Git `main` branch, npm dist-tag `latest`, Git tag, and GitHub Release describe the same official source state.
+- Git `main` branch, npm dist-tag `latest`, Git tag, and GitHub Release describe the same coordinated release, with any difference between npm publish source commit and Git tag target commit recorded explicitly.

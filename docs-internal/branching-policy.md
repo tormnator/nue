@@ -13,6 +13,8 @@ Release policy, see `docs-internal/release-and-publishing-policy.md`.
 - short-lived topic branches: branch from `dev`
 - `v3-dev`: future v3-based development branch from `upstream/3.0` when needed
 
+The GitHub default branch for this fork should be `main`. Keep `master` available as the upstream-aligned reference, not as the fork's release default.
+
 ## Normal Development Flow
 
 1. Start normal work from `dev`.
@@ -34,6 +36,7 @@ Before promoting `dev` to `main`:
 - Make sure docs describe the actual behavior.
 - If templates or `nue create` changed, regenerate and validate committed template zips on the branch being promoted so the default official templates match `main`.
 - Confirm no known blocker would make `main` a misleading official baseline.
+- If `main` has unique commits, use a normal merge that preserves them unless the release policy explicitly says otherwise.
 
 Practical test: if future work branches from `main`, `main` should contain the baseline you would want that work to inherit.
 

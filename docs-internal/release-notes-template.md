@@ -29,6 +29,12 @@ CRI: `{CRI}`
 Release date: YYYY-MM-DD
 Primary npm package line: `{package-name}@{version}`
 
+Optional release record fields after release:
+
+- npm publish source commit: `{commit}`
+- Git tag: `{tag}`
+- GitHub Release: `{url}`
+
 ## Summary
 
 Required.
@@ -134,7 +140,7 @@ migration needs longer examples or deeper explanation.
 
 ## Patch Updates
 
-Required when this release notes document also tracks patch releases.
+Required only when this release notes document also tracks patch releases. Delete this section when not applicable.
 
 Use newest-first entries.
 
@@ -152,10 +158,11 @@ Record the validation that supports the release claims.
 
 - Automated tests run.
 - Package dry runs or pack checks.
-- Install checks against published packages.
+- Install checks against published packages, including an external consumer check when npm package content changed.
 - Template zip regeneration or validation when applicable.
 - Deployment validation when runtime, adapter, or hosting behavior changed.
 - Source commit used for final validation.
+- npm publish source commit and Git tag target commit, when they differ.
 
 ## Known Issues
 
@@ -169,7 +176,7 @@ If there are no known issues, say so explicitly.
 
 ## In-Depth Notes
 
-Optional.
+Optional. Delete this section when not needed.
 
 Use one or more sections for substantial changes that need screenshots, videos,
 examples, architecture notes, or how-to material.
