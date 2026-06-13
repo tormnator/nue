@@ -187,6 +187,7 @@ Validation for the release cycle included:
 - Final package dry-runs on 2026-06-13: `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` with `--access public --tag latest`.
 - Final npm publish on 2026-06-13 from `main` commit `6d387ab5`: `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` published to `latest`.
 - Final npm package-set verification on 2026-06-13: all seven `@tormnator` packages resolve to the versions listed in Package Versions through npm dist-tag `latest`.
+- External npm consumer validation on 2026-06-13: a clean project installed `nuekit@npm:@tormnator/nuekit@2.0.0-beta.3-tor.2`; `nue-tor --version` reported `Nue 2.0.0-beta.3-tor.2`; `nue-tor build` succeeded for a minimal Markdown site.
 - Git tag `v2-0-beta-3` was created and pushed.
 - GitHub Release was created at https://github.com/tormnator/nue/releases/tag/v2-0-beta-3.
 

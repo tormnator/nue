@@ -607,6 +607,7 @@ nue create spa ./packages/templates
 | Main branch promotion — 2026-06-13 | Completed; `origin/main` updated to merge commit `6d387ab5` |
 | Official npm publish — 2026-06-13 | Completed; `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` published to `latest` |
 | Final npm package-set verification — 2026-06-13 | Passed; npm `latest` resolves to the package versions listed for all seven `@tormnator` packages |
+| External npm consumer validation — 2026-06-13 | Passed; clean external project installed `nuekit@npm:@tormnator/nuekit@2.0.0-beta.3-tor.2`, `nue-tor --version` reported `Nue 2.0.0-beta.3-tor.2`, and `nue-tor build` succeeded for a minimal Markdown site |
 | Git tag — 2026-06-13 | Completed; `v2-0-beta-3` pushed to `origin` |
 | GitHub Release — 2026-06-13 | Completed; https://github.com/tormnator/nue/releases/tag/v2-0-beta-3 |
 
