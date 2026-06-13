@@ -1,6 +1,6 @@
 {
   "name": "@tormnator/nue-edgeserver",
-  "version": "0.1.0-tor.1",
+  "version": "0.1.0-tor.2",
   "description": "Edge first server development",
   "homepage": "https://nuejs.org/docs/nueserver",
   "license": "MIT",

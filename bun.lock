@@ -15,12 +15,12 @@
     },
     "packages/nuekit": {
       "name": "@tormnator/nuekit",
-      "version": "2.0.0-beta.3-tor.1",
+      "version": "2.0.0-beta.3-tor.2",
       "bin": {
         "nue-tor": "./src/cli.js",
       },
       "dependencies": {
-        "nue-edgeserver": "npm:@tormnator/nue-edgeserver@0.1.0-tor.1",
+        "nue-edgeserver": "npm:@tormnator/nue-edgeserver@0.1.0-tor.2",
         "nue-glow": "npm:@tormnator/nue-glow@0.2.5-tor.1",
         "nuedom": "npm:@tormnator/nuedom@0.1.1-tor.1",
         "nuemark": "npm:@tormnator/nuemark@0.7.1-tor.1",
@@ -38,7 +38,7 @@
     },
     "packages/nueserver": {
       "name": "@tormnator/nue-edgeserver",
-      "version": "0.1.0-tor.1",
+      "version": "0.1.0-tor.2",
     },
     "packages/nuestate": {
       "name": "@tormnator/nuestate",

@@ -2,6 +2,8 @@
 # Nueglow: CSS first syntax highlighting
 Nueglow is syntax highlighting that works with your design system. It generates semantic HTML that your CSS can style. One minuscule highlighter for all languages.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 
 <a href="https://nuejs.org/blog/nueglow">
   <img src="https://nuejs.org/img/glow-dark-big.png"></a>

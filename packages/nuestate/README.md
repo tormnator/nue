@@ -2,6 +2,8 @@
 # Nuestate: URL-first state management
 Nuestate puts your application state in the URL by default. This makes bookmarking, sharing, and browser navigation work naturally without extra code. State changes automatically update the URL and trigger component re-renders.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 ## Why URL-first?
 Most state management solutions treat the URL as an afterthought. You have to manually sync state with the URL, handle browser navigation, and write extra code for bookmarking and sharing.
 

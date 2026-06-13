@@ -2,6 +2,8 @@
 # Nuedom: HTML first UI assembly
 Nuedom (or just "Nue") is a markup language that extends HTML with just enough syntax to build websites, apps and SVG images. It's a different development model based on document structure rather than programmatic composition.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 ## UI assembly
 Nue differs from React "composition" in both syntax and architecture:
 

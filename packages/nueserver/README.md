@@ -2,6 +2,8 @@
 # Nueserver: Edge first development
 Nueserver is an HTTP server built for edge deployment. Write code locally, deploy globally when ready.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 > **Disclaimer** Nueserver currently works for local development only. It's the foundation for Nue's upcoming backend vision. See the [roadmap](https://nuejs.org/docs/roadmap) for details
 
 ## What is edge first
@@ -81,7 +83,7 @@ bun install --global nuekit
 Or install Nueserver directly as a library:
 
 ```bash
-bun install nue-edgeserver
+bun add nue-edgeserver@npm:@tormnator/nue-edgeserver@0.1.0-tor.2
 ```
 
 See the [Server API reference](https://nuejs.org/docs/server-api) for complete routing and context documentation.

@@ -1,13 +1,13 @@
 # Release Details — Nue 2.0 Beta 3 (v2-0-beta-3)
 
 **Document type:** Release Details — internal working document  
-**Status:** Draft — not for public release  
+**Status:** Draft - public release artifacts prepared for review
 **CRI:** v2-0-beta-3  
 **Draft date:** 2026-06-11  
 **Release tag:** `v2-0-beta-3`  
-**Target release:** Full `@tormnator` package set with version-incremented packages for significant changes  
+**Target release:** Full `@tormnator` package set with version-incremented packages for post-publish package changes
 **Release branch:** `dev` → `main` (promotion pending; final `main` SHA TBD)  
-**Release notes canonical location:** `packages/www/docs/releases/v2-0-beta-3.md` (rendered URL TBD — see note below)  
+**Release notes canonical location:** `packages/www/docs/releases/v2-0-beta-3.md` (GitHub URL used for this fork cycle - see note below)
 **Intended audience for this document:** Release author. Used to produce: (1) final public release notes, (2) root `CHANGELOG.md`, (3) package-level `CHANGELOG.md` files.
 
 > **Release notes URL note:** The canonical rendered URL per RPP convention would be `https://www.nuejs.org/docs/releases/v2-0-beta-3`. However, because this is a fork and the official Nue website cannot be updated at this time, the public release notes should instead be referenced via the tormnator GitHub location: `https://github.com/tormnator/nue/blob/main/packages/www/docs/releases/v2-0-beta-3.md`. A website deployment to Cloudflare (which would enable the nuejs.org URL) may happen in a future cycle (Beta 4).
@@ -87,21 +87,21 @@ All packages were first published on **2026-05-23** from Git `dev` branch at sou
 
 ### Official Release Publish — TBD
 
-A full package set will be published as part of the official Beta 3 release from the `main` branch promotion commit. Packages with significant changes in the cycle should receive incremented version strings per the RPP versioning rules.
+The official Beta 3 release uses the full `@tormnator` package set, but only packages with post-publish package changes receive incremented version strings. The first scoped npm publish happened at commit `eccbecd7`; the package audit for final release decisions compares package changes after that point.
 
 | Package | Planned Version | Notes |
 |---|---|---|
-| `@tormnator/nuekit` | `2.0.0-beta.3-tor.2` (suggested) | Platform adapter, resource layer, template zip, persistence layer, build fix, HMR fix, asset precedence, all M1–M4b work |
-| `@tormnator/nuemark` | `0.7.1-tor.2` (suggested) | `[image]` alt/figcaption fix, multi-line HTML comment fix |
-| `@tormnator/nue-edgeserver` | `0.1.0-tor.2` (suggested) | Bundled into Cloudflare Pages `_worker.js` — confirm if source changed beyond scoped rename |
-| `@tormnator/nuedom` | `0.1.1-tor.1` (no change likely) | No identified Beta 3 changes beyond scoped rename |
-| `@tormnator/nuestate` | `0.1.1-tor.1` (no change likely) | No identified Beta 3 changes beyond scoped rename |
-| `@tormnator/nueyaml` | `0.1.0-tor.1` (no change likely) | No identified Beta 3 changes beyond scoped rename |
-| `@tormnator/nue-glow` | `0.2.5-tor.1` (no change likely) | No identified Beta 3 changes beyond scoped rename |
+| `@tormnator/nuekit` | `2.0.0-beta.3-tor.2` | Bumped for the official Beta 3 package line and post-publish Nuekit/template work: resource layer, template zip workflow, lightweight persistence boundary, build fix, and release package visibility. |
+| `@tormnator/nue-edgeserver` | `0.1.0-tor.2` | Bumped for a package README correction after the first publish so npm-facing examples match the Beta 3 `c.env.models` route API. |
+| `@tormnator/nuemark` | `0.7.1-tor.1` | No package changes after the first publish; the Beta 3 Nuemark fixes are already included in `0.7.1-tor.1`. |
+| `@tormnator/nuedom` | `0.1.1-tor.1` | No package changes after the first publish. |
+| `@tormnator/nuestate` | `0.1.1-tor.1` | No package changes after the first publish. |
+| `@tormnator/nueyaml` | `0.1.0-tor.1` | No package changes after the first publish. |
+| `@tormnator/nue-glow` | `0.2.5-tor.1` | No package changes after the first publish. |
 
-> **Note on `nue-edgeserver`:** The Cloudflare Pages adapter bundles `nue-edgeserver` directly into the generated `_worker.js` via `import { fetch as dispatch, matches } from 'nue-edgeserver'`. Even if no source changes were made to the package itself during Beta 3, the worker output depends on it and it was newly published as a scoped package. Confirm whether any source changes landed before deciding on the version increment.
+> **Package audit note:** `git diff eccbecd7..HEAD -- packages/nuemark packages/nuedom packages/nuestate packages/nueyaml packages/nueglow` produced no output during draft finalization, so those package versions remain unchanged. `packages/nueserver/README.md` changed after the first publish and is npm-facing package content, so `@tormnator/nue-edgeserver` receives a `tor.N` metadata/documentation bump.
 
-> **Note on `nuedom` / `nuestate` / `nueyaml` / `nue-glow`:** These packages have no identified Beta 3 source changes beyond the scoped rename and initial publish. They should only receive a version increment if source changes are confirmed.
+> **Note on `nue-edgeserver`:** The Cloudflare Pages adapter bundles `nue-edgeserver` directly into the generated `_worker.js` via `import { fetch as dispatch, matches } from 'nue-edgeserver'`. The official `0.1.0-tor.2` bump is for npm-facing package documentation alignment; no `nueserver.js` runtime source change was identified after the first publish.
 
 ### Install / Upgrade (Final Release)
 
@@ -589,6 +589,11 @@ nue create spa ./packages/templates
 | Template ZIP generation and inspection (Windows) | Validated |
 | npm package dry-run before publish | Confirmed |
 | npm `dev` + `latest` dist-tags assigned on first publish | Confirmed |
+| Final frozen install — 2026-06-13 | Passed; `bun install --frozen-lockfile` reported no changes |
+| Final package test baseline — 2026-06-13 | Passed; `nueyaml` 24 pass; `nueglow` 7 pass; `nuedom` 190 pass, 1 skip; `nuestate` 9 pass, 2 skip; `nue-edgeserver` 18 pass; `nuemark` 116 pass, 1 skip; `nuekit` 178 pass, 3 skip |
+| Final template builds — 2026-06-13 | Passed; `spa` and `full` templates built with local `@tormnator/nuekit@2.0.0-beta.3-tor.2` |
+| Final template ZIP regeneration — 2026-06-13 | Passed; `bun run templates:zip` regenerated `blog.zip`, `full.zip`, `minimal.zip`, and `spa.zip` |
+| Final package dry-runs — 2026-06-13 | Passed; `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` dry-ran with `--access public --tag latest` |
 
 > **⚠ Validation gap:** The 2026-05-23 published packages do not include M4a or M4b changes. The official release requires a second publish from the `main` promotion commit covering the full Beta 3 scope. Package version increments should reflect all changes in the cycle, not just those present in the first publish.
 
@@ -674,16 +679,12 @@ const nueEnv = createResourceEnv({
 
 These items must be resolved before the official Beta 3 release is complete:
 
-1. **`dev` → `main` branch promotion** — Perform and record the exact `main` SHA.
-2. **Official npm publish** — Publish full package set from `main` promotion commit with incremented versions for packages with significant changes (`nuekit`, `nuemark`; confirm `nue-edgeserver`).
-3. **Git tag** — Create `v2-0-beta-3` tag on the `main` promotion commit.
-4. **GitHub Release** — Create GitHub Release from `v2-0-beta-3` tag per RPP.
-5. **`nue-edgeserver` source audit** — Confirm whether any source changes were made to `nueserver.js` during Beta 3 beyond the scoped package rename, to determine if version bump is warranted beyond the publish itself.
-6. **Package changelogs** — Create `CHANGELOG.md` files for packages receiving version bumps.
-7. **Root `CHANGELOG.md`** — Create initial `CHANGELOG.md` at repo root per RPP.
-8. **Package README changelog links** — Add changelog links to `README.md` of packages that receive new `CHANGELOG.md` files.
-9. **Template ZIP regeneration** — Run `bun run templates:zip` on the `main` promotion commit and commit refreshed ZIPs if templates changed.
-10. **Final release notes file** — Create `packages/www/docs/releases/v2-0-beta-3.md` from this document.
+1. **Commit and push release-candidate state on `dev`** — Commit the drafted artifacts, manifest changes, lockfile update, regenerated template ZIPs, and validation evidence; push `origin/dev`.
+2. **`dev` → `main` branch promotion** — Perform and record the exact `main` SHA after approval.
+3. **Official npm publish/promote** — Publish or promote the official package set from the `main` promotion commit: `@tormnator/nuekit@2.0.0-beta.3-tor.2`, `@tormnator/nue-edgeserver@0.1.0-tor.2`, and unchanged package versions already published during the cycle.
+4. **Git tag** — Create `v2-0-beta-3` tag on the `main` promotion commit after approval.
+5. **GitHub Release** — Create GitHub Release from `v2-0-beta-3` tag per RPP after approval.
+6. **Final release details update** — Record final source commit, npm publish/promote results, Git tag, GitHub Release URL, and known residual risks.
 
 ---
 

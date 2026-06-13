@@ -1,6 +1,6 @@
 {
   "name": "@tormnator/nuekit",
-  "version": "2.0.0-beta.3-tor.1",
+  "version": "2.0.0-beta.3-tor.2",
   "description": "The UNIX of the Web",
   "homepage": "https://nuejs.org",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "test": "cd test && bun test"
   },
   "dependencies": {
-    "nue-edgeserver": "npm:@tormnator/nue-edgeserver@0.1.0-tor.1",
+    "nue-edgeserver": "npm:@tormnator/nue-edgeserver@0.1.0-tor.2",
     "nuestate": "npm:@tormnator/nuestate@0.1.1-tor.1",
     "nueyaml": "npm:@tormnator/nueyaml@0.1.0-tor.1",
     "nuedom": "npm:@tormnator/nuedom@0.1.1-tor.1",
