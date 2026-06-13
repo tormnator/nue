@@ -74,6 +74,30 @@ It is two resolution names pointing at the same local workspace package.
 The scoped entry records the actual workspace package identity.
 The unscoped entry records the alias name that satisfies imports such as `import ... from 'nueyaml'`.
 
+## Why `@tormnator/nuekit` Looks Different in Consumer `node_modules`
+
+When a consumer project depends directly on `@tormnator/nuekit`, the package is installed under its real scoped package name:
+
+```text
+node_modules/@tormnator/nuekit
+```
+
+That is different from `nuekit`'s internal Nue dependencies, which are declared as aliases:
+
+```json
+"nuedom": "npm:@tormnator/nuedom@0.1.1-tor.1",
+"nuemark": "npm:@tormnator/nuemark@0.7.1-tor.1"
+```
+
+Those dependencies are installed under the alias keys, such as:
+
+```text
+node_modules/nuedom
+node_modules/nuemark
+```
+
+The asymmetry is expected. The top-level app installs `@tormnator/nuekit` by its scoped package name, while `nuekit` asks the package manager to expose its internal dependencies under the unscoped names that the source code imports.
+
 ## Why Not Use Only `workspace:*`
 
 `workspace:*` is useful when the dependency key is the actual workspace package name.
