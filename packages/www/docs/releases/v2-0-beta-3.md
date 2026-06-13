@@ -4,7 +4,7 @@ Status: Released
 CRI: `v2-0-beta-3`
 Release date: 2026-06-13
 Primary npm package line: `@tormnator/nuekit@2.0.0-beta.3-tor.2`
-Source commit: `6d387ab5` (`main` release merge and npm publish source)
+npm publish source commit: `6d387ab5` (`main` release merge)
 
 ## Summary
 
