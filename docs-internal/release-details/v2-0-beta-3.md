@@ -693,9 +693,14 @@ const nueEnv = createResourceEnv({
 
 ## Remaining Open Items Before Final Release
 
-These items must be resolved before the official Beta 3 release is complete:
+No release-blocking items remain.
 
-1. **Final checklist** — Run the RPP Final Review Checklist and record any residual risks.
+Final RPP checklist result on 2026-06-13: passed.
+
+Residual notes:
+
+- npm verification commands print warnings for user-level `min-release-age` / `minimum-release-age` npm config keys. These warnings do not affect the published package versions or npm dist-tags.
+- GitHub Release API output reports `targetCommitish: master`, but the release is attached to tag `v2-0-beta-3`; the pushed annotated tag peels to the final `main` commit and the release body records the exact tag target.
 
 ---
 
