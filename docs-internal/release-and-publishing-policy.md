@@ -399,11 +399,30 @@ Source-state terms used below:
 15. Create a Git tag for the final `main` release record commit, then create the GitHub Release from that tag.
 16. Fast-forward Git `dev` to the final Git `main` commit and push Git `dev`.
 
-Promotion preflight:
+**Promotion preflight:**
 
 - Verify `dev`, `main`, `origin/dev`, and `origin/main` before promotion.
 - Prefer fast-forward promotion when `main` is already an ancestor of `dev`. If `main` has unique commits, use a normal merge that preserves both histories and records the divergence in the release details.
 - Do not force-push `main` or discard unique `main` commits during release promotion.
+
+**Release Process AI Prompt:**
+*This prompt was first used on 6/13/2026 for the Nue 2.0 Beta 3 release.*
+```markdown
+## Goal
+- Release Nue 2.0 Beta 3
+
+## Context:
+- We are at the end of the release cycle and all my preparations are finished.
+
+## Approach
+- Follow the instructions in the Release and Publishing Policy (RPP), starting with the "End A Release Cycle" section to fully release the product.
+- First ask me questions while in "Ask mode", second, on my command, create a plan in "Plan mode", and third, implement the release.
+- Although some manual interventions during planning and/or implementation are unavoidable, let's see how we can prepare as well as possible to make the planning and implementation as smooth and efficient as possible.
+
+## Done when
+- You consider the plan completed
+- The "Final Review Checklist" passes
+```
 
 ## Official npm Publishing
 
