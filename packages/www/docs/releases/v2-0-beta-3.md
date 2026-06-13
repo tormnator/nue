@@ -1,9 +1,10 @@
 # Nue 2.0 Beta 3
 
-Status: Draft
+Status: Released
 CRI: `v2-0-beta-3`
 Release date: 2026-06-13
 Primary npm package line: `@tormnator/nuekit@2.0.0-beta.3-tor.2`
+Source commit: `6d387ab5` (`main` release merge and npm publish source)
 
 ## Summary
 
@@ -182,8 +183,10 @@ Validation for the release cycle included:
 - Final release-candidate package test baseline on 2026-06-13: `nueyaml` 24 pass; `nueglow` 7 pass; `nuedom` 190 pass, 1 skip; `nuestate` 9 pass, 2 skip; `nue-edgeserver` 18 pass; `nuemark` 116 pass, 1 skip; `nuekit` 178 pass, 3 skip.
 - Final template validation on 2026-06-13: `spa` and `full` templates built successfully with local `@tormnator/nuekit@2.0.0-beta.3-tor.2`.
 - Final package dry-runs on 2026-06-13: `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` with `--access public --tag latest`.
+- Final npm publish on 2026-06-13 from `main` commit `6d387ab5`: `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` published to `latest`.
+- Final npm package-set verification on 2026-06-13: all seven `@tormnator` packages resolve to the versions listed in Package Versions through npm dist-tag `latest`.
 
-Source commit, npm `latest` verification, Git tag, and GitHub Release URL are pending before this draft is marked released.
+Git tag and GitHub Release URL are pending at the time this release record was prepared.
 
 ## Known Issues
 
