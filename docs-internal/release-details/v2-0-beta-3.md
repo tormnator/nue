@@ -1,10 +1,10 @@
 # Release Details — Nue 2.0 Beta 3 (v2-0-beta-3)
 
 **Document type:** Release Details — internal working document  
-**Status:** Released - npm `latest` published; Git tag and GitHub Release pending
+**Status:** Released - npm `latest`, Git tag, and GitHub Release complete
 **CRI:** v2-0-beta-3  
 **Draft date:** 2026-06-11  
-**Release tag:** `v2-0-beta-3`  
+**Release tag:** `v2-0-beta-3` (`5de3902c`)
 **Target release:** Full `@tormnator` package set with version-incremented packages for post-publish package changes
 **Release branch:** `dev` → `main` (`main` release merge and npm publish source: `6d387ab5`)
 **Release notes canonical location:** `packages/www/docs/releases/v2-0-beta-3.md` (GitHub URL used for this fork cycle - see note below)
@@ -63,7 +63,8 @@ Beta 3 is the first coordinated release of the `tormnator/nue` fork as a publicl
 | First npm publish date | 2026-05-23 |
 | First npm publish source commit | `eccbecd7` |
 | Main branch promotion commit | `6d387ab5` — 2026-06-13 (`Merge dev for Nue 2.0 Beta 3 release`) |
-| Git release tag | `v2-0-beta-3` |
+| Git release tag | `v2-0-beta-3` → `5de3902c` |
+| GitHub Release | https://github.com/tormnator/nue/releases/tag/v2-0-beta-3 |
 
 ---
 
@@ -606,6 +607,8 @@ nue create spa ./packages/templates
 | Main branch promotion — 2026-06-13 | Completed; `origin/main` updated to merge commit `6d387ab5` |
 | Official npm publish — 2026-06-13 | Completed; `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` published to `latest` |
 | Final npm package-set verification — 2026-06-13 | Passed; npm `latest` resolves to the package versions listed for all seven `@tormnator` packages |
+| Git tag — 2026-06-13 | Completed; `v2-0-beta-3` pushed to `origin`, targeting `5de3902c` |
+| GitHub Release — 2026-06-13 | Completed; https://github.com/tormnator/nue/releases/tag/v2-0-beta-3 |
 
 > **Resolved validation gap:** The 2026-05-23 packages did not include M4a or M4b changes. The official release resolved this by publishing `@tormnator/nuekit@2.0.0-beta.3-tor.2` from the `main` release merge commit. Unchanged packages remain on their previously published exact versions.
 
@@ -691,10 +694,7 @@ const nueEnv = createResourceEnv({
 
 These items must be resolved before the official Beta 3 release is complete:
 
-1. **Release record commit** — Commit and push the npm publish results and released-status updates on `main`.
-2. **Git tag** — Create `v2-0-beta-3` tag after approval.
-3. **GitHub Release** — Create GitHub Release from `v2-0-beta-3` tag per RPP after approval.
-4. **Final checklist** — Run the RPP Final Review Checklist and record any residual risks.
+1. **Final checklist** — Run the RPP Final Review Checklist and record any residual risks.
 
 ---
 

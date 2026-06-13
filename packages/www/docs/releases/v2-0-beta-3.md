@@ -5,6 +5,8 @@ CRI: `v2-0-beta-3`
 Release date: 2026-06-13
 Primary npm package line: `@tormnator/nuekit@2.0.0-beta.3-tor.2`
 npm publish source commit: `6d387ab5` (`main` release merge)
+Git tag: `v2-0-beta-3` (`5de3902c`)
+GitHub Release: https://github.com/tormnator/nue/releases/tag/v2-0-beta-3
 
 ## Summary
 
@@ -185,8 +187,10 @@ Validation for the release cycle included:
 - Final package dry-runs on 2026-06-13: `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` with `--access public --tag latest`.
 - Final npm publish on 2026-06-13 from `main` commit `6d387ab5`: `@tormnator/nue-edgeserver@0.1.0-tor.2` and `@tormnator/nuekit@2.0.0-beta.3-tor.2` published to `latest`.
 - Final npm package-set verification on 2026-06-13: all seven `@tormnator` packages resolve to the versions listed in Package Versions through npm dist-tag `latest`.
+- Git tag `v2-0-beta-3` was created and pushed, targeting `5de3902c`.
+- GitHub Release was created at https://github.com/tormnator/nue/releases/tag/v2-0-beta-3.
 
-Git tag and GitHub Release URL are pending at the time this release record was prepared.
+The npm package contents were published from the `6d387ab5` main release merge. The Git tag targets `5de3902c`, which adds the release-record updates for the npm publish results.
 
 ## Known Issues
 
