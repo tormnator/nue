@@ -241,6 +241,21 @@ test('picture', () => {
   expect(html).toEndWith('</a><figcaption>Hello</figcaption></figure>')
 })
 
+test('[image] alt only — sets alt on img, no figcaption', () => {
+  const html = renderLines(['[image /foo.png]', '  alt: A description'])
+  expect(html).toBe('<figure><img alt="A description" loading="lazy" src="/foo.png"></figure>')
+})
+
+test('[image] caption only — figcaption rendered, no alt on img', () => {
+  const html = renderLines(['[image /foo.png]', '  caption: A caption'])
+  expect(html).toBe('<figure><img loading="lazy" src="/foo.png"><figcaption>A caption</figcaption></figure>')
+})
+
+test('[image] both alt and caption — alt on img, figcaption for caption', () => {
+  const html = renderLines(['[image /foo.png]', '  alt: A description', '  caption: A caption'])
+  expect(html).toBe('<figure><img alt="A description" loading="lazy" src="/foo.png"><figcaption>A caption</figcaption></figure>')
+})
+
 test('[object] tag', () => {
   const html = renderLines(['[object table.html]', '  [! foo.png]'])
   expect(html).toInclude('<object type="text/html" data="table.html" loading="lazy">')

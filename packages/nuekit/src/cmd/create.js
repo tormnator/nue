@@ -1,12 +1,13 @@
 
-import { mkdir } from 'node:fs/promises'
+import { cp, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
 export const NAMES = 'blog full minimal spa'.split(' ')
+export const DEFAULT_BASEURL = 'https://github.com/tormnator/nue/raw/main/packages/templates'
 
 export async function create(name, { dir, baseurl }) {
 
-  if (!name) return console.log('❌ USAGE: nue create <template-name>')
+  if (!name) return console.log('❌ USAGE: nue create <template-name> [template-source]')
 
   if (!NAMES.includes(name)) {
     return console.log('❌ Choose one: ' + NAMES.join(', '))
@@ -17,9 +18,13 @@ export async function create(name, { dir, baseurl }) {
   }
 
   try {
-    // load zip from local or remote
-    const zip = dir ? await getLocalZip(name, dir) : await fetchZip(name, baseurl)
-    await unzip(name, zip)
+    if (dir && await copyLocalTemplate(name, dir)) {
+      // copied live template folder
+    } else {
+      const source = dir || baseurl
+      const zip = source ? await getTemplateZip(name, source) : await fetchZip(name)
+      await unzip(name, zip)
+    }
 
     // success message
     console.log(`\n🎉  "${name}" directory created. Your next steps:`)
@@ -33,6 +38,34 @@ export async function create(name, { dir, baseurl }) {
   }
 }
 
+export function isRemoteSource(source='') {
+  return /^https?:\/\//.test(source)
+}
+
+export async function copyLocalTemplate(name, dir) {
+  if (isRemoteSource(dir)) return false
+
+  const path = join(dir, name)
+  try {
+    if (!(await stat(path)).isDirectory()) return false
+  } catch {
+    return false
+  }
+
+  console.log(`📁 Using local template folder: ${path}`)
+  await cp(path, name, { recursive: true, filter: shouldCopyTemplateFile })
+  return true
+}
+
+function shouldCopyTemplateFile(path) {
+  const name = path.split(/[\\/]/).pop()
+  return !['.dist', 'node_modules'].includes(name)
+}
+
+export async function getTemplateZip(name, source) {
+  return isRemoteSource(source) ? await fetchZip(name, source) : await getLocalZip(name, source)
+}
+
 
 export async function getLocalZip(name, dir) {
   const path = join(dir, `${name}.zip`)
@@ -43,10 +76,10 @@ export async function getLocalZip(name, dir) {
 
 // download from github
 //
-export async function fetchZip(name, baseurl='https://github.com/nuejs/nue/raw/master/packages/templates') {
+export async function fetchZip(name, baseurl=DEFAULT_BASEURL) {
   const url = `${baseurl}/${name}.zip`
   const resp = await fetch(url)
-  if (resp.status != 200) throw new Error(`${url} not found`)
+  if (resp.status !== 200) throw new Error(`${url} not found`)
   console.log(`📦 Downloading ${name} template...`)
   return resp
 }
@@ -61,7 +94,7 @@ export async function unzip(dir, zip) {
     await Bun.write(filename, zip)
 
     // extract (expects "minimal" directory inside zip)
-    const cmd = process.platform == 'win32' ? ['tar', '-xf', filename] : ['unzip', '-q', filename]
+    const cmd = process.platform === 'win32' ? ['tar', '-xf', filename] : ['unzip', '-q', filename]
     const proc = Bun.spawn(cmd)
     const exitCode = await proc.exited
 

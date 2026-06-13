@@ -1,16 +1,43 @@
 
-import { join, normalize, dirname, extname, basename, sep } from 'node:path'
+import { dirname, extname, basename } from 'node:path'
 
 // app, lib, server are @shared, but not auto-included
-const AUTO_INCLUDED = ['data', 'design', 'ui'].map(dir => join('@shared', dir))
+const AUTO_INCLUDED = ['data', 'design', 'ui'].map(dir => `@shared/${dir}`)
 
-const ASSET_TYPES = ['.html', '.js', '.ts', '.yaml', '.css']
+const ASSET_TYPES = ['.html', '.js', '.ts', '.yaml', '.json', '.css']
 
 
-export function listDependencies(basepath, { paths, exclude=[], include=[] }) {
+function getDependencyRank(path) {
+  // Accumulation categories load broad-to-specific: shared, then root, then nested scopes.
+  const dir = dirname(path)
+  const depth = dir == '.' ? 0 : dir.split('/').filter(Boolean).length
+
+  if (dir.startsWith('@shared')) return [0, depth]
+  if (dir == '.') return [1, depth]
+  return [2, depth]
+}
+
+
+function sortDependencies(paths) {
+  return paths
+    .map((path, index) => ({ path, index, rank: getDependencyRank(path) }))
+    .sort((left, right) => {
+      const [groupA, depthA] = left.rank
+      const [groupB, depthB] = right.rank
+
+      if (groupA != groupB) return groupA - groupB
+      if (depthA != depthB) return depthA - depthB
+      // Preserve original discovery order for ties so same-scope HTML libs stay stable.
+      return left.index - right.index
+    })
+    .map(entry => entry.path)
+}
+
+
+export function listDependencies(basepath, { paths, exclude=[], include=[], is_spa=false }) {
 
   // folder dependency
-  let deps = paths.filter(path => isDep(basepath, path, paths))
+  let deps = paths.filter(path => isDep(basepath, path, paths, is_spa))
 
   // extensions
   deps = deps.filter(path => ASSET_TYPES.includes(extname(path)))
@@ -27,11 +54,11 @@ export function listDependencies(basepath, { paths, exclude=[], include=[] }) {
     })
   })
 
-  return [...new Set(deps)]
+  return sortDependencies([...new Set(deps)])
 }
 
 
-function isDep(page_path, asset_path, all_paths) {
+function isDep(page_path, asset_path, all_paths, is_spa) {
   // self
   if (page_path == asset_path) return false
 
@@ -40,17 +67,19 @@ function isDep(page_path, asset_path, all_paths) {
   if (dir == '.') return true
 
   // shared dir -> auto-included
-  if (AUTO_INCLUDED.some(dir => asset_path.startsWith(dir + sep))) return true
+  if (AUTO_INCLUDED.some(dir => asset_path.startsWith(dir + '/'))) return true
 
-  // SPA: entire app tree
-  if (basename(page_path) == 'index.html') {
+  // SPA entry points include their full subtree when explicitly marked as SPA.
+  if (basename(page_path) == 'index.html' && is_spa) {
     const dir = dirname(page_path)
-    return dir == '.' ? !all_paths.some(el => extname(el) == '.md') : asset_path.startsWith(dir + sep)
+    return dir == '.' ? !all_paths.some(el => extname(el) == '.md') : asset_path.startsWith(dir + '/')
   }
 
-  // index.md -> home dir
+  // Root index pages auto-include the special home directory.
   const pagedir = dirname(page_path)
-  if (pagedir == '.' && basename(page_path) == 'index.md') return dirname(asset_path) == 'home'
+  if (pagedir == '.' && ['index.md', 'index.html'].includes(basename(page_path))) {
+    return dirname(asset_path) == 'home'
+  }
 
   // hierarchical inclusion (handles root ui and app ui)
   const page_dirs = parseDirs(dirname(page_path))
@@ -58,7 +87,7 @@ function isDep(page_path, asset_path, all_paths) {
 
   // check if asset is in ui of any parent directory
   return page_dirs.some(pageDir => {
-    const ui_dir = pageDir ? join(pageDir, 'ui') : 'ui'
+    const ui_dir = pageDir ? pageDir + '/ui' : 'ui'
     return asset_dir == ui_dir || asset_dir == pageDir
   })
 }
@@ -66,6 +95,6 @@ function isDep(page_path, asset_path, all_paths) {
 
 // parseDirs('a/b/c') --> ['a', 'a/b', 'a/b/c']
 export function parseDirs(dir) {
-  const els = normalize(dir).split(sep)
+  const els = dir.split('/').filter(Boolean)
   return els.map((el, i) => els.slice(0, i + 1).join('/'))
 }

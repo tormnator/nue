@@ -1,5 +1,5 @@
 
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 
 import { parseNuemark } from 'nuemark'
 import { parseYAML } from 'nueyaml'
@@ -8,10 +8,56 @@ import { parseNue } from 'nuedom'
 import { renderMD, renderHTML } from './render/page'
 import { getCollections } from './collections'
 import { mergeConf, mergeData } from './conf'
-import { listDependencies } from './deps'
-import { mergeSharedData } from './site'
+import { listDependencies, parseDirs } from './deps'
+import { applySharedDataModifiers, parseSharedData } from './site'
 import { renderSVG } from './render/svg'
 import { minifyCSS } from './tools/css'
+
+
+function getAssetRank(pagePath, assetPath) {
+  // HTML libs are winner-selection: narrower scopes sort ahead of broader fallbacks.
+  const assetDir = dirname(assetPath)
+  const is_ui = assetDir.endsWith('/ui') || assetDir == 'ui'
+  const scopeDir = is_ui ? assetDir.slice(0, -3) || '.' : assetDir
+
+  if (assetDir.startsWith('@shared/ui')) return [0, 0, is_ui ? 1 : 0]
+  if (scopeDir == '.') return [2, 0, is_ui ? 1 : 0]
+
+  const pageDirs = parseDirs(dirname(pagePath)).filter(Boolean).filter(dir => dir != '.')
+  const depth = pageDirs.lastIndexOf(scopeDir)
+
+  if (depth >= 0) return [3, depth + 1, is_ui ? 1 : 0]
+  if (scopeDir.startsWith(dirname(pagePath) + '/')) return [1, 0, is_ui ? 1 : 0]
+
+  return [1, 0, is_ui ? 1 : 0]
+}
+
+function sortHTMLAssets(pagePath, assets) {
+  return assets
+    .map((asset, index) => ({ asset, index, rank: getAssetRank(pagePath, asset.path) }))
+    .sort((left, right) => {
+      const [groupA, depthA, uiA] = left.rank
+      const [groupB, depthB, uiB] = right.rank
+
+      if (groupA != groupB) return groupB - groupA
+      if (depthA != depthB) return depthB - depthA
+      if (uiA != uiB) return uiA - uiB
+      return left.index - right.index
+    })
+    .map(entry => entry.asset)
+}
+
+
+function sortAppConfigAssets(assets) {
+  // App config is an override cascade, so broader app.yaml files merge before deeper ones.
+  return assets
+    .map((asset, index) => ({ asset, index, depth: dirname(asset.path).split('/').filter(Boolean).length }))
+    .sort((left, right) => {
+      if (left.depth != right.depth) return left.depth - right.depth
+      return left.index - right.index
+    })
+    .map(entry => entry.asset)
+}
 
 
 export function createAsset(file, site={}) {
@@ -28,23 +74,38 @@ export function createAsset(file, site={}) {
     return arr.map(file => createAsset(file, site))
   }
 
-  function getDeps(opts={}) {
+  async function getDeps(opts={}) {
     const { include, exclude } = opts
     const paths = files.map(f => f.path)
-    const deps = listDependencies(file.path, { paths, include, exclude })
+    const is_spa = await isSPAEntry()
+    const deps = listDependencies(file.path, { paths, include, exclude, is_spa })
     return toAssets(deps)
   }
 
+  async function isSPAEntry() {
+    if (!file.is_html || file.base != 'index.html') return false
+    const { is_dhtml=false, root={} } = await parse()
+    return is_dhtml && root.tag == 'body'
+  }
+
   async function config() {
-    const asset = getDeps().find(f => f.base == 'app.yaml')
-    return asset ? mergeConf(conf, await asset.parse()) : conf
+    const app_conf_assets = sortAppConfigAssets((await getDeps()).filter(f => f.base == 'app.yaml'))
+
+    let ret = conf
+    for (const asset of app_conf_assets) {
+      ret = mergeConf(ret, await asset.parse())
+    }
+
+    return ret
   }
 
   async function data() {
-    const assets = getDeps()
-    const app_files = assets.filter(f => f.is_yaml && f.name != 'site' && f.basedir != '@shared')
+    const assets = await getDeps()
+    const app_files = assets.filter(f => (f.is_yaml || f.is_json) && f.name != 'site' && f.basedir != '@shared')
     const app_data = await Promise.all(app_files.map(f => f.parse()))
-    const ret = mergeData([conf, ...app_data])
+    // Shared static data establishes the base layer before root/app/page data overrides it.
+    const shared_data = await parseSharedData(assets)
+    const ret = mergeData([...shared_data, conf, ...app_data])
 
     // content collections
     const colls = conf.collections
@@ -55,7 +116,7 @@ export function createAsset(file, site={}) {
     }
 
     // shared data, functions, and transformation
-    await mergeSharedData(assets, ret)
+    await applySharedDataModifiers(assets, ret)
 
     return ret
   }
@@ -70,7 +131,7 @@ export function createAsset(file, site={}) {
       const str = await file.text()
 
       cachedObj = file.is_js || file.is_ts ? await import(join(process.cwd(), file.path) + '?' + Math.random())
-        : file.is_json ? JSON.parsek(str)
+        : file.is_json ? JSON.parse(str)
         : file.is_md ? parseNuemark(str)
         : file.is_yaml ? parseYAML(str)
         : parseNue(str)
@@ -101,8 +162,11 @@ export function createAsset(file, site={}) {
   async function components(force_html) {
     const { is_dhtml=false } = await parse()
     const ret = []
+    const html_assets = sortHTMLAssets(file.path, (await assets()).filter(el => el.is_html))
 
-    for (const asset of (await assets()).filter(el => el.is_html)) {
+    for (const asset of html_assets) {
+      // Optimization candidate: this still parses non-lib HTML files, but we currently
+      // need AST metadata to tell libs from pages and to preserve html/dhtml compatibility.
       const ast = await asset.parse()
       const { doctype='' } = ast
 

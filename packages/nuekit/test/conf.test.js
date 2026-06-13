@@ -14,6 +14,8 @@ test('site overrides', async () => {
     server:
       dir: epic-server
 
+    platform: test-platform
+
     meta:
       title: Bad
 
@@ -26,6 +28,7 @@ test('site overrides', async () => {
 
   expect(conf).toMatchObject({
     server: { dir: "epic-server" },
+    platform: 'test-platform',
     meta: { title: "Good" },
     port: 666,
     is_prod: true,
@@ -33,6 +36,8 @@ test('site overrides', async () => {
 
   expect(conf.ignore).toContain('functions')
   expect(conf.ignore).toContain('epic-server')
+  expect(conf.ignore).toContain('wrangler.json')
+  expect(conf.ignore).toContain('wrangler.jsonc')
   expect(conf.ignore.length).toBeGreaterThan(10)
 
   await removeAll()
@@ -62,7 +67,7 @@ test('simple override', () => {
 
 test('mergeData', () => {
   const data = mergeData([
-    { sitename: 'Acme', port: 4000, meta: { title: 'Old', desc: 'Old' } },
+    { sitename: 'Acme', port: 4000, resources: { models: {} }, meta: { title: 'Old', desc: 'Old' } },
     { meta: { title: 'New' }, team: [], desc: 'New' }
   ])
 
@@ -72,6 +77,30 @@ test('mergeData', () => {
     desc: "New",
     team: [],
   })
+})
+
+test('resources config', async () => {
+  const CONF = trim(`
+    resources:
+      models:
+        users:
+          kind: collection
+          local: server/data/users.json
+  `)
+
+  await writeAll([['site.yaml', CONF]])
+  const conf = await readSiteConf({ root: testDir })
+
+  expect(conf.resources).toEqual({
+    models: {
+      users: {
+        kind: 'collection',
+        local: 'server/data/users.json'
+      }
+    }
+  })
+
+  await removeAll()
 })
 
 
@@ -107,5 +136,73 @@ test('asset data/config', async () => {
     port: 5000
   })
 
+})
+
+
+test('shared data acts as a base layer', async () => {
+
+  const files = [
+    { path: '@shared/data/theme.yaml', text: 'color: blue\nshared_only: base' },
+    { path: 'team.yaml', text: 'color: green\nroot_only: root' },
+    { path: 'blog/entry/data.yaml', text: 'color: red\npage_only: page' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: {} })
+
+  expect(await asset.data()).toEqual({
+    color: 'red',
+    shared_only: 'base',
+    root_only: 'root',
+    page_only: 'page',
+  })
+})
+
+
+test('nested app.yaml files cascade by specificity', async () => {
+
+  const files = [
+    { path: 'blog/app.yaml', text: 'include: [ syntax ]\nmeta:\n title: Blog\n desc: From blog' },
+    { path: 'blog/entry/app.yaml', text: 'include: [ chart ]\nmeta:\n title: Entry' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: { is_prod: true, port: 5000 } })
+
+  expect(await asset.config()).toEqual({
+    is_prod: true,
+    include: ['chart'],
+    meta: {
+      title: 'Entry',
+      desc: 'From blog',
+    },
+    port: 5000,
+  })
+})
+
+
+test('JSON data participates in the same hierarchy as YAML', async () => {
+
+  const files = [
+    { path: '@shared/data/team.json', text: '{ "name": "shared", "shared_only": true }' },
+    { path: 'team.json', text: '{ "name": "root", "root_only": true }' },
+    { path: 'blog/entry/data.json', text: '{ "name": "page", "page_only": true }' },
+  ].map(file => {
+    const { text } = file
+    return { ...getFileInfo(file.path), text: async function() { return text } }
+  })
+
+  const asset = createAsset({ path: 'blog/entry/index.md' }, { files, conf: {} })
+
+  expect(await asset.data()).toEqual({
+    name: 'page',
+    shared_only: true,
+    root_only: true,
+    page_only: true,
+  })
 })
 

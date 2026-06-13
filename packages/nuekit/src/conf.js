@@ -5,12 +5,12 @@ import { join } from 'node:path'
 import { parseYAML } from 'nueyaml'
 
 // configuration properties (separate from data)
-const SITE_CONF = 'site design server collections production port sitemap links'.split(' ')
+const SITE_CONF = 'site design server collections resources production port sitemap links platform'.split(' ')
 
 const ALL_CONF = SITE_CONF.concat('include exclude meta content import_map svg'.split(' '))
 
 // default skip list
-const SKIP = `node_modules .toml .rs .lock package.json .lockb lock.yaml README.md Makefile`.split(' ')
+const SKIP = `node_modules .toml .rs .lock package.json wrangler.json wrangler.jsonc .lockb lock.yaml README.md Makefile`.split(' ')
 
 
 export async function readSiteConf(args={}) {
@@ -30,8 +30,8 @@ export async function readSiteConf(args={}) {
 
   // build ignore list into config
   const ignore = [...SKIP, ...(conf.site?.skip || [])]
-  ignore.push(conf.server?.dir || join('@shared', 'server'))
-  ignore.push(join('@shared', 'test'))
+  ignore.push(conf.server?.dir || '@shared/server')
+  ignore.push('@shared/test')
 
   // production override
   if (is_prod && conf.meta) {

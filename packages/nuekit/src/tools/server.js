@@ -43,22 +43,35 @@ export function createServer({ port=4000, handler }, callback) {
 }
 
 
-const sessions = []
+const sessions = new Map()
 
 const websocket = {
   open(ws) {
-    sessions.push(ws)
-    // console.log(`HMR connected, total: ${sessions.length}`)
+    sessions.set(ws, { pathname: null })
+    // console.log(`HMR connected, total: ${sessions.size}`)
+  },
+  message(ws, raw) {
+    try {
+      const { type, pathname } = JSON.parse(raw)
+      if (type === 'pathname') sessions.get(ws).pathname = pathname
+    } catch {}
   },
   close(ws) {
-    const i = sessions.indexOf(ws)
-    if (i >= 0) sessions.splice(i, 1)
+    sessions.delete(ws)
   }
 }
 
 export function broadcast(data) {
-  sessions.forEach(ws => {
+  for (const [ws] of sessions) {
     try { ws.send(JSON.stringify(data)) } catch(e) {}
-  })
+  }
+}
+
+export function broadcastTo(data, pathname) {
+  for (const [ws, session] of sessions) {
+    if (session.pathname === pathname) {
+      try { ws.send(JSON.stringify(data)) } catch(e) {}
+    }
+  }
 }
 

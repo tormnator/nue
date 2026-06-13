@@ -33,4 +33,14 @@ Visit [Nue website](https://nuejs.org) for comprehensive documentation.
 
 See the [migration guide](https://nuejs.org/docs/migration) for the complete story.
 
+## About the tormnator fork of Nue
 
+This fork began as a way to study and learn from Nue, then became an active compatibility and experimentation fork after real-world use exposed issues that needed fixes, including Windows compatibility bugs.
+
+In April 2026, work started on making Nue 2.0 usable in real projects. That effort has led to a Nue 2.0 Beta 3 release with fixes, new features, Cloudflare-oriented deployment work, and supporting internal documentation. See the [Beta 3 release notes](https://github.com/tormnator/nue/blob/main/packages/www/docs/releases/v2-0-beta-3.md) and [Nuekit changelog](CHANGELOG.md) for details.
+
+The current plan is to test Beta 3 in real projects, then decide whether to stop the project or continue with a Beta 4 step or a full release. A later decision will also be made about whether the work should be proposed back to the original Nue project or continue under a separate name.
+
+Work on this fork takes place on the `dev` branch and short-lived topic branches off `dev`. A cleanup of branches is expected at some point. See the [branching policy](https://github.com/tormnator/nue/blob/main/docs-internal/branching-policy.md) for details.
+
+June 13, 2026 - Tor Langlo

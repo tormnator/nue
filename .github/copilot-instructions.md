@@ -1,9 +1,9 @@
 - Use Bun for repo work unless the user explicitly asks for Node.
-- Do not change the existing Node-based test scripts in `packages/nueglow` or `packages/nuemark` unless requested.
-
-- Do Git and GitHub work only against `origin`. Use `upstream` only as read-only reference unless the user explicitly asks otherwise.
+- Default Nue GitHub target is `tormnator/nue` (`origin`). Use it for issues, issue references, discussions, PR targets, and GitHub links unless the user explicitly asks otherwise.
+- Treat `nuejs/nue` (`upstream`) as read-only reference only. This default still applies when the active workspace folder is `archie-nue`.
+- For new sessions, assume normal Nue work targets the `nue` repo and follows the `dev`-based branch flow unless the user points to another repo or a different release or upstream flow.
 - Before making code, doc, or Git changes, always check the current branch and switch or create the correct branch if needed.
-- For tracked bug fixes or behavior changes, consider creating a GitHub issue on `origin` before implementation unless the user explicitly wants to skip that step.
+- For tracked bug fixes or behavior changes, consider creating the issue first unless the user explicitly wants to skip that step.
 - Keep `master` upstream-aligned and use it as the clean reference branch.
 - Use `main` as the fork's official/latest branch.
 - Use `dev` as the active development branch and default parent for normal work.

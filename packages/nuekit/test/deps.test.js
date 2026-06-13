@@ -1,6 +1,7 @@
 
 import { test, expect } from 'bun:test'
 import { listDependencies, parseDirs } from '../src/deps'
+import { sortAssets } from '../src/site'
 
 const paths = [
 
@@ -55,8 +56,24 @@ test('SPA app', () => {
 
 test('root SPA', () => {
   const paths = [ 'ui/spa.css', 'ui/users.html', 'index.html' ]
-  const deps = listDependencies('index.html', { paths })
+  const deps = listDependencies('index.html', { paths, is_spa: true })
   expect(deps.length).toBe(2)
+})
+
+test('root index.html does not discover unrelated nested ui layouts', () => {
+  const deps = listDependencies('index.html', {
+    paths: [
+      'index.html',
+      '@shared/ui/layout.html',
+      'layout.html',
+      'shopping/ui/layout.html',
+      'shopping/index.html',
+    ]
+  })
+
+  expect(deps).toContain('@shared/ui/layout.html')
+  expect(deps).toContain('layout.html')
+  expect(deps).not.toContain('shopping/ui/layout.html')
 })
 
 test('MPA deps', () => {
@@ -108,6 +125,95 @@ test('home auto-include', () => {
   const deps = listDependencies('index.md', { paths, exclude: [ '@' ] })
   expect(deps.includes('home/layout.css')).toBeTrue()
   expect(deps.length).toBe(4)
+})
+
+
+test('home auto-include for root index.html', () => {
+  const deps = listDependencies('index.html', {
+    paths: ['site.yaml', 'globals.js', 'index.html', 'home/home.css', 'home/home.yaml'],
+    exclude: ['@'],
+  })
+
+  expect(deps).toContain('home/home.css')
+  expect(deps).toContain('home/home.yaml')
+  expect(deps).toEqual(['site.yaml', 'globals.js', 'home/home.css', 'home/home.yaml'])
+})
+
+
+test('MPA discovery includes ancestor ui folders', () => {
+  const deps = listDependencies('shopping/cart/index.md', {
+    paths: [
+      'site.yaml',
+      '@shared/ui/layout.html',
+      'layout.html',
+      'shopping/layout.html',
+      'shopping/ui/layout.html',
+      'shopping/cart/layout.html',
+      'shopping/cart/ui/layout.html',
+      'shopping/cart/index.md',
+    ]
+  })
+
+  expect(deps).toContain('@shared/ui/layout.html')
+  expect(deps).toContain('layout.html')
+  expect(deps).toContain('shopping/layout.html')
+  expect(deps).toContain('shopping/ui/layout.html')
+  expect(deps).toContain('shopping/cart/layout.html')
+  expect(deps).toContain('shopping/cart/ui/layout.html')
+})
+
+
+test('MPA discovery does not auto-include non-ui custom folders', () => {
+  const deps = listDependencies('shopping/cart/index.md', {
+    paths: [
+      'site.yaml',
+      'shopping/layout.html',
+      'shopping/ui/layout.html',
+      'shopping/components/layout.html',
+      'shopping/cart/layout.html',
+      'shopping/cart/ui/layout.html',
+      'shopping/cart/widgets/layout.html',
+      'shopping/cart/index.md',
+    ]
+  })
+
+  expect(deps).toContain('shopping/layout.html')
+  expect(deps).toContain('shopping/ui/layout.html')
+  expect(deps).toContain('shopping/cart/layout.html')
+  expect(deps).toContain('shopping/cart/ui/layout.html')
+  expect(deps).not.toContain('shopping/components/layout.html')
+  expect(deps).not.toContain('shopping/cart/widgets/layout.html')
+})
+
+
+test('MPA CSS and JS dependencies stay broad-to-specific', () => {
+  const paths = sortAssets([
+    '@shared/design/base.css',
+    '@shared/ui/keyboard.js',
+    'global.css',
+    'globals.js',
+    'blog/blog.css',
+    'blog/blog.js',
+    'blog/entry/page.css',
+    'blog/entry/page.js',
+    'blog/entry/index.md',
+  ])
+
+  const deps = listDependencies('blog/entry/index.md', { paths })
+
+  expect(deps.filter(path => path.endsWith('.css'))).toEqual([
+    '@shared/design/base.css',
+    'global.css',
+    'blog/blog.css',
+    'blog/entry/page.css',
+  ])
+
+  expect(deps.filter(path => path.endsWith('.js'))).toEqual([
+    '@shared/ui/keyboard.js',
+    'globals.js',
+    'blog/blog.js',
+    'blog/entry/page.js',
+  ])
 })
 
 

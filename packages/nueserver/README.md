@@ -2,6 +2,8 @@
 # Nueserver: Edge first development
 Nueserver is an HTTP server built for edge deployment. Write code locally, deploy globally when ready.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 > **Disclaimer** Nueserver currently works for local development only. It's the foundation for Nue's upcoming backend vision. See the [roadmap](https://nuejs.org/docs/roadmap) for details
 
 ## What is edge first
@@ -23,13 +25,13 @@ Nueserver provides a simple HTTP server with global route handlers. No classes, 
 
 ```javascript
 get('/api/users', async (c) => {
-  const users = await c.env.users.getAll()
+  const users = await c.env.models.users.getAll()
   return c.json(users)
 })
 
 post('/api/users', async (c) => {
   const data = await c.req.json()
-  const user = await c.env.users.create(data)
+  const user = await c.env.models.users.create(data)
   return c.json(user, 201)
 })
 
@@ -81,7 +83,7 @@ bun install --global nuekit
 Or install Nueserver directly as a library:
 
 ```bash
-bun install nue-edgeserver
+bun add nue-edgeserver@npm:@tormnator/nue-edgeserver@0.1.0-tor.2
 ```
 
 See the [Server API reference](https://nuejs.org/docs/server-api) for complete routing and context documentation.

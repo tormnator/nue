@@ -1,16 +1,20 @@
 {
-  "name": "nueyaml",
-  "version": "0.1.0",
+  "name": "@tormnator/nueyaml",
+  "version": "0.1.0-tor.1",
   "description": "YAML without the problems",
   "homepage": "https://nuejs.org/docs/nueyaml",
   "license": "MIT",
   "type": "module",
-  "main": "nueyaml",
+  "main": "nueyaml.js",
   "files": [ "nueyaml.js" ],
 
   "repository": {
-    "url": "https://github.com/nuejs/nue",
+    "url": "https://github.com/tormnator/nue",
     "directory": "packages/nueyaml",
     "type": "git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "dev"
   }
 }

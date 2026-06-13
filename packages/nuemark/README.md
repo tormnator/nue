@@ -2,6 +2,8 @@
 # Nuemark: Content first web development
 Nuemark is a Markdown-based authoring format for rich, interactive content. It places content at the heart of web development, delivering a true content-first approach where writing comes before coding, and structure drives presentation.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 <a href="https://nuejs.org/">
   <img src="https://nuejs.org/img/nuemark-content-big.png" width="650" height="1321">
 </a>

@@ -1,6 +1,8 @@
 # Nueyaml: YAML without the problems
 Nueyaml is YAML stripped down to its essence so you can write complex configurations without the usual YAML pitfalls.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 
 ## The problem with standard YAML
 The original YAML specification buried a beautiful idea under 80 pages of features that cause more problems than they solve. It guesses what you mean, often guessing wrong:

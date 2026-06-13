@@ -5,3 +5,17 @@ meta:
 server:
   dir: server
   reload: true
+
+resources:
+  models:
+    users:
+      kind: collection
+      local: server/data/users.json
+
+platform:
+  name: cloudflare-pages
+  resources:
+    models:
+      users:
+        binding: DB
+        table: users

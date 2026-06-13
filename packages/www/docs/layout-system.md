@@ -129,6 +129,8 @@ docs/
 
 A single file can contain multiple modules. Put your header, footer, and navigation all in one file if you prefer.
 
+On regular multi-page sites, automatic discovery is convention-based. Nue discovers layout modules from the page directory, its parent directories, their `ui/` subfolders, root-level layout files, and `@shared/ui/`.
+
 See [project structure](project-structure) for details on how to organize your layout for small vs large apps.
 
 
@@ -138,7 +140,18 @@ More specific modules override global ones:
 
 - `blog/layout.html` modules override `site.html` modules for blog pages
 - `blog/post.html` modules override `blog/layout.html` for individual posts
+- Within the same directory scope, files in the directory override files in that directory's `ui/` subfolder
+- Root layout files override `@shared/ui/` modules for the same slot
 - Page-level front matter overrides everything
+
+For example, on `blog/post/hello.md`, Nue resolves the `header` slot from the first matching scope in this order:
+
+1. `blog/post/*.html`
+2. `blog/post/ui/*.html`
+3. `blog/*.html`
+4. `blog/ui/*.html`
+5. Root-level layout files such as `layout.html` or `site.html`
+6. `@shared/ui/*.html`
 
 ## Disabling modules
 

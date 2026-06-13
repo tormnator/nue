@@ -4,6 +4,7 @@ import { build, matches, stats, buildAsset, buildAll, minifyJS } from '../../src
 import { testDir, writeAll, removeAll, fileset } from '../test-utils'
 import { trim } from '../../src/render/page'
 import { createSite } from '../../src/site'
+import { registerPlatform, unregisterPlatform } from '../../src/platform'
 
 
 
@@ -102,6 +103,16 @@ describe('build', async () => {
     expect(home).toInclude('<h1>Hello</h1>')
   })
 
+  test('buildAll clean tolerates missing dist', async () => {
+    const { dist } = CONF
+    const { assets } = await createSite(CONF)
+
+    await buildAll(assets, { dist, clean: true })
+    const results = await fileset(dist)
+
+    expect(await results.read('index.html')).toInclude('<h1>Hello</h1>')
+  })
+
 
   test('build feeds', async () => {
     const site = await createSite(CONF)
@@ -124,6 +135,19 @@ describe('build', async () => {
     const site = await createSite(CONF)
     const subset = await build(site, { dryrun: true, paths: ['.md', '.css'] })
     expect(subset.length).toBe(6)
+  })
+
+  test('platform build hook', async () => {
+    let context
+    registerPlatform({ name: 'test', build(args) { context = args } })
+
+    const site = await createSite({ ...CONF, platform: 'test' })
+    await build(site, { silent: true })
+
+    expect(context.platform).toBe('test')
+    expect(context.runtime.required).toBeFalse()
+
+    unregisterPlatform('test')
   })
 
 })

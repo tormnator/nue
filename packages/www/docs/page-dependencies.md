@@ -17,6 +17,7 @@ Global assets that apply to every page:
 global.css          # Site-wide styles
 app.js              # Global JavaScript
 site.yaml           # Site data
+team.json           # Site-wide JSON data
 ```
 
 ### App level
@@ -26,12 +27,25 @@ Area-specific assets that apply to pages within that directory:
 blog/
 ├── blog.css        # Only applies to blog pages
 ├── layout.html     # Blog-specific layouts
-└── data.yaml       # Blog data
+├── data.yaml       # Blog YAML data
+└── data.json       # Blog JSON data
 
 admin/
 ├── admin.js        # Only applies to admin pages
 └── uilib.html      # Admin UI components
 ```
+
+### Home page level
+Assets in the special `home/` directory are only included for the root home page:
+
+```
+home/
+├── home.css        # Only applies to /
+├── hero.html       # Only applies to /
+└── home.yaml       # Only applies to /
+```
+
+This applies to both root `index.md` and root `index.html`.
 
 ### Page level
 Assets in the same directory as the page:
@@ -40,7 +54,8 @@ Assets in the same directory as the page:
 blog/css-is-awesome/
 ├── effects.css     # Only applies to this specific page
 ├── awesome.html    # Page-specific components
-└── products.yaml   # Page-specific data
+├── products.yaml   # Page-specific YAML data
+└── products.json   # Page-specific JSON data
 ```
 
 Page-specific directories are rare but allow construction of complex content that needs dedicated assets.
@@ -54,12 +69,16 @@ Larger projects can use @shared directory for globally available assets:
 ├── ui/          # Auto-included UI components/controllers.
 ├── lib/         # Selective UI components/controllers
 ├── design/      # Design system CSS files (.css)
-└── data/        # Site-wide data files (.yaml)
+└── data/        # Site-wide data files (.yaml and .json)
 ```
 
 The UI components can operate either on client, on server, or both. The ui and lib directories can contain .html, .js, .ts, and component specific .css files.
 
 System-level assets load before root-level assets, establishing the foundation that everything else builds upon.
+
+For regular multi-page pages, automatic HTML discovery is still convention-based: Nue looks in the page directory, its parent directories, their `ui/` subfolders, root-level files, and `@shared/ui/`. Other subfolder names are not auto-discovered unless you include them explicitly or use SPA subtree loading.
+
+When multiple HTML library files define the same layout slot, Nue resolves them by page-relative scope rather than broad asset load order. More specific directories win over broader ones, a directory beats its own `ui/` subfolder, root layout files beat `@shared/ui/`, and `@shared/ui/` acts as the shared fallback.
 
 ## Include and exclude
 Control which assets load across your entire site in `site.yaml`:

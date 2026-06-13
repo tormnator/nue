@@ -1,10 +1,11 @@
 
-import { mkdir, rmdir, writeFile, unlink } from 'node:fs/promises'
-import { join, sep } from 'node:path'
+import { mkdir, rm, writeFile, unlink } from 'node:fs/promises'
+import { join } from 'node:path'
 import { tmpdir } from 'os'
 
 import { generateSitemap, generateFeed } from '../render/feed'
 import { createSystemFiles } from '../system'
+import { runPlatformBuild } from '../platform'
 
 export async function build(site, args) {
   const { paths=[], dryrun, silent } = args
@@ -35,6 +36,8 @@ export async function build(site, args) {
     if (xml) await writeFile(join(dist, 'feed.xml'), xml)
   }
 
+  if (!paths.length) await runPlatformBuild(site, args, subset)
+
   // stats
   if (!silent) {
     stats(subset).forEach(line => console.log(line))
@@ -48,14 +51,14 @@ export async function buildAll(subset, args) {
   const { dist, init, verbose, clean } = args
 
   // .dist directory
-  if (clean) await rmdir(dist, { recursive: true, force: true })
+  if (clean) await rm(dist, { recursive: true, force: true })
   await mkdir(dist, { recursive: true })
 
   // .dist/@nue directory
   await createSystemFiles(dist, init)
 
   // build files
-  subset = subset.filter(el => !el.is_yaml && !el.dir.startsWith(`@shared${sep}data`))
+  subset = subset.filter(el => !el.is_yaml && !el.dir.startsWith('@shared/data'))
 
   await Promise.all(subset.map(async asset => {
     try {
@@ -123,7 +126,7 @@ export function matches(path, patterns) {
 }
 
 export async function minifyJS(code) {
-  const path = join(tmpdir(), `temp-${Date.now()}.js`)
+  const path = join(tmpdir(), `temp-${crypto.randomUUID()}.js`)
   await writeFile(path, code)
 
   const result = await Bun.build({

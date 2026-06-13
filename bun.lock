@@ -1,0 +1,84 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "nue-monorepo",
+    },
+    "packages/nuedom": {
+      "name": "@tormnator/nuedom",
+      "version": "0.1.1-tor.1",
+    },
+    "packages/nueglow": {
+      "name": "@tormnator/nue-glow",
+      "version": "0.2.5-tor.1",
+    },
+    "packages/nuekit": {
+      "name": "@tormnator/nuekit",
+      "version": "2.0.0-beta.3-tor.2",
+      "bin": {
+        "nue-tor": "./src/cli.js",
+      },
+      "dependencies": {
+        "nue-edgeserver": "npm:@tormnator/nue-edgeserver@0.1.0-tor.2",
+        "nue-glow": "npm:@tormnator/nue-glow@0.2.5-tor.1",
+        "nuedom": "npm:@tormnator/nuedom@0.1.1-tor.1",
+        "nuemark": "npm:@tormnator/nuemark@0.7.1-tor.1",
+        "nuestate": "npm:@tormnator/nuestate@0.1.1-tor.1",
+        "nueyaml": "npm:@tormnator/nueyaml@0.1.0-tor.1",
+      },
+    },
+    "packages/nuemark": {
+      "name": "@tormnator/nuemark",
+      "version": "0.7.1-tor.1",
+      "dependencies": {
+        "nue-glow": "npm:@tormnator/nue-glow@0.2.5-tor.1",
+        "nueyaml": "npm:@tormnator/nueyaml@0.1.0-tor.1",
+      },
+    },
+    "packages/nueserver": {
+      "name": "@tormnator/nue-edgeserver",
+      "version": "0.1.0-tor.2",
+    },
+    "packages/nuestate": {
+      "name": "@tormnator/nuestate",
+      "version": "0.1.1-tor.1",
+    },
+    "packages/nueyaml": {
+      "name": "@tormnator/nueyaml",
+      "version": "0.1.0-tor.1",
+    },
+    "packages/www": {
+      "name": "www",
+    },
+  },
+  "packages": {
+    "@tormnator/nue-edgeserver": ["@tormnator/nue-edgeserver@workspace:packages/nueserver"],
+
+    "@tormnator/nue-glow": ["@tormnator/nue-glow@workspace:packages/nueglow"],
+
+    "@tormnator/nuedom": ["@tormnator/nuedom@workspace:packages/nuedom"],
+
+    "@tormnator/nuekit": ["@tormnator/nuekit@workspace:packages/nuekit"],
+
+    "@tormnator/nuemark": ["@tormnator/nuemark@workspace:packages/nuemark"],
+
+    "@tormnator/nuestate": ["@tormnator/nuestate@workspace:packages/nuestate"],
+
+    "@tormnator/nueyaml": ["@tormnator/nueyaml@workspace:packages/nueyaml"],
+
+    "nue-edgeserver": ["@tormnator/nue-edgeserver@workspace:packages/nueserver"],
+
+    "nue-glow": ["@tormnator/nue-glow@workspace:packages/nueglow"],
+
+    "nuedom": ["@tormnator/nuedom@workspace:packages/nuedom"],
+
+    "nuemark": ["@tormnator/nuemark@workspace:packages/nuemark"],
+
+    "nuestate": ["@tormnator/nuestate@workspace:packages/nuestate"],
+
+    "nueyaml": ["@tormnator/nueyaml@workspace:packages/nueyaml"],
+
+    "www": ["www@workspace:packages/www"],
+  }
+}

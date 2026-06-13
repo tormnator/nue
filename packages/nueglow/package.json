@@ -1,15 +1,19 @@
 {
-  "name": "nue-glow",
-  "version": "0.2.5",
+  "name": "@tormnator/nue-glow",
+  "version": "0.2.5-tor.1",
   "description": "Markdown syntax highlighter for CSS developers",
   "homepage": "https://nuejs.org/blog/introducing-glow/",
   "license": "MIT",
   "type": "module",
 
   "repository": {
-    "url": "https://github.com/nuejs/nue",
+    "url": "https://github.com/tormnator/nue",
     "directory": "packages/nueglow",
     "type": "git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "dev"
   },
   "engines": {
     "bun": ">= 1",
@@ -17,7 +21,7 @@
   },
   "scripts": {
     "css": "bun ./css/build.js",
-    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand"
+    "test": "bun test"
   },
 
   "files": ["index.js"],

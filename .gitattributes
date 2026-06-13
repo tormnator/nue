@@ -1,0 +1,8 @@
+# Let Git decide whether a file is text. If text, store the the file
+# using LF in the repo and also check it out as LF locally:
+* text=auto eol=lf
+# NOTE: Ensure this setting matches `.editorconfig` (e.g `end_of_line = lf`)
+# and `.vscode/settings.json` (e.g `"files.eol": "\n"`) for consistency.
+
+# Explicitly mark unusual binary files to avoid corruption:
+*.myBinaryExt binary

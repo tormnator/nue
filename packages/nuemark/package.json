@@ -1,24 +1,28 @@
 {
-  "name": "nuemark",
-  "version": "0.7.0",
+  "name": "@tormnator/nuemark",
+  "version": "0.7.1-tor.1",
   "description": "Markdown flavour for rich, interactive websites",
   "homepage": "https://nuejs.org",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
   "repository": {
-    "url": "https://github.com/nuejs/nue",
+    "url": "https://github.com/tormnator/nue",
     "directory": "packages/nuemark",
     "type": "git"
   },
+  "publishConfig": {
+    "access": "public",
+    "tag": "dev"
+  },
   "scripts": {
-    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand"
+    "test": "bun test"
   },
   "dependencies": {
-    "nueyaml": "^0.1.0",
-    "nue-glow": "^0.2.0"
+    "nueyaml": "npm:@tormnator/nueyaml@0.1.0-tor.1",
+    "nue-glow": "npm:@tormnator/nue-glow@0.2.5-tor.1"
   },
-  "files": [ "src" ],
+  "files": [ "index.js", "src" ],
   "jest": {
     "setupFilesAfterEnv": [
       "<rootDir>/../../setup-jest.js"

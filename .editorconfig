@@ -1,5 +1,7 @@
 root = true
 charset = utf-8
+# Ensure this setting matches `.gitattributes` (e.g., `* text=auto eol=lf`) and
+# `.vscode/settings.json` (e.g `"files.eol": "\n"`) for consistency.
 end_of_line = lf
 indent_size = 2
 tab_width = 2
