@@ -1,0 +1,30 @@
+<!doctype dhtml lib>
+
+<join-list>
+
+  <p :if="sessionStorage.joined">{ done }</p>
+
+  <form :else class="ui flex" --width="40em" :onsubmit="submit">
+    <div class="stack">
+      <input type="email" placeholder="Your email" class="flex-3" name="email">
+      <textarea placeholder="{ comment }" name="comment"></textarea>
+    </div>
+    <div>
+      <button class="brand">{ cta }</button>
+    </div>
+  </form>
+
+  <script>
+    submit(e) {
+      const data = Object.fromEntries(new FormData(e.target).entries())
+
+      fetch('/public/members', {
+        'Content-Type': 'application/json',
+        body: JSON.stringify(data),
+        method: 'POST',
+      })
+
+      sessionStorage.joined = true
+    }
+  </script>
+</join-list>

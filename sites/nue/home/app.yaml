@@ -1,0 +1,7 @@
+
+class: dark heroic
+include: [ assembly, console, hero, stack, syntax ]
+title_template: false
+
+design:
+  inline_css: true

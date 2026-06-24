@@ -1,0 +1,30 @@
+<!doctype dhtml lib>
+
+<script>
+  import { createVideo } from './controller.js'
+</script>
+
+<video-player class="player paused">
+
+  <play-icon/>
+
+  <maximize-icon/>
+
+  <script>
+    mounted() {
+      const video = createVideo(this)
+      this.root.appendChild(video)
+    }
+  </script>
+
+</video-player>
+
+
+<svg :is="play-icon" width="70" height="70" viewBox="0 0 24 24" class="icon play">
+  <circle cx="12" cy="12" r="10"/>
+  <path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"/>
+</svg>
+
+<svg :is="maximize-icon" width="20" height="20" viewBox="0 0 24 24" class="icon maximize">
+  <path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/>
+</svg>

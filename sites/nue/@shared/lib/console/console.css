@@ -1,0 +1,76 @@
+
+@layer component {
+
+  .console {
+    background-color: var(--gray-subtle);
+    margin-block: 2em -.5em;
+    color: var(--text);
+    height: 33em;
+
+    pre {
+      font-family: var(--monospace);
+      color: var(--text-subtle);
+      font-size: .875em;
+      max-width: 38em;
+      margin: 0;
+    }
+
+    div {
+      white-space: nowrap;
+      &:empty { height: 1.5em }
+    }
+
+    b {
+      color: var(--text-strong);
+      font-weight: 450;
+    }
+
+    .response {
+       &::first-letter { color: var(--brand) }
+    }
+
+    time {
+      color: var(--brand);
+      float: right;
+    }
+
+    header {
+      float: right;
+      padding: 1.25em 1.5em;
+    }
+
+    &.is-playing header { display: none }
+
+    .command {
+      color: var(--brand);
+      &:before {
+        content: "$ ";
+        color: var(--brand-subtle);
+      }
+
+      /* cursor */
+      &.is-typing:after {
+        content: '';
+        display: inline-block;
+        width: 0.5em;
+        height: 1em;
+        background-color: var(--accent);
+        margin-left: .15em;
+        position: relative;
+        opacity: .75;
+        top: 0.15em;
+      }
+
+      &.is-comment {
+        color: var(--accent);
+        &:after { animation: blink 1s infinite .5s; }
+      }
+    }
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1 }
+    51%, 100% { opacity: 0 }
+  }
+}
+

@@ -1,0 +1,59 @@
+<!doctype dhtml lib>
+
+<script>
+  import { createConsole } from './console.js'
+</script>
+
+<console class="console">
+
+  <header class="row">
+    <a :onclick="model.prev()">←</a>
+    <a :onclick="model.next()">→</a>
+  </header>
+
+  <pre/>
+
+  <script>
+    async mounted() {
+      const res = await fetch('/home/commands.txt')
+      const $pre = this.root.querySelector('pre')
+
+      let playing = false
+      let $line
+
+      const model = this.model = createConsole(await res.text(), e => {
+        const { line } = e
+
+        if (e.scene_started) {
+          $pre.innerHTML = ''
+          return playing = true
+        }
+
+        if (e.line_started) {
+          // previous line
+          if ($line) $line.classList.remove('is-typing')
+
+          // new line
+          $line = document.createElement('div')
+          $line.className = e.is_command ? 'command is-typing' : 'response'
+        }
+
+
+        if (line != null) {
+          if (!$line.parentNode) $pre.appendChild($line)
+          $line.innerHTML = line || ''
+          if (line == '#') $line.classList.add('is-comment')
+        }
+
+        if (e.scene_ended) playing = false
+      })
+
+      model.start()
+
+      addEventListener('keydown', function(e) {
+        if (e.key == 'Enter' && !playing) model.next()
+      })
+
+    }
+  </script>
+</console>
