@@ -1,5 +1,5 @@
 # Ignore the vision and strategy documents for the time being
-docs-internal/vision-and-strategy
+docs-internal/local-only
 docs-internal/temp
 node_modules
 
