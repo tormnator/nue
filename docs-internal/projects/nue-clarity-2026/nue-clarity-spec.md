@@ -2,7 +2,7 @@
 
 Status: Draft for review
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
 ## Purpose
 
@@ -84,6 +84,18 @@ The blog should remain useful for dated announcements and essays, but some curre
 Current docs content should be treated as source material, not as a fixed site map. Concept pages, selected Essentials pages such as Why Nue, and useful inline explanatory material throughout the current docs are likely inputs to the upgraded main-site and docs architecture.
 
 M4 should resolve the boundary between evaluation content and working documentation. In general, marketing, background, comparison, philosophy, and showcase material belong on the main site when they primarily help users decide whether Nue is for them; they belong in docs when they directly support learning, task completion, reference, troubleshooting, or architectural understanding.
+
+## Documentation Versioning
+
+Nue should use URL-based documentation versioning for the Clarity site by default. The current documentation should live at `nuejs.org/docs`, while retained older documentation can live under versioned paths such as `nuejs.org/docs/v2-beta-3`.
+
+A long-lived branch and subdomain model should not be the default for this project. That model is useful when a whole website needs to vary by release line, but Nue's expected need is narrower: the main website should remain current while only the docs need version-specific snapshots. Publishing each docs version from a separate long-lived branch would add branch, deployment, and domain complexity, especially if the practical result is a set of docs-specific subdomains such as `v2.docs.nuejs.org`.
+
+The first realistic archived version may be the current pre-Clarity docs site, published as an older version of the new docs experience under a path such as `nuejs.org/docs/v2-orig` or another final name. This decision should wait until the final status of the tormnator fork is known: whether it returns to the upstream repo, becomes an official new Nue product line, or takes a different name.
+
+Versioned docs should be treated as snapshots rather than active parallel authoring surfaces. The current docs should remain the maintained source of truth. Older versions should identify their product and version status clearly, receive only critical corrections when needed, and link readers back to the current docs where appropriate.
+
+M5 should define the version URL naming rules, version navigation requirements, canonical URL and redirect behavior, and archival content rules. M9 should validate the final routing and publication behavior before official cutover.
 
 ## Project Milestone Outline
 
