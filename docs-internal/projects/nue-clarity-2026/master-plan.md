@@ -41,8 +41,8 @@ Design, implement, validate, and publish an updated Nue website with a complete 
 | Status | Milestone | Description |
 |---|---|---|
 | Completed | [M1: Project Setup](#m1-project-setup) | Created project specification and master plan; prepared Git; created GitHub initiation issue. |
-| In Progress | [M2: Bootstrap Side-By-Side Website](#m2-bootstrap-side-by-side-website) | Create a separate updated website workspace from selected current-site pieces. |
-| Planned | [M3: Website Foundation Review](#m3-website-foundation-review) | Align the bootstrapped site with Nue Beta 3, site-structure best practices, ASCS, and private Cloudflare preview deployment. |
+| Completed | [M2: Bootstrap Side-By-Side Website](#m2-bootstrap-side-by-side-website) | Created a separate updated website workspace from selected current-site pieces. |
+| In Progress | [M3: Website Foundation Review](#m3-website-foundation-review) | Align the bootstrapped site with Nue Beta 3, site-structure best practices, ASCS, and private Cloudflare preview deployment. |
 | Planned | [M4: Main-Site Direction And Content Boundaries](#m4-main-site-direction-and-content-boundaries) | Define main-site direction and the boundary between evaluation content, blog content, and working docs. |
 | Planned | [M5: Documentation Information Architecture](#m5-documentation-information-architecture) | Design docs audiences, learning paths, page types, navigation, URLs, page templates, examples strategy, and content criteria. |
 | Planned | [M6: UX/UI Design And Design System](#m6-ux-ui-design-and-design-system) | Research, prototype, and define an ASCS-compliant visual system for the docs and future main-site expansion. |
@@ -63,27 +63,32 @@ Status vocabulary:
 Current project state:
 
 - M1 is complete.
+- M2 is complete.
 - Initial project docs were committed and pushed on `proj/clarity-2026`.
+- Side-by-side website bootstrap work was completed on `proj/clarity-m2-website-bootstrap`.
+- M3 website foundation review is starting.
 - GitHub initiation issue: [#31 Project Nue Clarity 2026: website and documentation rewrite](https://github.com/tormnator/nue/issues/31).
 
 Open planning questions:
 
-- Exact location and naming for the side-by-side website implementation.
 - Temporary Cloudflare project/domain naming.
-- How much current main-site content is kept during bootstrap versus rewritten later.
+- M3 structure and configuration adjustments needed before private preview deployment.
 - Minimum content and validation standard required for official publication in M9.
 
 Validation status:
 
-- No website implementation validation has started yet.
+- M2 local build behavior was validated enough to support M3 review.
+- M3 foundation review and private preview validation have not started yet.
 
 ## Next Actions
 
 Immediate next actions:
 
-1. Resolve the M2 side-by-side website location/name before bootstrapping.
-2. Create the M2 topic branch from `proj/clarity-2026`.
-3. Start M2 by bootstrapping the side-by-side website from the current website package.
+1. Review site configuration, settings, folder structure, and file structure against Nue Beta 3 and site-structure best-practice notes.
+2. Read the project-local ASCS instructions and ASCS spec before HTML/CSS work.
+3. Update the bootstrapped site structure and existing HTML/CSS where M3 review identifies foundation issues.
+4. Validate local build behavior after M3 foundation updates.
+5. Configure and deploy a private Cloudflare preview.
 
 ## Milestones And Tasks
 
@@ -106,9 +111,9 @@ This milestone creates the separate updated website starting point from selected
 - Completed: Decide exact implementation location and name.
 - Completed: Create side-by-side website workspace from the current website package.
 - Completed: Carry forward selected site structure, home/blog material, required shared assets, and docs folder shell.
-- In Progress: Remove stale release messaging such as old 2.0/3.0 promotional notices.
-- In Progress: Leave current docs page content out until the rewrite phase, except where needed as source material.
-- In Progress: Validate local build behavior enough to support M3 review.
+- Completed: Remove stale release messaging such as old 2.0/3.0 promotional notices.
+- Completed: Leave current docs page content out until the rewrite phase, except where needed as source material.
+- Completed: Validate local build behavior enough to support M3 review.
 
 ### M3: Website Foundation Review
 
