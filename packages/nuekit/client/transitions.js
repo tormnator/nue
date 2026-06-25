@@ -123,7 +123,7 @@ export function setupTransitions() {
 
   // Fix: window.onpopstate, event.state == null?
   // https://stackoverflow.com/questions/11092736/window-onpopstate-event-state-null
-  history.pushState({ path: location.pathname }, 0)
+  history.replaceState({ path: location.pathname }, 0)
 
   // save scroll position whenever user scrolls
   addEventListener('scroll', () => {
