@@ -11,6 +11,8 @@ Release policy, see `docs-internal/release-and-publishing-policy.md`.
 - `main`: latest official/releasable branch in this fork
 - `dev`: active development branch
 - short-lived topic branches: branch from `dev`
+- long-lived project parent branches: branch from `dev` for multi-topic projects
+- project topic branches: branch from their project parent branch
 - `v3-dev`: future v3-based development branch from `upstream/3.0` when needed
 
 The GitHub default branch for this fork should be `main`. Keep `master` available as the upstream-aligned reference, not as the fork's release default.
@@ -23,6 +25,19 @@ The GitHub default branch for this fork should be `main`. Keep `master` availabl
 4. Promote `dev` to `main` only when cutting an official fork update.
 
 Do not merge every `dev` commit to `main` immediately. Treat `dev` as the preparation branch and `main` as the latest known-good fork state for external users and production-like consumers.
+
+## Long-Lived Project Branches
+
+Use a project parent branch when a larger project needs multiple related topic branches before the work is ready for `dev`.
+
+1. Create the project parent branch from `dev`, using a `proj/<project>` name.
+2. Create project topic branches from the project parent, using a `proj/<project>-<topic>` name.
+3. Sync new `dev` work into the project parent first.
+4. Sync the updated project parent into active project topic branches.
+5. Merge or fast-forward completed project topics back into the project parent.
+6. Merge or fast-forward the project parent back into `dev` when the project or milestone is ready.
+
+Routine project-branch syncs should use merges or fast-forwards, not cherry-picks. Use cherry-picks only for explicit rescue, backport, or cross-line operations, and record why the normal branch hierarchy did not apply.
 
 ## `dev` to `main`
 
