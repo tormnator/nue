@@ -113,13 +113,15 @@ The release details document is intentionally more detailed than public release 
 Create one public release notes document per release cycle before the cycle is officially released:
 
 ```text
-packages/www/docs/releases/{CRI}.md
+sites/nue/docs/releases/{CRI}.md
+packages/www/docs/releases/{CRI}.md # This is the old website's location
 ```
 
 Example:
 
 ```text
-packages/www/docs/releases/v2-0-beta-3.md
+sites/nue/docs/releases/v2-0-beta-3.md
+packages/www/docs/releases/v2-0-beta-3.md # This is the old website's location
 ```
 
 The rendered URL should use the same CRI slug, for example:

@@ -803,3 +803,5 @@ Each template ships as both a folder and a pre-built `.zip` file (used by Nuekit
 The source for [nuejs.org](https://nuejs.org) — the public Nue website and documentation. It is itself a Nue project, built with Nuekit, so it also serves as the most complete real-world integration test of the toolchain. The docs pages under `www/docs/` are the canonical end-user documentation for every package covered in this file.
 
 `www` is marked `"private": true` and is never published.
+
+[Note!] The `www` folder is in the process of being obsoleted. The website's new home folder will soon become `sites/nue`.

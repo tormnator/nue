@@ -3,7 +3,8 @@
 Use this template for public release notes in:
 
 ```text
-packages/www/docs/releases/{CRI}.md
+sites/nue/docs/releases/{CRI}.md
+packages/www/docs/releases/{CRI}.md # This is the old website's location
 ```
 
 The Canonical Release Identifier (CRI) format is:
