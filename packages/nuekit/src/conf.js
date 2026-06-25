@@ -28,6 +28,13 @@ export async function readSiteConf(args={}) {
     if (!index) return null
   }
 
+  return createSiteConf(conf, { is_prod, port, root })
+}
+
+export function createSiteConf(data={}, args={}) {
+  const { is_prod=false, port, root='.' } = args
+  const conf = structuredClone(data)
+
   // build ignore list into config
   const ignore = [...SKIP, ...(conf.site?.skip || [])]
   ignore.push(conf.server?.dir || '@shared/server')
@@ -45,6 +52,16 @@ export async function readSiteConf(args={}) {
   conf.dist = join(root, '.dist')
 
   return { ...conf, is_prod, root, ignore }
+}
+
+export function refreshSiteConf(conf, data={}, args={}) {
+  const fresh = createSiteConf(data, {
+    is_prod: conf.is_prod,
+    root: conf.root,
+    ...args,
+  })
+  for (const key of Object.keys(conf)) delete conf[key]
+  return Object.assign(conf, fresh)
 }
 
 

@@ -1,5 +1,5 @@
 
-import { readSiteConf, mergeData, mergeValue } from '../src/conf'
+import { readSiteConf, refreshSiteConf, mergeData, mergeValue } from '../src/conf'
 import { testDir, writeAll, removeAll } from './test-utils'
 import { createAsset } from '../src/asset'
 import { getFileInfo } from '../src/file'
@@ -99,6 +99,42 @@ test('resources config', async () => {
       }
     }
   })
+
+  await removeAll()
+})
+
+test('refreshSiteConf replaces removed keys in place', async () => {
+  const CONF = trim(`
+    site:
+      skip: [old-cache]
+
+    server:
+      dir: old-server
+
+    teaser:
+      text: Old
+  `)
+
+  await writeAll([['site.yaml', CONF]])
+  const conf = await readSiteConf({ root: testDir, is_prod: true, port: 666 })
+  const same = conf
+
+  refreshSiteConf(conf, {
+    site: { skip: ['fresh-cache'] },
+    meta: { title: 'New' },
+  }, { port: 666 })
+
+  expect(conf).toBe(same)
+  expect(conf.teaser).toBeUndefined()
+  expect(conf.server).toBeUndefined()
+  expect(conf.ignore).toContain('fresh-cache')
+  expect(conf.ignore).not.toContain('old-cache')
+  expect(conf.ignore).toContain('@shared/server')
+  expect(conf.ignore).not.toContain('old-server')
+  expect(conf.root).toBe(testDir)
+  expect(conf.is_prod).toBe(true)
+  expect(conf.port).toBe(666)
+  expect(conf.dist).toContain('.dist')
 
   await removeAll()
 })
