@@ -87,11 +87,11 @@ M4 should resolve the boundary between evaluation content and working documentat
 
 ## Documentation Versioning
 
-Nue should use URL-based documentation versioning for the Clarity site by default. The current documentation should live at `nuejs.org/docs`, while retained older documentation can live under versioned paths such as `nuejs.org/docs/v2-beta-3`.
+Nue will use URL-based documentation versioning for the Clarity site by default. The current documentation will live at `nuejs.org/docs`, while retained older documentation live under versioned paths such as `nuejs.org/docs/1.0`. The version number pattern is `/docs/{major}.{minor}[suffix]`.
 
 A long-lived branch and subdomain model should not be the default for this project. That model is useful when a whole website needs to vary by release line, but Nue's expected need is narrower: the main website should remain current while only the docs need version-specific snapshots. Publishing each docs version from a separate long-lived branch would add branch, deployment, and domain complexity, especially if the practical result is a set of docs-specific subdomains such as `v2.docs.nuejs.org`.
 
-The first realistic archived version may be the current pre-Clarity docs site, published as an older version of the new docs experience under a path such as `nuejs.org/docs/v2-orig` or another final name. This decision should wait until the final status of the tormnator fork is known: whether it returns to the upstream repo, becomes an official new Nue product line, or takes a different name.
+The first realistic archived version will be the original Nue 2.0 beta docs site, published as an older version of the new docs experience under `nuejs.org/docs/2.0-beta`.
 
 Versioned docs should be treated as snapshots rather than active parallel authoring surfaces. The current docs should remain the maintained source of truth. Older versions should identify their product and version status clearly, receive only critical corrections when needed, and link readers back to the current docs where appropriate.
 

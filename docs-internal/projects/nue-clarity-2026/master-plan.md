@@ -67,6 +67,7 @@ Current project state:
 - Initial project docs were committed and pushed on `proj/clarity-2026`.
 - Side-by-side website bootstrap work was completed on `proj/clarity-m2-website-bootstrap`.
 - M3 website foundation review is starting.
+- Archived Nue 2.0-beta docs added as `.md` source files; versioning approach and naming finalized in the spec.
 - GitHub initiation issue: [#31 Project Nue Clarity 2026: website and documentation rewrite](https://github.com/tormnator/nue/issues/31).
 
 Open planning questions:
@@ -119,12 +120,14 @@ This milestone creates the separate updated website starting point from selected
 
 This milestone makes the bootstrapped website technically sound before larger IA, content, and design work begins. It is about structure and configuration, not content architecture.
 
-- Planned: Review site configuration, settings, folder structure, and file structure against Nue Beta 3 and site-structure best-practice notes.
+- Completed: Added original Nue 2.0 beta documentation as an archived version of the documentation in `sites/nue/docs/2.0-beta`.
+- In Progress: Review site configuration, settings, folder structure, and file structure against Nue Beta 3 and site-structure best-practice notes.
 - Planned: Update the site to use current Nue capabilities appropriately.
 - Planned: Read project-local ASCS instructions and ASCS spec before HTML/CSS work.
 - Planned: Update current HTML and CSS to be ASCS-compliant.
 - Planned: Leave CSS useful as input for M6 prototyping.
 - Planned: Validate local build behavior.
+- Planned: Validate that the archived 2.0-beta docs build correctly with the current Nue build pipeline.
 - Planned: Configure and deploy a private Cloudflare preview.
 
 ### M4: Main-Site Direction And Content Boundaries

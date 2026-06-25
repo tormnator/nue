@@ -1,0 +1,24 @@
+
+<!--
+  topics and getTopicCategory defined in @shared/data/data.js
+-->
+
+<nav :is="topics" class="stack">
+  <a :each="{ slug, desc, title } in topics[category]" href="/docs/{ slug }">
+    <template :if="!desc">{ title }</template>
+    <div :if="desc" class="row">
+      <strong>{ title }</strong>
+      <small>{ desc }</small>
+    </div>
+  </a>
+</nav>
+
+<pagefoot class="learn-more">
+  <h2>Learn more</h2>
+
+  <topics :topics :category="getTopicCategory(slug)"/>
+
+  <p>
+    <a href="/docs/"><strong>View all topics</strong></a>
+  </p>
+</pagefoot>

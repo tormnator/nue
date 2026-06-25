@@ -1,0 +1,45 @@
+
+@layer layout {
+
+  .topics {
+    font-size: var(--ui-sizing);
+    margin-top: 2em;
+    display: flex;
+
+    nav { margin: 0 10vw 3em 0 }
+
+    small {
+      font-size: inherit;
+      color: var(--text-subtle);
+      @media (500px < width < 900px) {
+        display: none;
+      }
+    }
+
+    @media (width < 700px) {
+      flex-wrap: wrap;
+    }
+  }
+
+  .learn-more {
+
+    .stack {
+      font-size: var(--ui-sizing);
+      margin-block: 1.5em 2em;
+      a { max-width: 13em }
+      gap: .75em;
+    }
+
+    [aria-current] {
+      background-color: var(--inverse);
+      color: var(--inverse-text);
+      padding: .25em .5em;
+      pointer-events: none;
+      margin-left: -.5em;
+      width: auto;
+
+      strong { color: white }
+      &:has(.row) { max-width: 25em }
+    }
+  }
+}
