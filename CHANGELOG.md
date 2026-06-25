@@ -4,6 +4,12 @@ All notable coordinated releases of the `tormnator/nue` fork are documented here
 
 This project follows the Keep a Changelog style. Package-specific changes are documented in package changelogs when a package has release-relevant changes or publish records.
 
+## v2-0-beta-4 - Unreleased
+
+### Fixed
+
+- Nuekit HMR refreshes removed `site.yaml` config values without requiring a server restart.
+
 ## [v2-0-beta-3](packages/www/docs/releases/v2-0-beta-3.md) - 2026-06-13
 
 Nue 2.0 Beta 3 is the first coordinated release of the `@tormnator` scoped npm package set. It adds the Cloudflare Pages platform adapter, the target-neutral `c.env` resource layer, D1-backed collection resources, deterministic template ZIPs, and the fork's release and branching policy foundations.
