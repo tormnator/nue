@@ -8,6 +8,7 @@
 - Use `main` as the fork's official/latest branch.
 - Use `dev` as the active development branch and default parent for normal work.
 - Create short-lived work branches from `dev`.
+- For long-lived project work, follow `docs-internal/branching-policy.md`: create project parent branches from `dev`, create project topic branches from the project parent, and sync with merges or fast-forwards instead of routine cherry-picks.
 - Create `v3-dev` only for future v3-based work from `upstream/3.0` when needed.
 - Prepare upstream PR branches from `master` or another upstream-aligned base, not directly from `dev`.
 - After committing, merge working branches into `dev`, then promote `dev` to `main` when cutting an official update.

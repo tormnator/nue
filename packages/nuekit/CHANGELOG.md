@@ -2,6 +2,13 @@
 
 All notable changes to `@tormnator/nuekit` are documented here.
 
+## Unreleased
+
+### Fixed
+
+- HMR refreshes removed `site.yaml` config values without requiring a server restart.
+- View transitions no longer add duplicate browser history entries on page refresh.
+
 ## [2.0.0-beta.3-tor.2](../www/docs/releases/v2-0-beta-3.md) - 2026-06-13
 
 ### Added

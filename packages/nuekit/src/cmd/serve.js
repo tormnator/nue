@@ -7,9 +7,11 @@ import { fswatch } from '../tools/fswatch'
 
 import { getSystemFiles } from '../system'
 import { getServer } from '../server'
+import { refreshSiteConf } from '../conf'
 
 
-export async function serve(site, { silent }) {
+export async function serve(site, opts={}) {
+  const { silent } = opts
   const { conf, assets } = site
   const { root, ignore, port } = conf
 
@@ -33,7 +35,7 @@ export async function serve(site, { silent }) {
     // site.yaml update
     if (asset.base == 'site.yaml') {
       const data = asset.content = await asset.parse()
-      Object.assign(conf, data)
+      refreshSiteConf(conf, data, { port: opts.port })
       return broadcast(asset)
     }
 
