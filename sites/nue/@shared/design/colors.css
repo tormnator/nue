@@ -1,0 +1,54 @@
+@layer design {
+  :root {
+    --bg: #ffffff;
+    --text: #64707f;
+    --text-subtle: #95a0ae;
+    --text-strong: #000;
+    --gray: #dcdfe5;
+    --gray-subtle: #f4f6f9;
+    --gray-strong: #b0b4bc;
+    --brand: #3481fe;
+    --brand-text: white;
+    --accent: #18aa79;
+    --accent-text: white;
+    --inverse: black;
+    --inverse-text: white;
+    --pop: #7727ff;
+  }
+
+  .dark {
+    --bg: #121212;
+    --text: #a7b4c8;
+    --text-subtle: #6d7d91;
+    --text-strong: #eef2f7;
+    --gray: #323d4e;
+    --gray-subtle: #1c2026;
+    --gray-strong: #4c5663;
+    --accent: #0bbc81;
+    --inverse: white;
+    --inverse-text: black;
+  }
+}
+
+@layer component {
+  @layer modifier {
+    .brand {
+      background-color: var(--brand);
+
+      &, * { color: var(--brand-text) }
+    }
+
+    .accent {
+      background-color: var(--accent);
+
+      &, * { color: var(--accent-text) }
+    }
+
+    .inverse {
+      background-color: var(--inverse);
+      color: var(--inverse-text);
+
+      &, * { color: var(--inverse-text) }
+    }
+  }
+}
