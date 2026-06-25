@@ -1,6 +1,6 @@
 # Project Nue Clarity - Master Plan
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
 ## Purpose
 
@@ -40,8 +40,8 @@ Design, implement, validate, and publish an updated Nue website with a complete 
 
 | Status | Milestone | Description |
 |---|---|---|
-| In Progress | [M1: Project Setup](#m1-project-setup) | Create project specification and master plan; prepare Git; create GitHub initiation issue. |
-| Planned | [M2: Bootstrap Side-By-Side Website](#m2-bootstrap-side-by-side-website) | Create a separate updated website workspace from selected current-site pieces. |
+| Completed | [M1: Project Setup](#m1-project-setup) | Created project specification and master plan; prepared Git; created GitHub initiation issue. |
+| In Progress | [M2: Bootstrap Side-By-Side Website](#m2-bootstrap-side-by-side-website) | Create a separate updated website workspace from selected current-site pieces. |
 | Planned | [M3: Website Foundation Review](#m3-website-foundation-review) | Align the bootstrapped site with Nue Beta 3, site-structure best practices, ASCS, and private Cloudflare preview deployment. |
 | Planned | [M4: Main-Site Direction And Content Boundaries](#m4-main-site-direction-and-content-boundaries) | Define main-site direction and the boundary between evaluation content, blog content, and working docs. |
 | Planned | [M5: Documentation Information Architecture](#m5-documentation-information-architecture) | Design docs audiences, learning paths, page types, navigation, URLs, page templates, examples strategy, and content criteria. |
@@ -62,7 +62,9 @@ Status vocabulary:
 
 Current project state:
 
-- M1 is in progress.
+- M1 is complete.
+- Initial project docs were committed and pushed on `proj/clarity-2026`.
+- GitHub initiation issue: [#31 Project Nue Clarity 2026: website and documentation rewrite](https://github.com/tormnator/nue/issues/31).
 
 Open planning questions:
 
@@ -79,10 +81,9 @@ Validation status:
 
 Immediate next actions:
 
-1. [Completed] Review and approve the project specification and this master plan.
-2. [Completed] Decide whether M1 should create a GitHub initiation issue before or after the first project-doc commit.
-3. Resolve the M2 side-by-side website location/name before bootstrapping.
-4. Create or identify the M2 work branch if normal work should move off `dev` before implementation.
+1. Resolve the M2 side-by-side website location/name before bootstrapping.
+2. Create the M2 topic branch from `proj/clarity-2026`.
+3. Start M2 by bootstrapping the side-by-side website from the current website package.
 
 ## Milestones And Tasks
 
@@ -94,20 +95,20 @@ This milestone establishes the project planning foundation and GitHub tracking. 
 - Completed: Draft this master plan.
 - Completed: Review and approve the specification and master plan.
 - Completed: Run documentation checks before commit.
-- In Progress: Prepare Git for the implementation phase.
-- Planned: Create GitHub initiation issue.
-- Planned: Update this milestone after issue creation and project-doc validation.
+- Completed: Prepare Git for the implementation phase.
+- Completed: Create GitHub initiation issue [#31](https://github.com/tormnator/nue/issues/31).
+- Completed: Update this milestone after issue creation and project-doc validation.
 
 ### M2: Bootstrap Side-By-Side Website
 
 This milestone creates the separate updated website starting point from selected current-site pieces. It should keep the bootstrap narrow: enough structure to start Clarity work, not a rewrite.
 
-- Planned: Decide exact implementation location and name.
-- Planned: Create side-by-side website workspace from the current website package.
-- Planned: Carry forward selected site structure, home/blog material, required shared assets, and docs folder shell.
-- Planned: Remove stale release messaging such as old 2.0/3.0 promotional notices.
-- Planned: Leave current docs page content out until the rewrite phase, except where needed as source material.
-- Planned: Validate local build behavior enough to support M3 review.
+- Completed: Decide exact implementation location and name.
+- Completed: Create side-by-side website workspace from the current website package.
+- Completed: Carry forward selected site structure, home/blog material, required shared assets, and docs folder shell.
+- In Progress: Remove stale release messaging such as old 2.0/3.0 promotional notices.
+- In Progress: Leave current docs page content out until the rewrite phase, except where needed as source material.
+- In Progress: Validate local build behavior enough to support M3 review.
 
 ### M3: Website Foundation Review
 
