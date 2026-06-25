@@ -1,9 +1,9 @@
 {
-  "name": "www",
+  "name": "nue-site",
   "description": "Nue website",
   "homepage": "https://nuejs.org",
   "private": true,
   "engines": {
-    "bun": ">= 1.2"
+    "bun": ">= 1.3"
   }
 }
