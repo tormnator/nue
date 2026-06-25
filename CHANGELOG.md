@@ -9,6 +9,7 @@ This project follows the Keep a Changelog style. Package-specific changes are do
 ### Fixed
 
 - Nuekit HMR refreshes removed `site.yaml` config values without requiring a server restart.
+- Nuekit view transitions no longer add duplicate browser history entries on page refresh.
 
 ## [v2-0-beta-3](packages/www/docs/releases/v2-0-beta-3.md) - 2026-06-13
 
