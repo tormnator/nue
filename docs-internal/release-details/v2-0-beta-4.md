@@ -20,13 +20,15 @@ Beta 4 starts with a Nuekit HMR fix for stale `site.yaml` config values during `
 | Date | Item | Notes |
 |---|---|---|
 | 2026-06-24 | Cycle opened | Started for issue #33. |
+| 2026-06-24 | HMR config refresh fix | Landed on `dev` in `b584464f`. |
 
 ## Validation Log
 
 | Date | Validation | Result |
 |---|---|---|
-| TBD | Nuekit tests | Pending |
-| TBD | Manual `site.yaml` HMR teaser check | Pending |
+| 2026-06-24 | `bun test packages/nuekit/test/conf.test.js` | Pass |
+| 2026-06-24 | `bun test packages/nuekit/test` | 179 pass, 3 skip, 0 fail |
+| 2026-06-24 | Manual temp-site `site.yaml` refresh check | Removed key stopped rendering without server restart |
 
 ## Known Limitations
 
