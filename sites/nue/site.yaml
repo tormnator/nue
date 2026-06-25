@@ -35,24 +35,27 @@ rss:
   collection: blog
   enabled: true
 
-
-teaser:
-  text: Nue 2.0 is out ->
-  url: /blog/2.0/
-  tag: New
+# Teaser CTA in site header; enable whenever we have relevant 'breaking news', etc.
+#teaser:
+#  text: Nue 2.0 is out ->
+#  url: /blog/2.0/
+#  tag: New
 
 gh:
-  url: https://github.com/nuejs/nue
-  count: 8.8k
+  url: https://github.com/tormnator/nue
+  # Not enough stars on the tormnator fork to show this:
+  #count: 8.8k
 
 slack:
   url: //join.slack.com/t/nuejs/shared_invite/zt-2wf8ozu5i-N2Y9PA_D17weIWuN2QPOqQ
 
-join:
-  title: 3.0 is coming
-  desc: Get email when [multi-site development](/docs/roadmap) is ready
-  form:
-    comment: Comment (Optional, but valued!)
-    done: We'll email you when the next major release is out
-    cta: Ping me
+# The join mailing list feature is disabled until the server-side implementation is reimplemented.
+# See `join-list.html and `global-layout.html` in the `@shared/ui` folder for more details. 2026-06-24, @tormnator.
+#join:
+#  title: 3.0 is coming
+#  desc: Get email when [multi-site development](/docs/roadmap) is ready
+#  form:
+#    comment: Comment (Optional, but valued!)
+#    done: We'll email you when the next major release is out
+#    cta: Ping me
 
