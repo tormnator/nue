@@ -1,10 +1,10 @@
 
 <!--
-  topics and getTopicCategory defined in @shared/data/data.js
+  topics is defined in topics.yaml, and getTopicCategory defined in @shared/data/topics.js
 -->
 
 <nav :is="topics" class="stack">
-  <a :each="{ slug, desc, title } in topics[category]" href="/docs/{ slug }">
+  <a :each="{ slug, desc, title } in topics[category]" href="{ slug }">
     <template :if="!desc">{ title }</template>
     <div :if="desc" class="row">
       <strong>{ title }</strong>
