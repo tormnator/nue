@@ -32,3 +32,36 @@ test('getCategory', () => {
   expect(getCategory(topics, 'foo')).toBe('first')
 })
 
+test('mutate - topics missing', () => {
+  const data = {}
+  mutate(data)
+  expect(data.getTopicCategory).toBeFunction()
+  expect(data.getTopicCategory('anything')).toBeUndefined()
+})
+
+test('mutate - topics is null', () => {
+  const data = { topics: null }
+  mutate(data)
+  expect(data.getTopicCategory).toBeFunction()
+})
+
+test('mutate - topics is a string', () => {
+  const data = { topics: 'invalid' }
+  mutate(data)
+  expect(data.getTopicCategory).toBeFunction()
+})
+
+test('mutate - topics is an array', () => {
+  const data = { topics: ['invalid'] }
+  mutate(data)
+  expect(data.getTopicCategory).toBeFunction()
+})
+
+test('getCategory - topics missing', () => {
+  expect(getCategory(undefined, 'foo')).toBeUndefined()
+})
+
+test('getCategory - topics is an array', () => {
+  expect(getCategory(['invalid'], 'foo')).toBeUndefined()
+})
+
