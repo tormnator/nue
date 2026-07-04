@@ -66,29 +66,30 @@ Current project state:
 - M2 is complete.
 - Initial project docs were committed and pushed on `proj/clarity-2026`.
 - Side-by-side website bootstrap work was completed on `proj/clarity-m2-website-bootstrap`.
-- M3 website foundation review is starting.
+- M3 website foundation review is in progress.
 - Archived Nue 2.0-beta docs added as `.md` source files; versioning approach and naming finalized in the spec.
+- M3 structure and configuration review is complete; the bootstrapped site was updated to use current Nue capabilities appropriately.
 - GitHub initiation issue: [#31 Project Nue Clarity 2026: website and documentation rewrite](https://github.com/tormnator/nue/issues/31).
 
 Open planning questions:
 
 - Temporary Cloudflare project/domain naming.
-- M3 structure and configuration adjustments needed before private preview deployment.
+- ASCS/CSS alignment needed before private preview deployment.
 - Minimum content and validation standard required for official publication in M9.
 
 Validation status:
 
 - M2 local build behavior was validated enough to support M3 review.
-- M3 foundation review and private preview validation have not started yet.
+- M3 structure/configuration review is complete; ASCS/CSS alignment, local build validation, archived-doc build validation, and private preview validation remain.
 
 ## Next Actions
 
 Immediate next actions:
 
-1. Review site configuration, settings, folder structure, and file structure against Nue Beta 3 and site-structure best-practice notes.
-2. Read the project-local ASCS instructions and ASCS spec before HTML/CSS work.
-3. Update the bootstrapped site structure and existing HTML/CSS where M3 review identifies foundation issues.
-4. Validate local build behavior after M3 foundation updates.
+1. Read the project-local ASCS instructions and ASCS spec before HTML/CSS work.
+2. Review CSS/design configuration and file organization against ASCS.
+3. Update current HTML and CSS to be ASCS-compliant while leaving CSS useful as input for M6 prototyping.
+4. Validate local build behavior, including the archived 2.0-beta docs with the current Nue build pipeline.
 5. Configure and deploy a private Cloudflare preview.
 
 ## Milestones And Tasks
@@ -121,9 +122,10 @@ This milestone creates the separate updated website starting point from selected
 This milestone makes the bootstrapped website technically sound before larger IA, content, and design work begins. It is about structure and configuration, not content architecture.
 
 - Completed: Added original Nue 2.0 beta documentation as an archived version of the documentation in `sites/nue/docs/2.0-beta`.
-- In Progress: Review site configuration, settings, folder structure, and file structure against Nue Beta 3 and site-structure best-practice notes.
-- Planned: Update the site to use current Nue capabilities appropriately.
+- Completed: Review site configuration, settings, folder structure, and file structure against Nue Beta 3 and site-structure best-practice notes. CSS/design to be completed separately next.
+- Completed: Update the site to use current Nue capabilities appropriately.
 - Planned: Read project-local ASCS instructions and ASCS spec before HTML/CSS work.
+- Planned: Review CSS/design configuration and file-organization and align with ASCS.
 - Planned: Update current HTML and CSS to be ASCS-compliant.
 - Planned: Leave CSS useful as input for M6 prototyping.
 - Planned: Validate local build behavior.
@@ -144,6 +146,7 @@ This milestone defines enough main-site direction to support the docs work. It r
 
 This milestone designs the docs structure using the SotA-docs as the primary guide. It should produce enough architecture to know what pages and page types are required before the full rewrite begins.
 
+- Planned: Finalize the Nue Vocabulary so that new docs can consistently use that vocabulary.
 - Planned: Apply the SotA-docs to define docs audiences, learning paths, page categories, and navigation.
 - Planned: Define URL structure and page-type model.
 - Planned: Define page templates, cross-linking rules, examples strategy, and content quality criteria.

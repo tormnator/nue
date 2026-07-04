@@ -99,7 +99,7 @@ M5 should define the version URL naming rules, version navigation requirements, 
 
 ## Project Milestone Outline
 
-The milestones below are intentionally concise. Each milestone should be expanded in the master plan before active work begins.
+The milestones below are intentionally concise. See the [master plan](./master-plan.md) for more details on each.
 
 ### M1: Project Setup
 
@@ -125,7 +125,7 @@ This is a focused information and content architecture pass, not a full main-sit
 
 ### M5: Documentation Information Architecture (IA)
 
-Design the docs structure: audiences, learning paths, page categories, navigation, URLs, page templates, cross-linking rules, examples strategy, and content quality criteria.
+First finalize the Nue vocabulary so that new docs can consistently use that vocabulary (see the "Nue Common Vocabulary" sub-section in the [Clarity Docs Notes](clarity-docs-notes.md) and the [Nue Vocabulary](./nue-vocabulary.md) document). Then design the docs structure: audiences, learning paths, page categories, navigation, URLs, page templates, cross-linking rules, examples strategy, and content quality criteria.
 
 The output should make it clear what pages must exist before the full rewrite begins.
 
@@ -158,6 +158,9 @@ Project-specific inputs:
   - Archie Semantic CSS Specification (ASCS)
     - `docs-internal/local-only/ascs-spec/ascs.instructions.md` - project-local ASCS instructions; read before the ASCS spec.
     - `docs-internal/local-only/ascs-spec/ASCS.md` - ASCS spec.
+  - Additional input for M5 (Documentation Information Architecture) and subsequent milestones:
+    - `docs-internal/projects/nue-clarity-2026/clarity-docs-notes.md`
+    - `docs-internal/projects/nue-clarity-2026/nue-vocabulary.md`
 - Nue documentation notes in Notion, to be edited and brought in during the milestones that need them.
 - Supplemental:
   - `docs-internal/projects/nue-clarity-2026/documentation-design-knowledge.md` - source input for the SotA-docs.
