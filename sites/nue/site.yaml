@@ -4,15 +4,6 @@ site:
   origin: https://nuejs.org
   view_transitions: true
 
-meta:
-  title: The UNIX of the Web
-  tagline: The UNIX of the Web
-  title_template: %s / Nue
-  description: Nue is the fastest way to build modern websites
-  favicon: /img/favicon.svg
-  origin: https://nuejs.org
-  og: /img/og.png
-
 content:
   sections: true
 
@@ -29,33 +20,9 @@ design:
 sitemap:
   enabled: true
 
+# Note: `title` and `description` below are content and should be moved to `@shared/data/content.yaml`, but due to the current Nue implementation they have to stay here in `site.yaml`.
 rss:
   title: Nue developer blog
   description: The UNIX of the Web
   collection: blog
   enabled: true
-
-# Teaser CTA in site header; enable whenever we have relevant 'breaking news', etc.
-#teaser:
-#  text: Nue 2.0 is out ->
-#  url: /blog/2.0/
-#  tag: New
-
-gh:
-  url: https://github.com/tormnator/nue
-  # Not enough stars on the tormnator fork to show this:
-  #count: 8.8k
-
-slack:
-  url: //join.slack.com/t/nuejs/shared_invite/zt-2wf8ozu5i-N2Y9PA_D17weIWuN2QPOqQ
-
-# The join mailing list feature is disabled until the server-side implementation is reimplemented.
-# See `join-list.html and `global-layout.html` in the `@shared/ui` folder for more details. 2026-06-24, @tormnator.
-#join:
-#  title: 3.0 is coming
-#  desc: Get email when [multi-site development](/docs/roadmap) is ready
-#  form:
-#    comment: Comment (Optional, but valued!)
-#    done: We'll email you when the next major release is out
-#    cta: Ping me
-

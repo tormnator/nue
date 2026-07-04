@@ -1,4 +1,4 @@
-
+# Tooling: A list of Nue packages ("tooling" might be a slightly misleading term). Used by the nue-stack HTML Component (sites/nue/@shared/lib/stack/stack.html). This component is used both on the home page and in the "Nue 2.0: The UNIX of the web" article.
 tooling:
   - title: Nuekit
     desc: Standards first web framework
@@ -25,6 +25,7 @@ tooling:
     info: Semantic, design system compatible syntax blocks. Style with CSS, not class names
 
 
+# Features: A list of key features for the framework, categorized by their functionality. Used by the nue-stack HTML Component (sites/nue/@shared/lib/stack/stack.html). This component is used both on the home page and in the "Nue 2.0: The UNIX of the web" article.
 features:
   Dev server:
     - Direct serving
@@ -50,13 +51,3 @@ features:
     - Full-stack previews
     - CloudFlare compatibiliity
 
-
-
-assembly:
-  - index.md
-  - app/index.html
-  - blog/index.md
-  - login/index.html
-  - about/index.md
-  - join/index.html
-  - contact/index.md

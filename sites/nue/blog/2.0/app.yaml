@@ -1,2 +1,2 @@
 
-include: [ console, stack, syntax ]
+include: [ /lib/console, /lib/stack, syntax.css ]

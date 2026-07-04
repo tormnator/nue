@@ -1,24 +1,3 @@
-
-<ul :is="blog-entries" class="list">
-  <li :each="el in blog">
-    <a href="{ el.url }" class="flex">
-      <pretty-date :date="el.date"/>
-      <strong>{{ markdown(el.title) }}</strong>
-    </a>
-  </li>
-</ul>
-
-<!-- the hero area for each blog entry -->
-<header :is="pagehead">
-  <pretty-date :date/>
-
-  <h1>{{ markdown(hero_title || title) }}</h1>
-
-  <author :bind="authors[author || authors.default]"/>
-
-</header>
-
-
 <author class="author row">
   <span><img src="{ img }" width="36" height="36"></span>
 

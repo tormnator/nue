@@ -1,9 +1,11 @@
-<!doctype dhtml lib>
+<!dhtml lib>
 
 <script>
   import { createConsole } from './console.js'
 </script>
 
+<!-- Console HTML Component: Simulates the Nue install, create, development, and building process.
+     Is used both on the home page and in the "Nue 2.0: The UNIX of the web" article. -->
 <console class="console">
 
   <header class="row">
@@ -15,7 +17,7 @@
 
   <script>
     async mounted() {
-      const res = await fetch('/home/commands.txt')
+      const res = await fetch('/@shared/lib/console/commands.txt')
       const $pre = this.root.querySelector('pre')
 
       let playing = false

@@ -6,7 +6,7 @@ Please be aware that we sometimes have to make some changes to the archived Docs
 
 To make this version work, here's what we had to do:
 
-- This version depends on the global data manipulation script in `sites/nue/@shared/data/topics.js`. We need to ensure that the script remain backwards compatible with this version.
+- This version depends on the global data manipulation script in `sites/nue/@shared/data/topics.js`. We need to ensure that the script remains backwards compatible with this version.
 - `sites/nue/docs/2.0-beta/ui/docs.html`
   - Fixed incorrect comment
   - Changed absolute path in anchor tag's href attribute to be relative to the current folder.

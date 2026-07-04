@@ -1,6 +1,6 @@
 
 beside: false
-include: [ syntax ]
+include: [ syntax.css ]
 
 content:
   heading_ids: true

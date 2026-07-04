@@ -1,6 +1,8 @@
 /**
  * This template data manipulation script translate the contents of any `topics` property in the 
- * template data. It also adds a getTopicCategory function to the data.
+ * template data. It also adds a getTopicCategory function to the data. `topics` is a feature of the
+ * Docs sub-site, but since data manipulation scripts only are allowed within `@shared/data`, this
+ * script is placed there.
  * @param {object} data Template data - all source data that is loaded for rendering. Becomes the
  * template context.
  */

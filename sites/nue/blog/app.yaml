@@ -1,2 +1,2 @@
 
-include: [ video, syntax ]
+include: [ /lib/video, syntax.css ]

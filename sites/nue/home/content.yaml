@@ -1,0 +1,9 @@
+# Assembly: A list of typical @shared directory files to be displayed in the Assembly HTML Component on the home page.
+assembly:
+  - index.md
+  - app/index.html
+  - blog/index.md
+  - login/index.html
+  - about/index.md
+  - join/index.html
+  - contact/index.md
