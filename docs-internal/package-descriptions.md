@@ -180,9 +180,9 @@ Nuedom is the core engine of Nue. It has two main jobs:
 
 **HTML template engine** — Nuedom takes `.html` files written in Nue's extended HTML syntax and renders them into HTML pages and layout components. This is what powers every page on a Nue site.
 
-**Client-side reactive UI runtime** — Nuedom also runs in the browser. It mounts interactive components, responds to user actions, and updates only the parts of the page that changed — directly on the real DOM, with no virtual DOM layer.
+**Client-side reactive UI runtime** — Nuedom also runs in the browser. It mounts components, responds to user actions, and updates only the parts of the page that changed — directly on the real DOM, with no virtual DOM layer.
 
-Both jobs use the same template format: plain HTML extended with a small set of dynamic features. The same `.html` file can produce a server-rendered page and drive a browser-side interactive component.
+Both jobs use the same template format: plain HTML extended with a small set of dynamic features (see [The Template Syntax](#the-template-syntax)). The same `.html` file can produce a server-rendered page and drive a client-side interactive component.
 
 It has no external runtime dependencies.
 

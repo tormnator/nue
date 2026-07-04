@@ -1,7 +1,8 @@
 # Nue SPA Documentation Research
 
 > **Purpose:** Pre-documentation research for the Nue SPA documentation sub-site.  
-> **Date:** May 2026  
+> **Created:** May 2026  
+> **Updated:** July 2, 2026, added a TODO for documenting SPA islands.
 > **Status:** Research phase — not yet documentation
 
 ---
@@ -26,10 +27,11 @@
 16. [HMR and Development Workflow](#17-hmr-and-development-workflow)
 17. [Build System and SPA Production](#17-build-system-and-spa-production)
 18. [MPA+SPA Hybrid Architecture](#18-mpaspa-hybrid-architecture)
-19. [What Is Not Yet Supported](#19-what-is-not-yet-supported)
-20. [SPA vs. MPA: Nue's Philosophical Stance](#20-spa-vs-mpa-nues-philosophical-stance)
-21. [Roadmap: Future SPA Features](#21-roadmap-future-spa-features)
-22. [Source Inventory](#22-source-inventory)
+19. [Client-side Components](#19-client-side-components)
+20. [What Is Not Yet Supported](#20-what-is-not-yet-supported)
+21. [SPA vs. MPA: Nue's Philosophical Stance](#21-spa-vs-mpa-nues-philosophical-stance)
+22. [Roadmap: Future SPA Features](#22-roadmap-future-spa-features)
+23. [Source Inventory](#23-source-inventory)
 
 ---
 
@@ -1229,7 +1231,30 @@ SPAs and MPAs coexist by file location:
 
 ---
 
-## 19. What Is Not Yet Supported
+## 19. Client-side Components
+
+*TODO: Expand on my (Tor's) initial text below.*
+
+Nue also supports mounting client-side components on static pages. In other words, the majority of the page might be static HTML, optionally built from a markdown file, and then one or more sections within the page are mounted and rendered on the client. As a good example of this, see the Nue website itself. Its home page has a "Console" HTML Component referenced like this:
+
+```markdown
+[console]
+Nue is small and fast
+```
+
+The Console component is its own HTML-file with the following declaration:
+
+```HTML
+<!dhtml lib>
+```
+
+When building the site, instead of the component being added to the static HTML, a console.html.js file is rendered. This .js file is then mounted on the client and the DOM is updated with the contents. Also see the "join-list" client-side component there.
+
+This whole concept is a great feature, and we must make sure it's well documented along with the full SPA feature set (the SPA term is misleading, sounds like a "big" thing).
+
+---
+
+## 20. What Is Not Yet Supported
 
 Based on documentation, source code inspection, and the roadmap, the following is **confirmed not yet supported**:
 
@@ -1292,7 +1317,7 @@ This is a deliberate design choice (no extra complexity), but it means:
 
 ---
 
-## 20. SPA vs. MPA: Nue's Philosophical Stance
+## 21. SPA vs. MPA: Nue's Philosophical Stance
 
 From the "Rethinking Reactivity" blog post (written in 2023):
 
@@ -1310,7 +1335,7 @@ The vision is that the **same design system** should work across both MPA and SP
 
 ---
 
-## 21. Roadmap: Future SPA Features
+## 22. Roadmap: Future SPA Features
 
 From `roadmap.md` and `universal-data-model.md`:
 
@@ -1346,7 +1371,7 @@ Branded templates with different aesthetic systems (referenced as "Mies", "Rams"
 
 ---
 
-## 22. Source Inventory
+## 23. Source Inventory
 
 ### Primary Documentation Sources
 
