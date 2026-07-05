@@ -154,6 +154,151 @@ collections:
 Important author-facing explanation: `collections.blog` in `site.yaml` does not expose `{ collections.blog }` in templates. The generated collection is exposed directly as `{ blog }`.
 
 
+### How to Control Nuemark Structure for CSS
+
+Current public docs need a clearer path from Nuemark source to the rendered HTML that CSS authors actually target. The practical author-facing model is:
+
+1. Use `content.heading_ids` and `content.sections` for page-wide document structure.
+2. Use heading attributes for stable heading selectors.
+3. Use anonymous blocks and tags for local layout hooks.
+4. Use HTML pages or custom components when Markdown-native structure is not precise enough.
+
+Global or app-level defaults go under `content:`:
+
+```yaml
+# site.yaml or app.yaml
+content:
+  heading_ids: true
+  sections: true
+```
+
+Page-level settings use flat front matter:
+
+```md
+---
+heading_ids: true
+sections: [hero, features, details]
+---
+```
+
+`sections: [hero, features, details]` turns on section rendering and assigns class names by section index. Nuemark first computes the section boundaries, then applies the array values to the generated sections in order:
+
+```html
+<section class="hero">...</section>
+<section class="features">...</section>
+<section class="details">...</section>
+```
+
+It does not apply all classes to every section, and it does not map class names to heading levels. If the first generated section starts with an `h1`, it gets `hero`; if the second generated section starts with an `h2`, it gets `features`; if a later `h3` stays inside that second section, it does not receive its own section class. If there are more sections than class names, later sections have no class. If there are more class names than sections, the extra class names are unused. Avoid examples with duplicate YAML keys such as:
+
+```yaml
+content:
+  sections: true
+  sections: [hero, features]
+```
+
+Use one `sections:` value or the other.
+
+When sectioning is on, `---` changes sectioning from heading-driven to author-driven. If no `---` exists, section boundaries come from the heading rules. If any `---` exists, section boundaries come from the separators instead, and headings no longer start sections. In that mode `---` is structural and disappears from rendered output; it is not rendered as `<hr>`.
+
+Use `---` when headings do not express the section boundaries you want. For example, it can keep an `h1` and a following `h2` inside the same first section:
+
+```md
+---
+sections: [hero, details]
+---
+
+# Nue Features
+Intro copy.
+
+## Why it matters
+Still part of the hero section.
+
+---
+
+## Details
+Now the second section starts.
+```
+
+There is no current option to leave an `h1` in the Markdown body unwrapped and start section wrappers at the first `h2`. With section rendering enabled, all rendered Markdown content is inside generated `<section>` elements. The practical workaround is to put the `h1` in a layout slot such as `pagehead`, derive it from front matter, and let the sectionized Markdown body start with `h2`.
+
+Current implementation caveat: page front matter cannot reliably disable inherited `heading_ids` or `sections` with `false`, because Nuekit currently resolves them with truthy fallback. App-level `content.sections: false` can override site config through config merge, but page front matter `sections: false` falls back to inherited config. This is visible in `packages/nuekit/src/render/page.js`, and the current `packages/www/docs/index.md` tries `heading_ids: false` while the generated page still has heading IDs.
+
+Heading attributes give CSS/linking hooks on headings:
+
+```md
+## Installation { #install.tight }
+```
+
+Renders:
+
+```html
+<h2 id="install" class="tight">Installation</h2>
+```
+
+Only `id` and `class` are supported in the `{ ... }` heading attribute syntax. Generated heading IDs are simple slugs and are not deduplicated, so repeated headings can produce repeated IDs.
+
+Anonymous blocks create local wrapper elements:
+
+```md
+[.note]
+  ## Note
+  Content here.
+```
+
+This renders a `<div class="note">`, not a `<section>`. If the block content splits into multiple internal sections, Nuemark wraps each internal group in a child `<div>`:
+
+```md
+[.features]
+  ### First
+  Text
+
+  ### Second
+  Text
+```
+
+Manual separators with `---` can also split block content into child divs. Use this when CSS needs predictable children without authoring raw HTML in Markdown.
+
+Square-bracket tag shorthand supports classes and IDs on built-in tags and custom components:
+
+```md
+[image#hero.responsive hero.jpg]
+[accordion.faq name="docs" open]
+[table.compact :rows="pricing"]
+```
+
+Important distinction: only a small allowlist becomes real HTML attributes in Nuemark tag syntax: `id`, `is`, `class`, `style`, `hidden`, `disabled`, `popovertarget`, `popover`, and `data-*`. Other named options become tag/component data. For example, `loading="eager"` is data consumed by `[image]`, while `data-state="open"` becomes a real HTML attribute.
+
+Custom Markdown tags are square-bracket calls to components defined in HTML libraries. For example, if a site defines a `card` component, Markdown can call it with `[card]`. Nuekit passes parsed tag data, shorthand classes/IDs, and nested Markdown slot content to the component, but the component decides which attributes appear in final HTML. To make classes pass through, the component needs to use them explicitly:
+
+```html
+<div :is="card" class="card { class } { type }">
+  <slot/>
+</div>
+```
+
+Prefer inline tag options when a custom component needs both data and slot Markdown:
+
+```md
+[card type="feature" title="Key Feature" footer="Learn more"]
+  This is Markdown slot content.
+```
+
+Do not document this pattern as if it produced both data and slot content:
+
+```md
+[card]
+  title: Key Feature
+  footer: Learn more
+
+  This prose is not parsed as slot Markdown in the current parser.
+```
+
+Once a tag body is recognized as YAML data, Nuemark does not also parse that body as Markdown blocks.
+
+Raw HTML in `.md` is not a general escape hatch today. The block parser skips lines that start with `<`, so manual `<div>` or `<section>` markup in Markdown does not reliably render as HTML. Use an `.html` page/layout/component for arbitrary HTML structure, or expose the structure through a custom component.
+
+
 ## Reference
 
 ### Page Collections
@@ -219,6 +364,171 @@ Recommended docs shape:
 - Reference: `Page collections` — exact behavior, options, item shape, current Markdown-only scope, RSS relationship, and limitations.
 - How-to: `How to create and use page collections` — one practical workflow from Markdown files to `site.yaml` config to rendered list. Keep creation and utilization together unless the material grows enough to split later.
 - Explanation: a short conceptual note that page collections are generated template data, not hand-authored YAML/JSON data and not generic file dependency inclusion.
+
+### Nuemark Configuration and Structure Reference
+
+This section records current source behavior for Nuemark features that affect rendered structure and CSS targeting. It is intentionally scoped to configuration, headings, sections, blocks, tags, and attributes.
+
+#### Content configuration
+
+Relevant current settings:
+
+| Setting | Where | Current behavior |
+|---|---|---|
+| `content.heading_ids` | `site.yaml`, app `app.yaml` | Adds generated IDs and empty anchor links to headings without explicit IDs. |
+| `content.sections` | `site.yaml`, app `app.yaml` | Enables section wrapping for Markdown render output. Can be `true`, `false`, or an array of section class names. |
+| `heading_ids` | Markdown front matter | Page-level truthy override for heading IDs. Current source cannot use `false` to disable an inherited truthy config. |
+| `sections` | Markdown front matter | Page-level truthy override for section wrapping/classes. Current source cannot use `false` to disable an inherited truthy config. |
+| `links` | site/app config | Supplies global reference links for Nuemark reference-link syntax. |
+
+`section_wrapper` is currently documented in public docs but not wired. Nuemark has a low-level render option named `content_wrapper`, but Nuekit does not pass `content.section_wrapper`, `section_wrapper`, or `content_wrapper` from config/front matter into `doc.render()`. Current docs showing `section_wrapper: wrap` are inaccurate.
+
+#### Sectioning rules
+
+Nuemark's `sectionize()` is used for page sections, anonymous block internals, accordions, lists, and definitions.
+
+The high-level model is: first Nuemark determines section boundaries, then `sections: [...]` class names are assigned to the resulting sections by index. Heading level influences where sections are cut; it does not determine which class name is used.
+
+Current rules:
+
+1. If any `---` separator exists, section splitting is controlled by `---`, and headings no longer create section boundaries.
+2. Only `---` is a section separator. Other thematic breaks like `***`, `___`, and `- - -` render as `<hr>` and do not drive section splitting.
+3. If there is no `---`, Nuemark looks for the first heading with level `h1`, `h2`, or `h3`.
+4. If the first sectioning heading is `h3`, sections split on `h3`.
+5. If the first sectioning heading is `h1` or `h2`, sections split on `h1` and `h2`; `h3` stays inside the current section.
+6. `h4` and deeper do not start sections.
+7. In page rendering with `sections` enabled, content with no sectioning heading/separator still gets wrapped as one `<section>`.
+
+When section rendering is enabled, `---` separators are omitted from output because they are structural. When section rendering is not enabled, `---` renders as `<hr>`.
+
+This makes `---` an author-controlled section break, not a styling hook. It is useful when a page needs section boundaries that differ from heading boundaries, such as an `h1` and `h2` sharing one hero section, or a section that has no heading. It does not provide a way to keep some Markdown content outside all generated sections.
+
+#### Headings
+
+Heading syntax supports IDs/classes through inline `{ ... }` attributes:
+
+```md
+# Title { #intro.hero }
+```
+
+Current behavior:
+
+- `{ #id.class }` supports only `id` and `class`.
+- Multiple classes work: `{ #id.a.b }`.
+- Generated IDs are produced in rendered HTML when `heading_ids` is truthy or when an explicit heading ID exists.
+- Generated IDs are lowercased slugs from the first 32 characters of heading text.
+- Generated IDs are not deduplicated.
+- `doc.headings` in render data is built from top-level document headings only. Headings nested inside blocks/tags are rendered with IDs when `heading_ids` is enabled, but they are not included in the `headings` array.
+
+#### Blocks
+
+Anonymous blocks are tags without a name, usually written as class hooks:
+
+```md
+[.note]
+  ## Note
+  Text
+```
+
+They render through the built-in `block` tag:
+
+- Default outer element: `<div>`.
+- Outer element with `popover`: `<dialog>`.
+- Classes and IDs from shorthand apply to the outer element.
+- If nested content has multiple sections, each section becomes an inner `<div>`.
+- If nested content has only one section or no sectioning structure, no extra inner divs are added.
+
+This means current docs/examples should not imply `[.hero]` directly renders `<section class="hero">`. It renders a `<div class="hero">`, unless a separate page section wrapper surrounds it.
+
+#### Tags
+
+Tag parsing shape:
+
+```md
+[tag#id.class unnamed key="value" flag data-state="open"]
+```
+
+Parsing behavior:
+
+- `#id` and `.class` become HTML attributes.
+- `class="..."` merges with shorthand classes and deduplicates.
+- Allowlisted names become HTML attributes: `id`, `is`, `class`, `style`, `hidden`, `disabled`, `popovertarget`, `popover`, and `data-*`.
+- Other names become tag data.
+- Booleans and numbers are parsed for inline options: `true`, `false`, `0`, and numeric strings.
+- A quoted unnamed value becomes `_`.
+- Colon-prefixed data bindings resolve from render data, e.g. `[table :rows="pricing"]`.
+
+Block tag bodies are either YAML data or Markdown blocks, not both. The parser treats a nested body as YAML when it starts with a YAML-looking key or list. If parsed as YAML, `block.blocks` is not populated and `<slot/>` receives no Markdown slot content.
+
+Built-in tags in current source include:
+
+- `block` / anonymous `[.class]`
+- `accordion`
+- `list`
+- `define`
+- `image`
+- `video`
+- `object`
+- `table`
+- `svg`
+- `icon`
+- `!` shortcut for image/video based on MIME
+- deprecated `button`
+- internal `codeblock`
+
+"Built-in tag" means a square-bracket tag with a built-in render handler. Other square-bracket tags are still allowed, but their behavior depends on whether a matching component exists:
+
+| Syntax | Current behavior |
+|---|---|
+| `[image]`, `[accordion]`, `[table]`, etc. | Handled by Nuemark built-in render functions. |
+| `[my-card]` where a matching HTML component exists | Rendered as a custom Markdown tag through Nuekit. |
+| `[unknown-tag]` with no matching component | Rendered as a client island stub like `<unknown-tag nue="unknown-tag">...`, not as ordinary static HTML. |
+
+`[div]` and `[section]` are not currently manual native tag insertion in Nuemark. Unless there is a matching custom component, they are treated as unknown tags/client stubs. For arbitrary native HTML structure, use an `.html` file or a custom component.
+
+Accordion caveat: docs say `open="2"` opens the second item, but source compares against the zero-based section index. `open` opens the first item; `open="1"` opens the second; `open="2"` opens the third.
+
+#### Attribute support by rendering path
+
+Current element-producing paths do not all support attributes the same way:
+
+| Rendering path | Element produced | Attribute support |
+|---|---|---|
+| Nue HTML pages/layouts/components | Arbitrary HTML/SVG/component elements | Broadest support. Static attributes generally pass through, including `id`, `class`, `name`, `data-*`, `aria-*`, etc. Boolean attributes are recognized. `:if`, `:each`, `:is`, and `:on*` are directives. Other colon attributes are component data, not rendered HTML attributes. Static `style` is ignored by the compiler; CSS variable attributes like `--x` are converted to style declarations. |
+| Nuemark headings | `<h1>` through `<h6>` | `{ #id.class }` supports only `id` and `class`. No `name`, `data-*`, `aria-*`, etc. |
+| Nuemark auto-inserted page sections | `<section>` | `sections: [hero, features]` assigns `class` by index only. No per-section `id`, `name`, `data-*`, or other attributes through config. |
+| Nuemark anonymous blocks | `<div>` or `<dialog>` | `[.class]`, `[#id.class]`, plus tag options from Nuemark's tag parser. Supports `id`, `class`, `style`, `hidden`, `disabled`, `popover`, `popovertarget`, and `data-*` as real HTML attributes. Other options become data, not attributes. `popover` changes the outer element to `<dialog>`. |
+| Nuemark auto-inserted block divs | inner `<div>` wrappers | Created when a block's nested content is sectionized. No direct author control over their attributes. |
+| Nuemark built-in tags | Depends on tag | Shorthand `#id.class` usually applies to the built-in tag's outer element, but each built-in decides where options go. Some options are consumed as data and rendered elsewhere. |
+| Nuemark custom tags | Component-defined output | Nuemark parses `id`, `class`, `data-*`, etc., then Nuekit passes them into the component as data and as `attr`. The component must explicitly render them. Nothing automatically applies unless the component template uses `{ class }`, `{ id }`, `:bind`, etc. |
+| Nuemark unknown tags | Client island stub | Renders a custom element with `nue="tag-name"` plus parsed attrs. Not suitable as ordinary static structural HTML. |
+| Nuemark thematic breaks | `<hr>` | No attribute support. `---` can also become a section separator and then disappear from output when section rendering is enabled. |
+| Standard Markdown structural elements | `<p>`, `<ul>`, `<ol>`, `<li>`, `<blockquote>`, links, images, code | Little or no direct attribute syntax in current Markdown parser. Wrap in blocks/components when attributes are needed. |
+| Fenced code blocks | `<pre><code>` optionally wrapped | Code fence info uses the tag parser, so classes can wrap the code block/figure. Some data options such as `numbered` and caption are consumed by rendering. |
+
+Suggested sorted list for final docs:
+
+1. Nue HTML pages/layouts/components
+2. Nuemark headings
+3. Nuemark auto-inserted page sections
+4. Nuemark anonymous blocks
+5. Nuemark auto-inserted block divs
+6. Nuemark built-in tags
+7. Nuemark custom tags
+8. Nuemark unknown tags/client island stubs
+9. Nuemark thematic breaks
+10. Standard Markdown structural elements: paragraphs, lists, blockquotes, links/images/code
+
+#### Current Nuemark docs mismatches to fix
+
+- `nuemark-syntax.md` documents `section_wrapper`, but source does not wire it through Nuekit config/front matter.
+- `configuration.md` and `conventions-reference.md` show duplicate `sections:` keys and the unsupported `section_wrapper`.
+- Page front matter examples imply flat `sections: false` / `heading_ids: false` can override inherited config; current source uses truthy fallback, so false does not disable inherited true.
+- The custom `[card]` example mixes YAML data and Markdown slot content; current parser treats the body as YAML and does not also provide slot Markdown.
+- `\|highlighted|` in the enhanced formatting example should not be documented as the mark syntax. The source syntax is `|highlighted|`; the backslash escapes the pipe.
+- Nuemark intro/example material implying `[.hero]` generates `<section class="hero">` is inaccurate for current source. Anonymous blocks render `<div>`.
+- Accordion `open="2"` is documented as second item, but current source uses zero-based indexes.
+- "Fully supports standard Markdown" is too broad for current source. For example, Markdown raw HTML lines are skipped by the block parser, and support is a focused subset plus Nue extensions.
 
 ### Folder Reference
 
@@ -508,3 +818,33 @@ Recommended model:
 - Do not place global content data in `@shared/ui/`; that folder is for globally available UI assets. Use `@shared/data/` for shared data.
 
 The open information-architecture question for M5: decide whether this should become a formal Reference topic, a How-to guide, or a Best Practices page. The likely shape is all three: a reference page for exact YAML/data behavior, a short how-to for moving content out of `site.yaml`, and a best-practice note explaining why the separation matters.
+
+
+## Nue and ASCS Mismatches / Future Changes
+
+Keep this separate from the main Nuemark docs notes for now. The main public docs should explain current Nue behavior clearly; this section records where current behavior may not be enough for the new docs site's ASCS conventions and semantic HTML/CSS goals.
+
+Current mismatch areas:
+
+- Headings only support `id` and `class` through `{ #id.class }`. They do not support `data-*`, `aria-*`, `name`, or other attributes.
+- Auto-inserted page sections only support ordered class assignment through `sections: [hero, features]`. There is no way to assign section IDs, data attributes, names, roles, or multiple structured attribute groups per section.
+- Auto-inserted block child divs have no author-controlled attributes. This limits how precisely a content author can align generated wrappers with CSS architecture rules.
+- Anonymous blocks are always `<div>` by default, except `popover` switches them to `<dialog>`. There is no Markdown-native way to choose semantic elements such as `section`, `aside`, `nav`, `header`, or `figure` for a generic block.
+- `[div]`, `[section]`, and other native-looking square-bracket tags are not native HTML insertion. They become custom tag/component calls or client island stubs unless matching components exist.
+- Raw HTML in Markdown is currently skipped by the block parser when lines start with `<`, so Markdown authors cannot fall back to arbitrary semantic HTML inside `.md` files.
+- Nuemark square-bracket tag syntax only turns a small allowlist plus `data-*` into real HTML attributes. Other named options become tag/component data. This is powerful for components, but it is not a general HTML attribute model.
+- Custom components can implement ASCS-compatible output, but each component must deliberately pass through or map `id`, `class`, `data-*`, and other attributes. The Markdown call site alone does not guarantee the final HTML shape.
+- The `sections: false` and `heading_ids: false` front matter behavior is currently weaker than expected because false values fall back to inherited truthy config.
+
+Possible future changes to evaluate:
+
+- Add a supported Nuemark syntax for choosing semantic block elements, for example an explicit element option on anonymous blocks, or a small set of built-in semantic block tags.
+- Add a general, documented attribute pass-through model for Nuemark-generated elements, with clear rules for `id`, `class`, `name`, `data-*`, `aria-*`, `role`, and boolean attributes.
+- Extend auto section configuration beyond ordered class names so sections can receive richer per-section attributes.
+- Decide whether raw HTML should be supported in Markdown, and if so under what safety and parsing rules.
+- Fix page-level false overrides for `sections` and `heading_ids` so local front matter can disable inherited behavior.
+- Revisit `section_wrapper` / `content_wrapper`: either wire and document it properly, or remove it from public docs until the feature exists.
+- Consider whether unknown native-looking tags such as `[section]` should render static HTML, require explicit component definitions, or fail loudly. The current client-stub behavior is surprising for documentation authors.
+- Define component-author conventions for passing through attributes so custom Markdown tags can produce predictable, semantic HTML without one-off template decisions.
+
+Tor's current direction: good documentation is imperative for the current behavior, but future upgrades or rewrites may be needed to simplify the mental model and better support ASCS plus general semantic HTML/CSS authoring.
