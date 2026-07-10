@@ -1,6 +1,6 @@
 # Clarity Docs Notes
 
-*The purpose of this document is to capture all kinds of information which we think should go into the new documentation sub-site. These will often be info that is not already on the docs site, info that is incorrect on the old site, meta-info to take advantage of (e.g. how to utilize AI for search), etc.*
+*The purpose of this document is to capture all kinds of information which we think should go into the new documentation sub-site. This will often be info that is not already on the docs site, info that is incorrect on the old site, meta-info to take advantage of (e.g. how to utilize AI for search), etc.*
 
 ## Introduction
 
@@ -301,6 +301,24 @@ Raw HTML in `.md` is not a general escape hatch today. The block parser skips li
 
 ## Reference
 
+### View Transitions
+
+`site.view_transitions: true` adds Nuekit's `@nue/transitions.js` client runtime to every rendered page. It is not only a CSS animation switch: the runtime turns eligible same-site link clicks into fetch-and-patch navigation. It fetches the destination HTML, parses it in memory, updates selected parts of the current document inside `document.startViewTransition()`, and uses the History API instead of loading a new browser document.
+
+Current runtime behavior and consequences:
+
+- **No new document on intercepted navigation.** `DOMContentLoaded`, `load`, and module top-level evaluation happen on the initial load or a manual reload, not on a client-side route change. Page-global JavaScript state remains alive. Code that initializes page behavior in `DOMContentLoaded` needs an additional route-aware path.
+- **Nue lifecycle events:** `before:route` fires before the destination fetch. After Nue patches the page, it dispatches `route` and `route:<app>`, where `<app>` is the first URL path segment or `home`. The client-component mount runtime already listens for `route`; new docs should present `route` as the appropriate hook for behavior that must run after every Nue navigation. Event handlers must be idempotent because they can run after both an initial load and later route changes.
+- **Only selected document parts are updated.** Nue updates the title, the `libs` metadata entry, external module scripts, stylesheets, inline `<style>` elements, `<main>`, and `<body>` content/class. It does not replace the document itself or generally synchronize the full `<head>`; for example, page-specific ordinary meta tags, favicon links, and existing scripts are not removed/replaced by this runtime. New module URLs are dynamically imported, but browser module caching means a module URL executes only once per page session.
+- **DOM identity is conditional.** The runtime recursively keeps elements only while the current and incoming nodes have the same child tag structure; otherwise it replaces HTML or individual elements. Direct listeners and imperative state on retained nodes can survive; listeners/state on replaced nodes do not. Prefer event delegation or a route initializer over assuming a fresh DOM on each page.
+- **Interception is intentionally narrow but not fully documented.** It skips modified clicks, `target` links, `mailto:`, URLs containing `//`, direct `#fragment` links, and apparent files with an extension other than `.html`. Forms are not handled. It intercepts other ordinary anchors, including relative paths, then passes `el.pathname` to the router. That discards query strings and fragments for intercepted navigation; direct `#fragment` links retain normal browser behavior. This is a current limitation to verify/fix before presenting it as a polished public feature.
+- **History and scrolling change.** Startup uses `history.replaceState()` for the initial page; intercepted forward navigation uses `pushState()`; `popstate` fetches and patches a previous managed page. Scroll positions are kept only in an in-memory map keyed by pathname. New client-side navigation scrolls to the top, and back/forward restores a saved position when available. A history entry with no Nue `path` state is ignored by this handler.
+- **It has an in-memory page cache.** Fetched HTML is cached by path for the life of the current document, so revisiting an already visited path does not fetch it again. That supports fast repeat navigation but can show stale page HTML during a long-lived session.
+- **Browser support fallback.** When `document.startViewTransition` is unavailable, Nue supplies a callback-only fallback, so fetch-and-patch navigation still occurs but without the browser's visual View Transitions API animation.
+- **Failure handling is minimal.** A 404 response whose body is not HTML creates a small in-place "Page not found" article; the runtime has no broader fetch-error/recovery path. This needs separate validation before public documentation promises navigation reliability or error semantics.
+
+Suggested public-docs framing: document the setting as **client-side page navigation with optional native view-transition animation**, rather than merely "transitions between pages." The reference should explicitly distinguish it from the separate full-SPA routing/state system and include the lifecycle contract, history/scroll behavior, current caching behavior, and compatibility fallback.
+
 ### Page Collections
 
 A page collection is a named array of Markdown pages that Nue builds from the site file tree and makes available as a template context property. Page collections are for pages-as-data: blog posts, docs pages, changelog entries, case studies, release notes, or any other group of Markdown pages that should be listed, sorted, filtered, rendered as previews, or used as an RSS source.
@@ -559,6 +577,7 @@ Any subfolder at root level that is not `@shared/` behaves as an app folder. Its
 
 - Files directly in `{app}/` are included for all pages under `{app}/`.
 - Files in `{app}/ui/` are also included for all pages under `{app}/`.
+- Files in `{app}/ui/{sub-folder}` are **not** auto-included, but can be included using the `include:` config value.
 - For nested pages (e.g. `{app}/guides/page.md`), both `{app}/` and `{app}/guides/` (and their `ui/` subfolders) are included.
 - Data files (`.yaml`/`.json`) in `{app}/` and `{app}/ui/` are loaded as template data for pages in that app.
 - `app.yaml` in `{app}/` (or `{app}/ui/`) provides app-scoped configuration that extends/overrides `site.yaml`.
@@ -628,7 +647,8 @@ In practice, `include:` is mainly for pulling in component libraries, scripts, s
 
 If an `include:` string matches a folder name, every walked file whose path contains that folder segment is added. For example, `include: [console]` can match `@shared/lib/console/console.html`, `@shared/lib/console/console.css`, and `@shared/lib/console/console.js` together.
 
-> Warning: Keep `include:` strings narrow, especially in `site.yaml`. A loose global pattern can expose assets to every page. For example, `include: [console]` in `site.yaml` does not mean "the shared console component"; it means "every walked path containing `console`". If the only match is `admin/console/`, those files become global page dependencies. Prefer a more specific path fragment such as `@shared/lib/console/` or `/lib/console/` when the intent is a particular shared folder.
+> **Warning**: Keep `include:` strings narrow, especially in `site.yaml`. A loose global pattern can expose assets to every page. For example, `include: [console]` in `site.yaml` does not mean "the shared console component"; it means "every walked path containing `console`". If the only match is `admin/console/`, those files become global page dependencies. Prefer a more specific path fragment such as `@shared/lib/console/` or `/lib/console/` when the intent is a particular shared folder.
+Similarly, an `include:` in an app's `app.yaml` does **not** automatically scope to the current app's folder. If your search strings are too loose, you risk pulling in files from other apps (pages).
 
 `site.yaml` provides the site-wide default. An app-level `app.yaml` can replace that default with its own `include:` or `exclude:` list. The `app.yaml` whose `include:`/`exclude:` applies is determined by which `app.yaml` files are in the page's natural dependency list — so `home/app.yaml` applies to `index.md` (because `home/` files are in its natural deps), and `docs/app.yaml` applies to pages in `docs/`.
 
@@ -665,6 +685,43 @@ Configuration and data are merged differently. Configuration groups such as `sit
 Some configuration groups contain child keys that are conceptually content. The current `rss:` group is the clearest example: `enabled` and `collection` control behavior, while `title` and `description` are feed content. In the current implementation, RSS generation reads `title`, `description`, `collection`, and `enabled` from `conf.rss`, so even the content-like RSS keys need to remain in `site.yaml`. Moving them to `@shared/data/content.yaml` would not feed RSS generation.
 
 
+### Page Shell Attributes
+
+Some render data properties affect the generated page shell rather than producing visible content or HTML `<meta>` tags. These properties are easy to confuse with document metadata because they can be placed under `meta:`, but their actual effect is on wrapper elements generated by Nuekit.
+
+Current page shell properties to document together:
+
+| Property | Applied to | Current behavior |
+|---|---|---|
+| `class` | `<body>` | Renders as `<body class="...">` when Nuekit generates the page shell. Multiple class names are written as a space-separated string, e.g. `class: dark heroic`. |
+| `language` | `<html>` | Renders as `<html lang="...">`; defaults to `en-US` when unset. |
+| `direction` | `<html>` | Renders as `<html dir="...">` when set. |
+| `scope` | page wrapper generation | Controls whether Nuekit wraps content in generated `body`, `main`, or `article` elements. Needs more source review before final docs. |
+
+The `class` property is used by the current Nue home page app config:
+
+```yaml
+# home/app.yaml
+class: dark heroic
+```
+
+This produces:
+
+```html
+<body class="dark heroic">
+```
+
+`class` can currently reach render data in more than one way:
+
+- `meta.class` in `site.yaml` or `app.yaml`, because Nue flattens the `meta:` group into render data.
+- Top-level `class` in app/page YAML, because non-configuration top-level YAML keys are merged as template/render data.
+- Markdown front matter `class`, which overrides broader data for that page.
+
+Public docs should say clearly that `class` is not related to Nuemark section classes, heading classes, or block classes. It is a page-shell render property for the generated `<body>` element.
+
+Important caveat: this only applies when Nuekit generates the page shell. If a page renders with `scope: body`, or otherwise supplies its own body-level structure, the automatic `<body class="...">` wrapper path is bypassed.
+
+
 ### The `meta:` Group
 
 `meta:` is best described as a group of document/page metadata defaults, not as "every child becomes an HTML `<meta>` element". Nue flattens keys under `meta:` into page data before rendering. The head renderer then uses selected well-known context properties to produce `<title>`, `<link>`, and `<meta>` elements.
@@ -694,7 +751,7 @@ Current well-known `meta:` properties from the Nue website:
 | `og` | Yes | Alias/input for `og:image`. `og_image` is also recognized. |
 | `origin` | Yes, as render data | Used by `og:image` generation in production to turn root-relative image paths into absolute URLs. It is not used for sitemap/RSS. |
 
-Other known metadata-style keys in Nue include `viewport`, `author`, `robots`, `date`/`pubDate`, `language`, `direction`, and `class`. Some become `<meta>` elements; others affect wrapper attributes such as `<html lang="...">`, `<html dir="...">`, or `<body class="...">`.
+Other known metadata-style keys in Nue include `viewport`, `author`, `robots`, `date`/`pubDate`, `language`, `direction`, and `class`. Some become `<meta>` elements; others affect generated page shell attributes. Document `language`, `direction`, and `class` with the Page Shell Attributes reference so users do not mistake them for literal HTML `<meta>` output.
 
 Important distinction:
 
@@ -757,7 +814,7 @@ These values are good candidates for `@shared/data/content.yaml` or another desc
 ***
 *General information is placed below*
 
-## Meta (not about documentation itself, but how to do the sub-site)
+## Meta (not about the Nue documentation itself, but how to do the sub-site)
 
 ### Nue Common Vocabulary
 
@@ -835,6 +892,16 @@ Current mismatch areas:
 - Nuemark square-bracket tag syntax only turns a small allowlist plus `data-*` into real HTML attributes. Other named options become tag/component data. This is powerful for components, but it is not a general HTML attribute model.
 - Custom components can implement ASCS-compatible output, but each component must deliberately pass through or map `id`, `class`, `data-*`, and other attributes. The Markdown call site alone does not guarantee the final HTML shape.
 - The `sections: false` and `heading_ids: false` front matter behavior is currently weaker than expected because false values fall back to inherited truthy config.
+- There's no way in Nue to set attributes on `html`, `head`, and `body` elements unless you set `scope: html` (for markdown files), or manually start your html files with `<html>`. To avoid having to do that we propose a new .yaml configuration feature under the `design:` group:
+  ```yaml
+  design:
+    html_attributes:
+      {attribute}: {value}
+    head_attributes:
+      {attribute}: {value}
+    body_attributes:
+      {attribute}: {value}    
+  ```
 
 Possible future changes to evaluate:
 
@@ -846,5 +913,6 @@ Possible future changes to evaluate:
 - Revisit `section_wrapper` / `content_wrapper`: either wire and document it properly, or remove it from public docs until the feature exists.
 - Consider whether unknown native-looking tags such as `[section]` should render static HTML, require explicit component definitions, or fail loudly. The current client-stub behavior is surprising for documentation authors.
 - Define component-author conventions for passing through attributes so custom Markdown tags can produce predictable, semantic HTML without one-off template decisions.
+- Current design-related configuration should be moved under the `design:` group. Examples are `class` and `scope`. Research other similar configuration properties.
 
 Tor's current direction: good documentation is imperative for the current behavior, but future upgrades or rewrites may be needed to simplify the mental model and better support ASCS plus general semantic HTML/CSS authoring.

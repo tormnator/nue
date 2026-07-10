@@ -59,7 +59,7 @@
 
 ### Tree Structure Example
 
-*4/21/2026: the diagram below was created by AI and then manually edited and color-coded by me. 5/1/2026: updated the diagram based on current knowledge*
+*4/21/2026: the diagram below was created by AI and then manually edited and color-coded by me. 5/1/2026: updated the diagram based on current knowledge. 7/7/2026: FYI, the diagram is not complete. For CSS organization, see `css-folders-files.md`.*
 
 ```
 .
@@ -115,3 +115,4 @@
 └── site.yaml                       # Global site configuration
 
 ```
+
