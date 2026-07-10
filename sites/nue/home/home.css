@@ -1,10 +1,9 @@
-
-@layer component {
+@layer paint {
   .cta-buttons { gap: .75em }
 
   /* captions */
   [class] + p {
-    color: var(--text-subtle);
+    color: var(--text-color-subtle);
     font-size: .875em
   }
 }

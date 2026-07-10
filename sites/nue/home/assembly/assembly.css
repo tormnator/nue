@@ -1,18 +1,17 @@
-
-@layer component {
-
+@layer paint {
+  /* Assembly Component */
   .assembly {
     margin-top: 2em;
 
     aside {
-      font-family: var(--monospace);
-      border: 1px solid var(--brand);
+      font-family: var(--mono-font-family);
+      border: 1px solid var(--brand-color);
       font-size: 1em;
       max-width: 200px;
       padding: 2em;
 
-      p { margin: 0; color: var(--gray-strong); }
-      b { color: var(--brand); font-weight: 600 }
+      p { margin: 0; color: var(--supporting-text-color); }
+      b { color: var(--brand-color); font-weight: 600 }
     }
 
     ul {
@@ -23,7 +22,7 @@
     /* pulsating arrow */
     svg {
       max-width: 2em;
-      color: var(--text-strong);
+      color: var(--text-color-strong);
       align-self: center;
       margin: -1em 0 0 -.5em;
       animation: flow .75s ease-in-out infinite alternate;
@@ -39,7 +38,7 @@
         font-size: .9em;
         font-weight: 500;
         white-space: nowrap;
-        color: var(--text-strong);
+        color: var(--text-color-strong);
       }
     }
 

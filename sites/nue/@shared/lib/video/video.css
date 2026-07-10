@@ -1,5 +1,5 @@
-
-@layer component {
+@layer paint {
+  /* Video Player Component */
   .player {
     position: relative;
     display: inline-flex;
@@ -7,7 +7,7 @@
     margin: 1em 0;
     
     video {
-      border-radius: var(--radius-m);
+      border-radius: var(--radius-md);
       max-width: 100%;
     }
 

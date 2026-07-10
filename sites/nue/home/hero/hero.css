@@ -1,18 +1,64 @@
-@layer design {
+@layer themes {
+  /* NOTE: If we change the default theme to light, we need to update the selectors below to match
+     the new default (keep this in sync with the global themes layer styles). */
 
+  :root[data-theme="light"],
+  :root[data-theme="auto"],
+  :root:not([data-theme]) {
+    --hero-title-gradient: linear-gradient(
+      to bottom right,
+      #0b1020 30%,
+      #64707f
+    );
+  }
+
+  :root[data-theme="dark"] {
+    --hero-title-gradient: linear-gradient(
+      to bottom right,
+      #fff 30%,
+      #ffffff80
+    );
+  }
+}
+
+@layer layouts {
   h1 {
-    font-size: 4em;
     max-width: unset;
-    letter-spacing: -.025em;
-    line-height: 1;
-    background-image: linear-gradient(to bottom right, #fff 30%, #ffffff80);
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
     margin-top: .5em;
 
     + p {
-      font-size: 1.25em;
       max-width: inherit;
+    }
+  }
+
+  h2 {
+    margin-block: 1em .25em;
+
+    + p {
+      margin-bottom: 1.5em;
+    }
+  }
+}
+
+@layer paint {
+
+  h1 {
+    font-size: 4em;
+    letter-spacing: -.025em;
+    line-height: 1;
+
+    color: transparent;
+    background-image: var(--hero-title-gradient);
+
+    /* Gradient text: clip the element background to the glyphs, then hide the text fill.
+      Safari still needs -webkit-background-clip, and -webkit-text-fill-color is the
+      most reliable way to make the glyph fill transparent for this effect. */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    + p {
+      font-size: 1.25em;
     }
 
     @media (width < 750px) { font-size: 3.25em }
@@ -22,11 +68,9 @@
     font-size: 2em;
     font-weight: 600;
     line-height: 1;
-    margin-block: 1em .25em;
 
     + p {
       font-size: 1.125em;
-      margin-bottom: 1.5em;
     }
   }
 }

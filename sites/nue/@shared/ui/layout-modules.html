@@ -1,5 +1,13 @@
 <!html lib>
 
+<head>
+  <!-- The color-scheme meta element tells the browser how it supports light and dark color schemes
+    (by "support" is meant which schemes it allows the browser to use). The browser uses this
+    information to adjust its UI accordingly (and before the page's CSS is applied on initial load),
+    avoiding a flash of incorrect colors. Keep this setting in sync with the color-scheme CSS property. -->
+  <meta name="color-scheme" content="light dark">
+</head>
+
 <header class="ui">
   <nav>
     <a href="/"><b class="wordmark">NUE</b></a>
@@ -13,6 +21,17 @@
   </nav>
 
   <nav>
+    <div data-name="theme-selector">
+      <button type="button" popovertarget="theme-menu" aria-label="{ themeButton.ariaLabel }">{ themeButton.label }</button>
+      <div id="theme-menu" popover>
+        <menu>
+          <li><button type="button" data-value="auto">{ themeMenu.system }</button></li>
+          <li><button type="button" data-value="light">{ themeMenu.light }</button></li>
+          <li><button type="button" data-value="dark">{ themeMenu.dark }</button></li>
+        </menu>
+      </div>
+    </div>
+
     <a  href="{ slack.url }" class="social row">
       <slack-icon width="18" height="18"/>
       <strong>Slack</strong>

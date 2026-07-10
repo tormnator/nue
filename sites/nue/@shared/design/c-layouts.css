@@ -1,0 +1,164 @@
+/**
+ * Layouts Layer: all styles involving positioning, spacing, sizing, and arrangement (the "Geometry") must
+ * be separated from Paint styles and placed in this layer. By separating Layout styles from Paint
+ * styles, we can maintain separation of concerns, and minimize the risk of style conflicts.
+ */
+@layer layouts {
+
+  /* #region ================= Old `layout` layer (global-layout.css) ================== */
+
+  body {
+    max-width: var(--default-page-width);
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+
+    > * { padding: 1em }
+    > main { flex: 1 }
+
+
+    > header {
+      align-items: center;
+      margin-bottom: 3em;
+      display: flex;
+      gap: 1em;
+
+      nav {
+        align-items: center;
+        display: flex;
+        gap: 2em;
+
+        &:last-of-type {
+          margin-left: auto;
+          justify-content: right;
+        }
+      }
+
+      /* mobile layout */
+      @media (width < 750px) {
+        .teaser, .social { display: none }
+      }
+    }
+
+
+    > footer {
+      color: var(--text-color-subtle);
+      padding-bottom: 4.5em;
+    }
+
+    /* section gaps */
+    main > article {
+      flex-direction: column;
+      display: flex;
+      gap: 3em;
+
+      section {
+        > h3, > h4 { margin-top: 2.5em }
+      }
+
+      .thin { max-width: 75% }
+
+      .wide {
+        max-width: inherit;
+        width: 100%
+      }
+    }
+
+    /* bottom cta */
+    main > aside {
+      margin-block: 5em;
+    }
+  }
+
+  /* #endregion ================= Old `layout` layer (global-layout.css) ================== */
+
+  /* #region ================= Old `layout` layer (grid.css) ================== */
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--cell-width, 250px), 1fr));
+    gap: 1em;
+  }
+
+  .row {
+    align-items: center;
+    display: flex;
+    gap: .5em;
+  }
+
+  .flex {
+    display: flex;
+    gap: 1em;
+    > * { flex: 1 }
+
+    &.wrap {
+      flex-wrap: wrap;
+      > * { flex: 1 1 var(--cell-width, 200px) }
+    }
+  }
+
+  .stack {
+    flex-direction: column;
+    align-items: unset;
+    display: flex;
+    gap: 1em;
+  }
+
+  @media (width > 900px) {
+    .columns {
+      column-count: var(--count, 2);
+      margin-block: 2em;
+      column-gap: 1.5em;
+      div { break-inside: avoid }
+    }
+  }
+
+  /* #endregion ================= Old `layout` layer (grid.css) ================== */
+
+  /* #region ============= Named Layouts ============= */
+
+  /* #region ------------- Component Styles ------------- */
+
+  /** @category Component "Theme Selector" */
+  [data-name="theme-selector"] {
+    > button {
+      padding: var(--space-1) var(--space-3);
+      anchor-name: --theme-menu-trigger;
+    }
+
+    > [popover] {
+      position-anchor: --theme-menu-trigger;
+      margin: 0;
+      margin-block-start: var(--space-1);
+      inset-block-start: anchor(bottom);
+      inset-inline-start: unset;
+      inset-inline-end: anchor(right);
+      min-inline-size: anchor-size(width);
+
+      > menu {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding-inline-start: 0;
+
+        > li > button {
+          inline-size: 100%;
+          text-align: start;
+          padding: var(--space-2) var(--space-3);
+
+          &[aria-pressed="true"] {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--inner-3);
+          }
+        }
+      }
+    }
+  }
+
+  /* #endregion ------------- Component Styles ------------- */
+
+  /* #endregion ============= Named Layouts ============= */
+}

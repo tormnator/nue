@@ -1,0 +1,200 @@
+/**
+ * Tokens layer: defines the shared values of the system (colors, typography, spacing, etc.).
+ * Tokens provide the foundation for consistent styling across themes, layouts, and paint.
+ */
+@layer tokens {
+  :root {
+    /* #region ============= Primitive Tokens (must not be themed) ============= */
+
+    /* #region ----- Category: Colors ----- */
+
+    color-scheme: light dark;
+
+    --gray-100: #f4f6f9;
+    --gray-150: #eef2f7;
+    --gray-200: #dcdfe5;
+    --gray-300: #b0b4bc;
+    --gray-350: #a7b4c8;
+    --gray-400: #78899f;
+    --gray-500: #6d7d91;
+    --gray-600: #64707f;
+    --gray-700: #4c5663;
+    --gray-800: #323d4e;
+    --gray-850: #1c2026;
+    --gray-900: #121212;
+
+    --green-300: #14bd86;
+    --green-400: #0bbc81;
+
+    --blue-200: #4a8fff;
+    --blue-300: #3481fe;
+
+    --purple-300: #7727ff;
+
+    /* #endregion ----- Category: Colors ----- */
+
+    /* #region ----- Category: Spacing ----- */
+
+    /* SPACING SCALE - spacing around elements (margin, padding, gap)
+       When you want consistent spacing which **scales with the root font-size**.
+       Based on a 0.25rem (4px) baseline. Math: value = 0.25rem * step. */
+    --space-0: 0;        /* 0px */
+    --space-1: 0.25rem;  /* 4px */
+    --space-2: 0.5rem;   /* 8px */
+    --space-3: 0.75rem;  /* 12px */
+    --space-4: 1rem;     /* 16px */
+    --space-5: 1.25rem;  /* 20px */
+    --space-6: 1.5rem;   /* 24px */
+    --space-7: 1.75rem;  /* 28px */
+    --space-8: 2rem;     /* 32px */
+    --space-9: 2.25rem;  /* 36px */
+    --space-10: 2.5rem;  /* 40px */
+    --space-11: 2.75rem; /* 44px */
+    --space-12: 3rem;    /* 48px */
+
+    /* INNER SCALE - for layout inner spacing (padding, etc.)
+       When you want the spacing to **scale with current font-size**, e.g. padding inside buttons.
+       Based on a 0.125rem (2px) baseline. Math: value = 0.125rem * step. */
+    --inner-0:  0;        /*  0px */
+    --inner-1:  0.125em;  /*  2px */
+    --inner-2:  0.25em;   /*  4px */
+    --inner-3:  0.375em;  /*  6px */
+    --inner-4:  0.5em;    /*  8px */
+    --inner-5:  0.625em;  /* 10px */
+    --inner-6:  0.75em;   /* 12px */
+    --inner-7:  0.875em;  /* 14px */
+    --inner-8:  1em;      /* 16px */
+    --inner-9:  1.125em;  /* 18px */
+    --inner-10: 1.25em;   /* 20px */
+    --inner-11: 1.375em;  /* 22px */
+    --inner-12: 1.5em;    /* 24px */
+    
+    /* #endregion ----- Category: Spacing ----- */
+
+    /* #region ----- Category: Borders ----- */
+
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+
+    --border-width-thin: 1px;
+
+    /* #endregion ----- Category: Borders ----- */
+
+    /* #endregion ============= Primitive Tokens (must not be themed) ============= */
+
+
+    /* #region ============= Non-Themeable Semantic Tokens ============= */
+
+    --default-font-family: inter, "helvetica neue", system-ui;
+    --mono-font-family: "plex mono", courier, monospace;
+    /* "ui" here is not a good name, but we'll keep it for the time being. This is a reduced font size 
+       used in the Nue Stack component, Join-list component's form, header and footer layout modules,
+       and Nue assembly component). */
+    --ui-font-size: 14px;
+    --default-line-height: 1.65;
+    --text-line-max-width: 42rem;
+    --default-page-width: 1024px;
+    /* Used for cards, modals, dialogs, etc. */
+    --container-radius: var(--radius-lg);
+    --shadow-popover: 0 4px 6px -1px var(--shadow-color-subtle);
+
+    /* #endregion ============= Non-Themeable Semantic Tokens ============= */
+  }
+}
+
+/**
+ * Themes layer: defines themeable semantic color tokens that correspond to the currently active
+ * theme. This layer maps primitive color tokens to semantic names (e.g., --default-text-color)
+ * based on the active theme (light, dark, {custom}).
+ */
+@layer themes {
+  /* Notes:
+     - We have all both themes (light and dark) defined here (instead of in separate files)
+       for clarity. In a real-world application we could split them into separate files for
+       maintainability.
+     - Themes are controlled by setting data-theme="light|dark|{custom}" on the :root element.
+       This approach assumes that JavaScript is used to set the data-theme attribute based on user
+       selection or system preference.
+     - TIP: Remember to keep the color values set in the HTML <head> section in sync with the CSS
+       variables here. */
+  :root {
+    /* Light theme (also the default theme) */
+    &[data-theme="light"],
+    &[data-theme="auto"],
+    &:not([data-theme]) {
+      /* Force browser UI (scrollbars, date pickers) to light mode */
+      color-scheme: light;
+
+      --default-bg-color: white;
+      --default-text-color: var(--gray-600);
+      --text-color-subtle: var(--gray-400);
+      --text-color-strong: black;
+
+      /* The tokens below are all using gray values. We'll keep them together here to show that if
+         want to change one, then we should review the use of the others to see if they also need to
+         be adjusted. */
+      --content-border-color: var(--gray-200);
+      --surface-bg-color-subtle: var(--gray-100);
+      --control-bg-color: var(--gray-100);
+      --code-bg-color: var(--gray-100);
+      --pill-bg-color-hover: var(--gray-200);
+      --separator-border-color: var(--gray-300);
+      --input-placeholder-text-color: var(--gray-300);
+      --supporting-text-color: var(--gray-300);
+
+      --accent-bg-color: var(--green-300);
+      --accent-text-color: white;
+      --code-text-color: var(--green-300);
+      --code-text-color-strong: var(--purple-300);
+
+      --inverse-bg-color: black;
+      --inverse-text-color: white;
+
+      /* `--brand-color` is used both as background-color, text-color, border-color etc. */
+      --brand-color: var(--blue-200);
+      /* To be used when `--brand-color` is used as a background color. */
+      --brand-text-color: white;
+      --selection-bg-color: var(--blue-200);
+      --selection-text-color: white;
+      --shadow-color-subtle: rgb(17 24 39 / 0.1);
+}
+    
+    /* Dark theme */
+    &[data-theme="dark"] {
+      /* Force browser UI (scrollbars, date pickers) to dark mode */
+      color-scheme: dark;
+
+      --default-bg-color: var(--gray-900);
+
+      --text-color-subtle: var(--gray-500);
+      --default-text-color: var(--gray-350);
+      --text-color-strong: var(--gray-150);
+
+      --content-border-color: var(--gray-800);
+      --surface-bg-color-subtle: var(--gray-850);
+      --control-bg-color: var(--gray-850);
+      --code-bg-color: var(--gray-850);
+      --pill-bg-color-hover: var(--gray-800);
+      --separator-border-color: var(--gray-700);
+      --input-placeholder-text-color: var(--gray-700);
+      --supporting-text-color: var(--gray-700);
+
+      --accent-bg-color: var(--green-400);
+      --accent-text-color: white;
+      --code-text-color: var(--green-300);
+      --code-text-color-strong: var(--purple-300);
+
+      --inverse-bg-color: white;
+      --inverse-text-color: black;
+
+      /* `--brand-color` is used both as background-color, text-color, border-color etc. */
+      --brand-color: var(--blue-300);
+      /* To be used when `--brand-color` is used as a background color. */
+      --brand-text-color: white;
+      --selection-bg-color: var(--blue-300);
+      --selection-text-color: white;
+      --shadow-color-subtle:rgb(255 255 255 / 0.15);
+    }
+  }
+}

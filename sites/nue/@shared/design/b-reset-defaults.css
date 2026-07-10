@@ -1,0 +1,390 @@
+/**
+ * Reset Layer: makes browsers behave consistently by stripping/neutralizing defaults which vary or
+ * get in the way of predictable layout. Keep it low-opinion. “The clean sheet.”
+ */
+@layer reset {
+  /* We're using two rules to reset the box-sizing property (it's called the "inherit-pattern")
+     because applying 'border-box' directly to * prevents inheritance. By using 'inherit' here,
+     we can later set a specific parent to 'content-box' and ensure all its children inherit that
+     setting. */
+  html {
+    box-sizing: border-box;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
+  /* Cautious reset of ALL MARGINS on a subset of elements to ensure predictable spacing. */
+  :where(body, menu) {
+    margin: 0;
+  }
+
+  /* More styles to come here... */
+}
+
+/**
+ * Defaults Layer: contains default, un-opinionated styling for all types of elements. Some elements
+ * will require additional styling in other layers. With a well defined Defaults layer, a “naked” HTML
+ * should look clean and accessible.
+ */
+@layer defaults {
+
+  /* #region ================= Old `design` layer (global.css) ================== */
+
+  @font-face {
+    src: url("/@shared/design/font/inter.woff2") format("woff2");
+    font-family: inter;
+    font-display: fallback;
+    font-weight: 100 900;
+  }
+
+  @font-face {
+    src: url("/@shared/design/font/ibm-plex-mono.woff2") format("woff2");
+    font-family: "plex mono";
+    font-display: fallback;
+    font-weight: 400;
+  }
+
+  body {
+    line-height: var(--default-line-height);
+    background-color: var(--default-bg-color);
+    font-family: var(--default-font-family);
+    color: var(--default-text-color);
+  }
+
+  *, *:before, *:after { box-sizing: border-box }
+
+  ::selection {
+    background-color: var(--selection-bg-color);
+    color: var(--selection-text-color);
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  [hidden] { display: none }
+
+  a:has(img:only-child) { font-size: 0 }
+
+  /* #endregion ================= Old `design` layer (global.css) ================== */
+
+  /* #region ================= Old `design` layer (content.css) ================== */
+
+  h1, h2, h3, h4 {
+    color: var(--text-color-strong);
+    margin-block: .5em;
+    text-wrap: balance;
+    line-height: 1.25;
+
+    strong {
+      font-weight: inherit;
+      color: var(--brand-color);
+    }
+
+    + p { margin-top: 0 }
+  }
+
+  h1 {
+    font-size: 1.75em;
+    margin-block: 0 .25em;
+    font-weight: 650;
+    letter-spacing: -.01em;
+
+    + p {
+      color: var(--text-color-strong);
+      font-weight: 450;
+    }
+  }
+
+  h2 {
+    font-weight: 550;
+    font-size: 1.25em;
+  }
+
+  h3 {
+    font-size: 1em;
+    margin-bottom: .75em;
+    font-weight: 600;
+  }
+
+  h1, h2, h3, p, li, pre { max-width: var(--text-line-max-width) }
+
+  ol, ul, table { margin-block: 1.5em }
+
+  strong {
+    color: var(--text-color-strong);
+    font-weight: 600;
+  }
+
+  p, li, td {
+    text-wrap: pretty;
+
+    /* Code fragment inside paragraphs, table cells, and list items. */
+    code {
+      background-color: var(--code-bg-color);
+      font-family: var(--mono-font-family);
+      padding: .125em .25em;
+      font-size: .875em;
+    }
+  }
+
+  ol, ul { padding-left: 1em }
+
+  li {
+    padding-left: .25em;
+
+    p:only-child { margin-block: .5em }
+  }
+
+  hr {
+    border: solid var(--separator-border-color);
+    margin-block: 1.5em;
+    border-width: .5px 0 0;
+  }
+
+  blockquote {
+    border-left: .25em solid var(--brand-color);
+    padding-left: 1em;
+    margin: 2em 0;
+
+    p { color: var(--text-color-strong) }
+  }
+
+  small, figcaption {
+    color: var(--text-color-subtle);
+    font-weight: 400;
+    font-size: .875em;
+  }
+
+  time { white-space: nowrap }
+
+  figure {
+    margin: 1.5em 0;
+
+    &.bordered img { border: 1px solid var(--content-border-color) }
+  }
+
+  /* #endregion ================= Old `design` layer (content.css) ================== */
+
+  /* #region ================= Old `design` layer (elements.css) ================== */
+
+  a {
+    text-decoration-color: var(--brand-color);
+    text-underline-offset: .25em;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration-color: var(--brand-color);
+      text-decoration-thickness: 2px;
+      color: var(--text-color-strong);
+    }
+
+    &:visited { opacity: .5 }
+    &[name] { color: inherit }
+  }
+
+  nav {
+    line-height: 1.25;
+
+    a {
+      color: var(--default-text-color);
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+
+      &:hover { color: var(--text-color-strong) }
+    }
+  }
+
+  button, .button {
+    background-color: var(--control-bg-color);
+    color: var(--text-color-strong);
+    text-align: center;
+    font-family: inherit;
+    font-size: inherit;
+    padding: .5em 1.25em;
+    border-radius: .25em;
+    cursor: pointer;
+    display: inline-block;
+    white-space: nowrap;
+    border: unset;
+    gap: .5em;
+
+    &:hover { filter: brightness(1.1) }
+
+    &:active {
+      filter: brightness(.9);
+      transform: scale(.99);
+    }
+
+    &[disabled] {
+      pointer-events: none;
+      opacity: .33;
+    }
+
+    &.plain {
+      background-color: unset;
+      border: 0;
+      padding: 0;
+    }
+
+    header & { padding: .375em 1em }
+  }
+
+  .button { text-decoration: none }
+
+  table {
+    font-size: var(--ui-font-size);
+    border-collapse: collapse;
+    width: 100%;
+
+    tr { vertical-align: baseline }
+    th { color: var(--text-color-strong) }
+
+    th, td {
+      border-bottom: 1px solid var(--content-border-color);
+      padding: .5em 0;
+      text-align: left;
+
+      &:not(:first-child) { padding-left: 2em }
+    }
+
+    td:first-child {
+      white-space: nowrap;
+      width: 25%;
+    }
+
+    tfoot td {
+      color: var(--text-color-strong);
+      font-weight: 500;
+      border: 0;
+    }
+  }
+
+  form {
+    max-width: var(--width, 45em);
+    margin-block: 2em;
+  }
+
+  ::placeholder { color: var(--input-placeholder-text-color) }
+
+  :focus-visible {
+    outline-color: var(--default-bg-color);
+    outline-offset: 4px;
+    outline-width: 1px;
+  }
+
+  input, textarea {
+    background-color: var(--control-bg-color);
+    border: none;
+    color: var(--default-text-color);
+    font-family: inherit;
+    font-size: inherit;
+    padding: .75em;
+    width: 100%;
+    margin: 0;
+  }
+
+  dialog {
+    margin-top: 10em;
+    padding: 1.5em;
+    max-width: 100%;
+    width: 25em;
+
+    > :first-child { margin: 0 }
+
+    &::backdrop {
+      background-color: rgba(0, 0, 0, 50%);
+      backdrop-filter: blur(5px);
+    }
+  }
+
+  /* #endregion ================= Old `design` layer (elements.css) ================== */
+
+  /* #region ================= Old `design` layer (ui.css) ================== */
+
+  /* Reduces the default font-size and sets line-height for several components (Nue stack, Join list component's form,
+     header and footer layout modules, Nue assembly component). */
+  .ui {
+    font-size: var(--ui-font-size);
+    line-height: 1.25;
+  }
+
+  /* "NUE" logo styling, used in the header and footer. */
+  .wordmark {
+    color: var(--text-color-strong);
+    font-size: 1.125em;
+    letter-spacing: .025em;
+    font-weight: 750;
+  }
+
+  /* Used by the Nue stack component (both outer and inner divs), and by the Nue assembly component (folder tree, each file). */
+  .card {
+    background-color: var(--surface-bg-color-subtle);
+    border-radius: var(--radius-md, 4px);
+    padding: 1em 1.25em;
+
+    .card { background-color: var(--default-bg-color) }
+    > :first-child { margin-top: 0 }
+    > :last-child { margin-bottom: 0 }
+  }
+
+  /* A small section with background color and padding, similar to a callout. Used in blog articles (Nuemark docs). */
+  .note {
+    background-color: var(--surface-bg-color-subtle);
+    max-width: var(--text-line-max-width);
+    font-size: var(--ui-font-size);
+    margin-block: 1.5em;
+    padding: 1em;
+
+    p { margin: 0 }
+  }
+
+  /* Inline tag-looking text. Currently only used in the header layout module. */
+  .tag {
+    border-radius: var(--radius-sm);
+    font-size: .875em;
+    padding: .125em .25em;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  /* A pill-shaped generic element. Currently only used in the header layout module. */
+  .pill {
+    background-color: var(--control-bg-color);
+    color: var(--text-color-strong);
+    border-radius: 9em;
+    padding: .25em .75em;
+
+    &:hover { background-color: var(--pill-bg-color-hover) }
+  }
+
+  /* Used around various svg-icons across the site. */
+  .icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    &.branded { color: var(--brand-color) }
+  }
+
+  /* No-bullet list; used by the blog-entries and Nue assembly components. */
+  .list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li:not([class]) { padding: 0 }
+  }
+
+  /* #endregion ================= Old `design` layer (ui.css) ================== */
+
+}

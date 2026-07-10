@@ -1,13 +1,31 @@
-
-@layer design {
-
+@layer layouts {
   pre {
-    background-color: var(--gray-subtle);
-    border-radius: var(--radius-m);
-    counter-reset: line-number 0;
-    color: var(--accent);
-    overflow: hidden;
     padding: 1.5em;
+
+    /* marked segments */
+    mark {
+      padding-block: .25em;
+    }
+
+    /* line numbers */
+    span {
+      &:before {
+        display: inline-block;
+        padding-right: 1em;
+        margin-right: 1em;
+        width: 2.5em;
+      }
+    }
+  }
+}
+
+@layer paint {
+  pre {
+    background-color: var(--code-bg-color);
+    border-radius: var(--radius-md);
+    counter-reset: line-number 0;
+    color: var(--code-text-color);
+    overflow: hidden;
 
     /* reset */
     * {
@@ -16,36 +34,35 @@
       text-decoration: inherit
     }
 
-    b { color: var(--brand); }
+    b { color: var(--brand-color); }
 
-    em { color: var(--accent) }
+    em { color: var(--code-text-color) }
 
     /* special emphasis */
     strong {
-      color: var(--pop);
+      color: var(--code-text-color-strong);
     }
 
     /* brackets, commas, semicolons... */
-    i { color: var(--text-subtle) }
+    i { color: var(--text-color-subtle) }
 
     /* comments */
     sup {
-      color: var(--text-subtle);
+      color: var(--text-color-subtle);
       vertical-align: inherit;
       font-size: inherit;
     }
 
     /* marked segments */
     mark {
-      background-color: color-mix(in srgb, var(--brand) 30%, transparent);
+      background-color: color-mix(in srgb, var(--brand-color) 30%, transparent);
       color: inherit;
       border-radius: .2em;
-      padding-block: .25em;
     }
 
     /* spotlight */
     label {
-      color: var(--text-strong);
+      color: var(--text-color-strong);
       font-weight: bold;
     }
 
@@ -58,9 +75,6 @@
         content: counter(line-number);
         display: inline-block;
         text-align: right;
-        padding-right: 1em;
-        margin-right: 1em;
-        width: 2.5em;
       }
     }
   }

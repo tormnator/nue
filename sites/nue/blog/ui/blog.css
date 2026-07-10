@@ -1,5 +1,4 @@
-
-@layer layout {
+@layer layouts {
   .list {
     margin-top: 2em;
 
@@ -24,7 +23,7 @@
     align-items; center;
 
     img {
-      border-radius: var(--radius-m);
+      border-radius: var(--radius-md);
       margin-bottom: -.25em;
     }
 

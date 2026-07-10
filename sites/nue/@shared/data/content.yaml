@@ -24,6 +24,14 @@ gh:
 slack:
   url: //join.slack.com/t/nuejs/shared_invite/zt-2wf8ozu5i-N2Y9PA_D17weIWuN2QPOqQ
 
+themeButton:
+  ariaLabel: Select Theme
+  label: Theme
+themeMenu:
+  system: System (Auto)
+  light: Light
+  dark: Dark
+
 # The join mailing list feature is disabled until the server-side implementation is reimplemented.
 # See `components-client-side.html and `layout-modules.html` in the `@shared/ui` folder for more details. 2026-06-24, @tormnator.
 # NOTE: Temporarily enabled again for the purpose of testing styling/design work. 2026-07-9, @tormnator.

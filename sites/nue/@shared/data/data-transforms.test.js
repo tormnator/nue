@@ -1,5 +1,5 @@
 
-import { parseEntry, getCategory, default as mutate } from './topics'
+import { parseEntry, getCategory, default as mutate } from './data-transforms'
 
 test('mutate', () => {
   const data = { topics: { first: ['Hello'] }}

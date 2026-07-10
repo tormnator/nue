@@ -1,15 +1,14 @@
-
-@layer component {
-
+@layer paint {
+  /* Console Component */
   .console {
-    background-color: var(--gray-subtle);
+    background-color: var(--code-bg-color);
     margin-block: 2em -.5em;
-    color: var(--text);
+    color: var(--default-text-color);
     height: 33em;
 
     pre {
-      font-family: var(--monospace);
-      color: var(--text-subtle);
+      font-family: var(--mono-font-family);
+      color: var(--text-color-subtle);
       font-size: .875em;
       max-width: 38em;
       margin: 0;
@@ -21,16 +20,16 @@
     }
 
     b {
-      color: var(--text-strong);
+      color: var(--text-color-strong);
       font-weight: 450;
     }
 
     .response {
-       &::first-letter { color: var(--brand) }
+       &::first-letter { color: var(--brand-color) }
     }
 
     time {
-      color: var(--brand);
+      color: var(--brand-color);
       float: right;
     }
 
@@ -42,7 +41,7 @@
     &.is-playing header { display: none }
 
     .command {
-      color: var(--brand);
+      color: var(--brand-color);
       &:before {
         content: "$ ";
         color: var(--brand-subtle);
@@ -54,7 +53,7 @@
         display: inline-block;
         width: 0.5em;
         height: 1em;
-        background-color: var(--accent);
+        background-color: var(--accent-bg-color);
         margin-left: .15em;
         position: relative;
         opacity: .75;
@@ -62,7 +61,7 @@
       }
 
       &.is-comment {
-        color: var(--accent);
+        color: var(--accent-bg-color);
         &:after { animation: blink 1s infinite .5s; }
       }
     }
@@ -73,4 +72,3 @@
     51%, 100% { opacity: 0 }
   }
 }
-

@@ -7,7 +7,7 @@
  * template context.
  */
 export default function(data) {
-  /* NOTE: Because the Docs site all contains an archive of older Docs version, the code in this
+  /* NOTE: Because the Docs site all contains an archive of older Docs versions, the code in this
    * global manipulation script must remain backwards compatible with all archived Docs versions.
    */
   const topics = (!data.topics || typeof data.topics !== 'object' || Array.isArray(data.topics))

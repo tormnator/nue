@@ -1,12 +1,13 @@
+/* Note, these styles are **not** within a layer and will have higher specificity than rules defined within a layer */
 
 h2 code {
   background-color: #e3f0ff;
   font-size: 1rem;
-  color: var(--brand);
+  color: var(--brand-color);
   line-height: 1;
   font-family: courier;
   padding: .25em .5em;
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-md);
   float: right;
   margin: .25em 0 0;
 }

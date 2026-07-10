@@ -1,6 +1,7 @@
-class: dark heroic
+class: heroic
 # - The `assembly` component is located in its own subfolder (of home), and since subfolders of home are not automatically included, they need to be explicitly listed in the include array below.
 # - The `hero.css` and the `cta-button` component are placed in the `hero` subfolder (of home), and must therefore also be specifically listed in the include (the `hero` matches the folder name in this case).
 # - The `console` and `nue-stack` components are located in the shared, but not auto-loaded `@shared/lib` folder, and must therefore also be specifically listed in the include.
-include: [ /lib/console, /lib/stack, home/assembly, home/hero ]
+# - `lib/syntax.css` is included because the `assembly` component uses some of its styles.
+include: [ /lib/console, /lib/stack, home/assembly, home/hero, lib/syntax.css ]
 title_template: false

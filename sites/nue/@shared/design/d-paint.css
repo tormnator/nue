@@ -1,0 +1,80 @@
+/**
+ * Paint Layer: reusable styles defining UI elements' visual identity (the “Paint”).
+ */
+@layer paint {
+  /* Note: styles within the inner `modifier` layer will have lower specificity than styles in the 
+     outer component layer. */
+  @layer modifier {
+    .brand {
+      background-color: var(--brand-color);
+
+      &, * { color: var(--brand-text-color) }
+    }
+
+    .inverse {
+      background-color: var(--inverse-bg-color);
+      color: var(--inverse-text-color);
+
+      &, * { color: var(--inverse-text-color) }
+    }
+  }
+
+  /* #region ============= Named Paint ============= */
+
+  /* #region ------------- Component Styles ------------- */
+
+  /** @category Component "Theme Selector" */
+  [data-name="theme-selector"] {
+    > button {
+      /*background: transparent;*/
+      color: var(--default-text-color);
+      border: var(--border-width-thin) solid var(--content-border-color);
+      border-radius: var(--container-radius);
+
+      &:hover {
+        background-color: var(--pill-bg-color-hover);
+        text-decoration: none;
+      }
+    }
+
+    > [popover] {
+      color: var(--default-text-color);
+      border: var(--border-width-thin) solid var(--content-border-color);
+      border-radius: var(--container-radius);
+      background-color: var(--control-bg-color);
+      box-shadow: var(--shadow-popover);
+
+      > menu {
+        list-style: none;
+
+        > li > button {
+          background-color: transparent;
+          border: none;
+          border-radius: var(--container-radius);
+          cursor: pointer;
+          color: var(--default-text-color);
+          font-size: var(--ui-font-size);
+
+          &:hover {
+            background-color: var(--pill-bg-color-hover);
+            filter: none;
+          }
+
+          /* Active/Selected state */
+          &[aria-pressed="true"] {
+            background-color: var(--pill-bg-color-hover);
+
+            &::after {
+              content: "✔";
+              opacity: 0.7;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* #endregion ------------- Component Styles ------------- */
+
+  /* #endregion ============= Named Paint ============= */
+}

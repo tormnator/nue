@@ -14,8 +14,11 @@ collections:
     sort: date desc
 
 design:
-  layers: [ design, layout, component ]
+  layers: [ tokens, themes, reset, defaults, layouts, paint, utilities, overrides]
   inline_css: true
+
+import_map:
+  lib/: /@shared/lib/
 
 sitemap:
   enabled: true
