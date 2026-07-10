@@ -26,10 +26,11 @@ slack:
 
 # The join mailing list feature is disabled until the server-side implementation is reimplemented.
 # See `components-client-side.html and `layout-modules.html` in the `@shared/ui` folder for more details. 2026-06-24, @tormnator.
-#join:
-#  title: 3.0 is coming
-#  desc: Get email when [multi-site development](/docs/roadmap) is ready
-#  form:
-#    comment: Comment (Optional, but valued!)
-#    done: We'll email you when the next major release is out
-#    cta: Ping me
+# NOTE: Temporarily enabled again for the purpose of testing styling/design work. 2026-07-9, @tormnator.
+join:
+  title: 3.0 is coming
+  desc: Get email when [multi-site development](/docs/roadmap) is ready
+  form:
+    comment: Comment (Optional, but valued!)
+    done: We'll email you when the next major release is out
+    cta: Ping me

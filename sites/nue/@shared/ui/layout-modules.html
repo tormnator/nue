@@ -27,14 +27,16 @@
 <aside :is="beside">
   <!--
    The join mailing list feature is disabled until the server-side implementation is reimplemented.
-   See `components-client-side.html and the `join` section in the `site.yaml` for more details. 2026-06-24, @tormnator.
+   See `components-client-side.html and the `join` section in the `@shared/data/content.yaml` for
+   more details. 2026-06-24, @tormnator.
+   NOTE: Temporarily enabled again for the purpose of testing styling/design work. 2026-07-9, @tormnator.
    -->
   <!-- join mailing list -->
-  <!--
+<!---->
   <h2>{ join.title }</h2>
   <p>{{ markdown(join.desc) }}</p>
   <join-list :bind="join.form"/>
-  -->
+  <!---->
 </aside>
 
 <footer class="ui">
