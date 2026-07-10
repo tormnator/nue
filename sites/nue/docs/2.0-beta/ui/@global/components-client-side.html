@@ -1,0 +1,36 @@
+<!dhtml lib>
+
+<!--
+ The join mailing list feature is disabled until the server-side implementation is reimplemented.
+ See `layout-modules.html` and the `join` section in the `site.yaml` for more details. The code is
+ still active here, but <join-list> should not be used anywhere for now. 2026-06-24, @tormnator.
+-->
+
+<join-list>
+
+  <p :if="sessionStorage.joined">{ done }</p>
+
+  <form :else class="ui flex" --width="40em" :onsubmit="submit">
+    <div class="stack">
+      <input type="email" placeholder="Your email" class="flex-3" name="email">
+      <textarea placeholder="{ comment }" name="comment"></textarea>
+    </div>
+    <div>
+      <button class="brand">{ cta }</button>
+    </div>
+  </form>
+
+  <script>
+    submit(e) {
+      const data = Object.fromEntries(new FormData(e.target).entries())
+
+      fetch('/public/members', {
+        'Content-Type': 'application/json',
+        body: JSON.stringify(data),
+        method: 'POST',
+      })
+
+      sessionStorage.joined = true
+    }
+  </script>
+</join-list>

@@ -1,0 +1,12 @@
+@layer design {
+  :root {
+    --max-line-width: 42rem;
+    --page-width: 1024px;
+    --line-height: 1.65;
+    --font: inter, "helvetica neue", system-ui;
+    --monospace: "plex mono", courier, monospace;
+    --radius-s: 2px;
+    --radius-m: 4px;
+    --ui-sizing: 14px;
+  }
+}
