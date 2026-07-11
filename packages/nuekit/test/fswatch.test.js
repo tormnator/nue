@@ -8,6 +8,7 @@ import {
   isEditorBackup,
   fswatch,
 } from '../src/tools/fswatch.js'
+import { createSiteConf } from '../src/conf.js'
 
 // Helper function to wait for expected array length
 async function waitForEvents(array, expectedCount, maxWait = 1000) {
@@ -15,6 +16,14 @@ async function waitForEvents(array, expectedCount, maxWait = 1000) {
   while (new Set(array).size < expectedCount && Date.now() - start < maxWait) {
     await new Promise(resolve => setTimeout(resolve, 5))
   }
+}
+
+async function waitForPath(array, path, maxWait = 1000) {
+  const start = Date.now()
+  while (!array.includes(path) && Date.now() - start < maxWait) {
+    await new Promise(resolve => setTimeout(resolve, 5))
+  }
+  await new Promise(resolve => setTimeout(resolve, 50))
 }
 
 test('identify backup files', () => {
@@ -77,6 +86,78 @@ test('watches directory creation and processes files', async () => {
 
   watcher.close()
   await fs.rm(tmpDir, { recursive: true })
+})
+
+test('does not report dotted directories as files', async () => {
+  const tmpDir = await fs.mkdtemp(join(tmpdir(), 'fswatch-test-'))
+  const stagedRoot = await fs.mkdtemp(join(tmpdir(), 'fswatch-staged-'))
+  const stagedDir = join(stagedRoot, '2.0-beta')
+  await fs.mkdir(join(tmpDir, 'docs'))
+  await fs.mkdir(stagedDir)
+  await fs.writeFile(join(stagedDir, 'index.md'), '# Docs')
+
+  const changes = []
+  const watcher = fswatch(tmpDir)
+  watcher.onupdate = async path => changes.push(path)
+
+  await fs.rename(stagedDir, join(tmpDir, 'docs', '2.0-beta'))
+  await fs.writeFile(join(tmpDir, 'control.txt'), 'content')
+  await waitForPath(changes, 'control.txt')
+
+  expect(changes).toContain('docs/2.0-beta/index.md')
+  expect(changes).not.toContain('docs/2.0-beta')
+
+  watcher.close()
+  await fs.rm(tmpDir, { recursive: true })
+  await fs.rm(stagedRoot, { recursive: true })
+})
+
+test('preserves ignore patterns while processing new directories', async () => {
+  const tmpDir = await fs.mkdtemp(join(tmpdir(), 'fswatch-test-'))
+  const stagedRoot = await fs.mkdtemp(join(tmpdir(), 'fswatch-staged-'))
+  const stagedDir = join(stagedRoot, 'bundle')
+  await fs.mkdir(stagedDir)
+  await fs.writeFile(join(stagedDir, 'app.js'), 'export default true')
+  await fs.writeFile(join(stagedDir, 'ignored.log'), 'ignore me')
+
+  const changes = []
+  const watcher = fswatch(tmpDir, { ignore: ['ignored.log'] })
+  watcher.onupdate = async path => changes.push(path)
+
+  await fs.rename(stagedDir, join(tmpDir, 'bundle'))
+  await fs.writeFile(join(tmpDir, 'control.txt'), 'content')
+  await waitForPath(changes, 'control.txt')
+
+  expect(changes).toContain('bundle/app.js')
+  expect(changes).not.toContain('bundle/ignored.log')
+
+  watcher.close()
+  await fs.rm(tmpDir, { recursive: true })
+  await fs.rm(stagedRoot, { recursive: true })
+})
+
+test('ignores .dist using default site configuration', async () => {
+  const tmpDir = await fs.mkdtemp(join(tmpdir(), 'fswatch-test-'))
+  const stagedRoot = await fs.mkdtemp(join(tmpdir(), 'fswatch-staged-'))
+  const stagedDir = join(stagedRoot, '.dist')
+  await fs.mkdir(stagedDir)
+  await fs.writeFile(join(stagedDir, 'generated.css'), 'body {}')
+
+  const changes = []
+  const { ignore } = createSiteConf({}, { root: tmpDir })
+  const watcher = fswatch(tmpDir, { ignore })
+  watcher.onupdate = async path => changes.push(path)
+
+  await fs.rename(stagedDir, join(tmpDir, '.dist'))
+  await fs.writeFile(join(tmpDir, 'control.txt'), 'content')
+  await waitForPath(changes, 'control.txt')
+
+  expect(changes).toContain('control.txt')
+  expect(changes.some(path => path.includes('.dist'))).toBe(false)
+
+  watcher.close()
+  await fs.rm(tmpDir, { recursive: true })
+  await fs.rm(stagedRoot, { recursive: true })
 })
 
 test('ignores files matching patterns', async () => {

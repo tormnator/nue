@@ -28,15 +28,13 @@ export function fswatch(root, opts = {}) {
       const stat = await fs.lstat(fullPath)
 
       // Process all files in the directory
-      if (onupdate && stat.isDirectory()) {
-        const paths = await fswalk(fullPath, ignore)
+      if (stat.isDirectory()) {
+        const paths = onupdate ? await fswalk(fullPath, { ignore }) : []
 
         for (const subPath of paths) {
           await onupdate(toPosix(join(path, subPath)))
         }
-      }
-
-      if (onupdate && extname(path)) {
+      } else if (onupdate && extname(path)) {
         await onupdate(path)
       }
 
