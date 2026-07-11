@@ -47,19 +47,16 @@
     height: auto;
   }
 
-  /* #region ================= Old `design` layer (global.css) ================== */
-
+  /* This is most likely a workaround to prevent unwanted extra space below images that are the only
+     child of a link. As of 2026-07-11 one place it is used is the `blog/standards-first-react-alternative/index.md`,
+     but visual inspection doesn't show a difference with or without it. */
   a:has(img:only-child) { font-size: 0 }
 
-  /* #endregion ================= Old `design` layer (global.css) ================== */
-
-  /* #region ================= Old `design` layer (content.css) ================== */
-
   h1, h2, h3, h4 {
-    color: var(--text-color-strong);
     margin-block: .5em;
-    text-wrap: balance;
     line-height: 1.25;
+    color: var(--text-color-strong);
+    text-wrap: balance;
 
     strong {
       font-weight: inherit;
@@ -70,26 +67,26 @@
   }
 
   h1 {
-    font-size: 1.75em;
     margin-block: 0 .25em;
+    font-size: 1.75em;
     font-weight: 650;
     letter-spacing: -.01em;
 
     + p {
-      color: var(--text-color-strong);
       font-weight: 450;
+      color: var(--text-color-strong);
     }
   }
 
   h2 {
-    font-weight: 550;
     font-size: 1.25em;
+    font-weight: 550;
   }
 
   h3 {
-    font-size: 1em;
     margin-bottom: .75em;
     font-weight: 600;
+    font-size: 1em;
   }
 
   h1, h2, h3, p, li, pre { max-width: var(--text-line-max-width) }
@@ -148,8 +145,6 @@
 
     &.bordered img { border: 1px solid var(--content-border-color) }
   }
-
-  /* #endregion ================= Old `design` layer (content.css) ================== */
 
   /* #region ================= Old `design` layer (elements.css) ================== */
 
@@ -252,7 +247,9 @@
     margin-block: 2em;
   }
 
-  ::placeholder { color: var(--input-placeholder-text-color) }
+  ::placeholder {
+     color: var(--input-placeholder-text-color);
+  }
 
   :focus-visible {
     outline-color: var(--default-bg-color);
