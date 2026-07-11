@@ -1,3 +1,18 @@
+/* These font-face at-rules don't belong inside layers so we'll declare them here at the top level. */
+@font-face {
+  src: url("/@shared/design/font/inter.woff2") format("woff2");
+  font-family: inter;
+  font-display: fallback;
+  font-weight: 100 900;
+}
+
+@font-face {
+  src: url("/@shared/design/font/ibm-plex-mono.woff2") format("woff2");
+  font-family: "plex mono";
+  font-display: fallback;
+  font-weight: 400;
+}
+
 /**
  * Tokens layer: defines the shared values of the system (colors, typography, spacing, etc.).
  * Tokens provide the foundation for consistent styling across themes, layouts, and paint.
@@ -32,6 +47,13 @@
     --purple-300: #7727ff;
 
     /* #endregion ----- Category: Colors ----- */
+
+    /* #region ----- Category: Typography ----- */
+
+    --font-family-sans: inter, "helvetica neue", system-ui;
+    --font-family-mono: "plex mono", courier, monospace;
+    
+    /* #endregion ----- Category: Typography ----- */
 
     /* #region ----- Category: Spacing ----- */
 
@@ -86,8 +108,7 @@
 
     /* #region ============= Non-Themeable Semantic Tokens ============= */
 
-    --default-font-family: inter, "helvetica neue", system-ui;
-    --mono-font-family: "plex mono", courier, monospace;
+    --default-font-family: var(--font-family-sans);
     /* "ui" here is not a good name, but we'll keep it for the time being. This is a reduced font size 
        used in the Nue Stack component, Join-list component's form, header and footer layout modules,
        and Nue assembly component). */
@@ -110,13 +131,10 @@
  */
 @layer themes {
   /* Notes:
-     - We have all both themes (light and dark) defined here (instead of in separate files)
-       for clarity. In a real-world application we could split them into separate files for
-       maintainability.
      - Themes are controlled by setting data-theme="light|dark|{custom}" on the :root element.
        This approach assumes that JavaScript is used to set the data-theme attribute based on user
        selection or system preference.
-     - TIP: Remember to keep the color values set in the HTML <head> section in sync with the CSS
+     - Remember to keep the color values set in the HTML <head> section in sync with the CSS
        variables here. */
   :root {
     /* Light theme */

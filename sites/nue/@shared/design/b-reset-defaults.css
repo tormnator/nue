@@ -21,8 +21,6 @@
   :where(body, menu) {
     margin: 0;
   }
-
-  /* More styles to come here... */
 }
 
 /**
@@ -32,30 +30,12 @@
  */
 @layer defaults {
 
-  /* #region ================= Old `design` layer (global.css) ================== */
-
-  @font-face {
-    src: url("/@shared/design/font/inter.woff2") format("woff2");
-    font-family: inter;
-    font-display: fallback;
-    font-weight: 100 900;
-  }
-
-  @font-face {
-    src: url("/@shared/design/font/ibm-plex-mono.woff2") format("woff2");
-    font-family: "plex mono";
-    font-display: fallback;
-    font-weight: 400;
-  }
-
   body {
     line-height: var(--default-line-height);
     background-color: var(--default-bg-color);
     font-family: var(--default-font-family);
     color: var(--default-text-color);
   }
-
-  *, *:before, *:after { box-sizing: border-box }
 
   ::selection {
     background-color: var(--selection-bg-color);
@@ -67,7 +47,7 @@
     height: auto;
   }
 
-  [hidden] { display: none }
+  /* #region ================= Old `design` layer (global.css) ================== */
 
   a:has(img:only-child) { font-size: 0 }
 
@@ -127,7 +107,7 @@
     /* Code fragment inside paragraphs, table cells, and list items. */
     code {
       background-color: var(--code-bg-color);
-      font-family: var(--mono-font-family);
+      font-family: var(--font-family-mono);
       padding: .125em .25em;
       font-size: .875em;
     }

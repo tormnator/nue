@@ -7,7 +7,7 @@
     height: 33em;
 
     pre {
-      font-family: var(--mono-font-family);
+      font-family: var(--font-family-mono);
       color: var(--text-color-subtle);
       font-size: .875em;
       max-width: 38em;
