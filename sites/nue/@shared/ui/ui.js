@@ -2,6 +2,9 @@ import { PopoverThemeManager } from 'lib/theme-manager.js';
 
 const options = {
   selectorElementId: 'theme-menu',
+  // Keep this first-visit default in sync with the no-data-theme selectors in both theme CSS files
+  // (a-tokens-themes.css and hero.css).
+  defaultTheme: 'dark',
   // Colors for the browser's window chrome (should match your CSS background colors):
   browserThemeColors: {
     light: '#ffffff',

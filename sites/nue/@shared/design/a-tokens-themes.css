@@ -119,10 +119,8 @@
      - TIP: Remember to keep the color values set in the HTML <head> section in sync with the CSS
        variables here. */
   :root {
-    /* Light theme (also the default theme) */
-    &[data-theme="light"],
-    &[data-theme="auto"],
-    &:not([data-theme]) {
+    /* Light theme */
+    &[data-theme="light"] {
       /* Force browser UI (scrollbars, date pickers) to light mode */
       color-scheme: light;
 
@@ -160,8 +158,12 @@
       --shadow-color-subtle: rgb(17 24 39 / 0.1);
 }
     
-    /* Dark theme */
-    &[data-theme="dark"] {
+    /* Dark theme (also the no-JavaScript/first-paint default) */
+    /* Keep this no-attribute default in sync with ui.js defaultTheme and home/hero/hero.css.
+       If you want light theme as default, then update ui.js and move the `&:not([data-theme])`
+       selector up to the light theme block above. */
+    &[data-theme="dark"],
+    &:not([data-theme]) {
       /* Force browser UI (scrollbars, date pickers) to dark mode */
       color-scheme: dark;
 

@@ -6,7 +6,7 @@
      theme. CSS can then apply theme-specific styles using attribute selectors.
    - Supports 'auto' mode: listens to system theme changes (prefers-color-scheme) and updates the
      effective theme accordingly.
-   - Persists explicit user selection in sessionStorage and applies it early on page load to
+   - Persists explicit user selection and applies it early on page load to
      reduce FOUC.
 
    Optional browser chrome / meta tag support (NOT enabled by default):
@@ -21,8 +21,12 @@
    Options:
    - selectorElementId (string, default: 'theme-selector')
      The id of the UI control element (select/button/etc) used to choose the theme.
-   - sessionStorageThemeName (string, default: 'theme')
-     The key used to persist the selected theme in sessionStorage.
+   - defaultTheme (string, default: 'auto')
+     The theme used when the user has not selected one.
+   - storage (Storage, default: localStorage)
+     The Web Storage object used to persist the selected theme.
+   - storageThemeName (string, default: 'theme')
+     The key used to persist the selected theme.
    - dataThemeAttribute (string, default: 'theme')
      The data-* attribute name on <html>. For example, 'theme' produces <html data-theme="...">.
    - browserThemeColors (object | undefined)
@@ -57,7 +61,9 @@ export class ThemeManager {
 
     // Options promoted to instance properties:
     this.selectorElementId = options.selectorElementId || 'theme-selector';
-    this.sessionStorageThemeName = options.sessionStorageThemeName || 'theme';
+    this.defaultTheme = options.defaultTheme || 'auto';
+    this.storage = options.storage || localStorage;
+    this.storageThemeName = options.storageThemeName || 'theme';
     this.dataThemeAttribute = options.dataThemeAttribute || 'theme';
     this.browserThemeColors = options.browserThemeColors; // Optional: theme color mappings for browser chrome
     this.onUpdateToggleElement = options.onUpdateToggleElement;
@@ -65,7 +71,9 @@ export class ThemeManager {
     // Only manage theme-color meta tag if browserThemeColors is provided
     if (this.browserThemeColors) {
       // Remove all theme-color meta tags with media-query so we can control it dynamically:
-      document.querySelectorAll('meta[name="theme-color"][media]').forEach((tag) => tag.remove());
+      document.querySelectorAll('meta[name="theme-color"][media]').forEach((tag) => {
+        tag.remove();
+      });
       // Don't create the tag here - we'll create it lazily when needed in applyTheme
       this.themeColorMetaTag = document.querySelector('meta[name="theme-color"]');
     }
@@ -86,9 +94,19 @@ export class ThemeManager {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  /** Gets the saved theme from sessionStorage. */
+  /** Gets the user's saved theme preference. */
   getSavedTheme() {
-    return sessionStorage.getItem(this.sessionStorageThemeName);
+    return this.storage.getItem(this.storageThemeName);
+  }
+
+  /** Gets the saved preference, or the configured default for a first-time visitor. */
+  getThemePreference() {
+    return this.getSavedTheme() || this.defaultTheme;
+  }
+
+  /** Resolves the selected preference to the theme currently applied to the document. */
+  getEffectiveTheme(theme = this.getThemePreference()) {
+    return theme === 'auto' ? this.getSystemColorScheme() : theme;
   }
 
   /** Ensures a <meta name="theme-color"> tag exists and sets its content. */
@@ -103,8 +121,8 @@ export class ThemeManager {
     }
   }
 
-  /** Updates the data-theme attribute on the root element and the theme name in sessionStorage. */
-  applyTheme(theme, updateSessionStorage = true) {
+  /** Applies the effective theme while persisting the user's selected preference. */
+  applyTheme(theme, updateStorage = true) {
     /** Helper function */
     const applyThemeToDocument = (colorScheme, themeColor, dataTheme) => {
       this.colorSchemeMetaTag.setAttribute('content', colorScheme); // <meta name="color-scheme" content="light|dark" or "light dark">
@@ -112,22 +130,17 @@ export class ThemeManager {
       this.root.dataset[this.dataThemeAttribute] = dataTheme; // <html data-theme="light|dark|silver">
     };
 
-    if (theme === 'auto') {
-      const effectiveTheme = this.getSystemColorScheme();
-      const themeColor = this.browserThemeColors?.[effectiveTheme];
-      applyThemeToDocument(this.originalColorScheme, themeColor, effectiveTheme);
-      if (updateSessionStorage) {
-        // Clear saved preference to enable auto mode:
-        sessionStorage.removeItem(this.sessionStorageThemeName);
-      }
-    } else {
-      // For color-scheme meta tag, only use 'light' or 'dark', not custom theme names
-      const colorScheme = theme === 'light' || theme === 'dark' ? theme : 'light';
-      const themeColor = this.browserThemeColors?.[theme];
-      applyThemeToDocument(colorScheme, themeColor, theme);
-      if (updateSessionStorage) {
-        sessionStorage.setItem(this.sessionStorageThemeName, theme);
-      }
+    const effectiveTheme = this.getEffectiveTheme(theme);
+    // For color-scheme meta tag, only use 'light' or 'dark', not custom theme names.
+    const colorScheme = ['light', 'dark'].includes(effectiveTheme)
+      ? effectiveTheme
+      : 'light';
+    const themeColor = this.browserThemeColors?.[effectiveTheme];
+    applyThemeToDocument(colorScheme, themeColor, effectiveTheme);
+
+    // Store "auto" explicitly so it remains distinguishable from no preference.
+    if (updateStorage) {
+      this.storage.setItem(this.storageThemeName, theme);
     }
   }
 
@@ -150,9 +163,9 @@ export class ThemeManager {
   }
 
   /** Handles system color scheme changes. */
-  enteredSystemDarkMode(isDarkMode) {
-    if (!this.getSavedTheme()) {
-      this.applyTheme(isDarkMode ? 'dark' : 'light', false);
+  enteredSystemDarkMode() {
+    if (this.getThemePreference() === 'auto') {
+      this.applyTheme('auto', false);
     }
     // Can be overridden by subclasses if needed
   }
@@ -160,12 +173,8 @@ export class ThemeManager {
   /** Initializes the document-wide theme state. Selector setup happens separately after each
    * initial load or client-side route event, because DOM updates do not fire DOMContentLoaded. */
   initialize() {
-    // Apply saved theme immediately if it exists. Otherwise, do nothing (Auto).
-    const savedTheme = this.root.dataset[this.dataThemeAttribute] || this.getSavedTheme();
-    if (savedTheme) {
-      // Note, we have this code here (instead of in DOMContentLoaded) to avoid FOUC (flash of unstyled content).
-      this.applyTheme(savedTheme);
-    }
+    // Apply before DOMContentLoaded to minimize a flash of the CSS default theme.
+    this.applyTheme(this.getThemePreference(), false);
 
     // This listener belongs to the persistent document, not a route-specific selector.
     window
@@ -176,8 +185,8 @@ export class ThemeManager {
 
 export class DropDownThemeManager extends ThemeManager {
   doSetupSelectorElement(signal) {
-    super.doSetupSelectorElement();
-    this.selectorElement.value = this.getSavedTheme() || 'auto';
+    super.doSetupSelectorElement(signal);
+    this.selectorElement.value = this.getThemePreference();
     this.selectorElement.addEventListener('change', (e) => {
       this.applyTheme(e.target.value);
     }, { signal });
@@ -194,7 +203,7 @@ export class ToggleElementThemeManager extends ThemeManager {
 
   /** Handles system color scheme changes. */
   enteredSystemDarkMode(isDarkMode) {
-    super.enteredSystemDarkMode(isDarkMode);
+    super.enteredSystemDarkMode();
     // Only update the button state if we are in 'Auto' mode (and the theme has been removed from sessionStorage):
     if (!this.getSavedTheme()) {
       this.updateToggleElement(isDarkMode ? 'dark' : 'light');
@@ -203,12 +212,7 @@ export class ToggleElementThemeManager extends ThemeManager {
 
   doSetupSelectorElement(signal) {
     super.doSetupSelectorElement(signal);
-    // If user has toggled before in this session, then the theme is saved in sessionStorage.
-    const savedTheme = this.getSavedTheme();
-    const currentTheme =
-      savedTheme === 'light' || savedTheme === 'dark'
-        ? savedTheme // User has toggled before, use saved preference
-        : this.getSystemColorScheme(); // First time or auto mode - detect current system preference for display only
+    const currentTheme = this.getEffectiveTheme();
     this.updateToggleElement(currentTheme);
 
     this.selectorElement.addEventListener('click', () => {
@@ -236,7 +240,7 @@ export class PopoverThemeManager extends ThemeManager {
 
       // Helper to update the visual state of buttons
       const updateButtonState = () => {
-        const currentTheme = this.getSavedTheme() || 'auto';
+        const currentTheme = this.getThemePreference();
         buttons.forEach((btn) => {
           const isSelected = btn.getAttribute('data-value') === currentTheme;
           // Set accessibility state which drives the styling

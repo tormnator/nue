@@ -1,23 +1,26 @@
 @layer themes {
-  /* NOTE: If we change the default theme to light, we need to update the selectors below to match
-     the new default (keep this in sync with the global themes layer styles). */
+  :root {
+    /* Light theme */
+    &[data-theme="light"] {
+      --hero-title-gradient: linear-gradient(
+        to bottom right,
+        #0b1020 30%,
+        #64707f
+      );
+    }
 
-  :root[data-theme="light"],
-  :root[data-theme="auto"],
-  :root:not([data-theme]) {
-    --hero-title-gradient: linear-gradient(
-      to bottom right,
-      #0b1020 30%,
-      #64707f
-    );
-  }
-
-  :root[data-theme="dark"] {
-    --hero-title-gradient: linear-gradient(
-      to bottom right,
-      #fff 30%,
-      #ffffff80
-    );
+    /* Dark theme (also the no-JavaScript/first-paint default) */
+    /* Keep the no-attribute default in sync with ui.js defaultTheme and a-tokens-themes.css.
+       If you want light theme as default, then update ui.js and move the `&:not([data-theme])`
+       selector up to the light theme block above. */
+    &[data-theme="dark"],
+    &:not([data-theme]) {
+      --hero-title-gradient: linear-gradient(
+        to bottom right,
+        #fff 30%,
+        #ffffff80
+      );
+    }
   }
 }
 
