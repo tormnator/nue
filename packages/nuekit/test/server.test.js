@@ -17,6 +17,7 @@ const server = createServer({
   if (pathname == '/custom-404') return { content: 'Not found', status: 404 }
   if (pathname == '/') return Bun.file(`${testDir}/index.html`)
   if (pathname == '/not-found') return null
+  if (pathname == '/.well-known/appspecific/com.chrome.devtools.json') return null
   return Bun.file(`${testDir}${pathname}`)
 })
 
@@ -60,6 +61,18 @@ test('not found', async () => {
   const res = await server.fetch(new Request('http://localhost/not-found'))
   expect(res.status).toBe(404)
   expect(await res.text()).toBe('404 Not Found')
+})
+
+test('Chrome DevTools probe is not logged', async () => {
+  const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+  const res = await server.fetch(
+    new Request('http://localhost/.well-known/appspecific/com.chrome.devtools.json')
+  )
+
+  expect(res.status).toBe(404)
+  expect(await res.text()).toBe('404 Not Found')
+  expect(consoleSpy).not.toHaveBeenCalled()
+  consoleSpy.mockRestore()
 })
 
 test('custom handler', async () => {

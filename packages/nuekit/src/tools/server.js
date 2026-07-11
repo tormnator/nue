@@ -1,5 +1,6 @@
 
 export function createServer({ port=4000, handler }, callback) {
+  const devToolsProbe = '/.well-known/appspecific/com.chrome.devtools.json'
 
   async function fetch(req) {
     const { pathname, searchParams } = new URL(req.url)
@@ -28,7 +29,7 @@ export function createServer({ port=4000, handler }, callback) {
         })
 
       } else {
-        console.error('Not found', pathname)
+        if (pathname !== devToolsProbe) console.error('Not found', pathname)
         return new Response('404 Not Found', { status: 404 })
       }
 
