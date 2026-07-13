@@ -1,4 +1,18 @@
-/* These font-face at-rules don't belong inside layers so we'll declare them here at the top level. */
+/*---------------------------------------------------------------------------
+Contents.....: Global design tokens and themes.
+Created......: July 10, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
+/** Layer order: establishes cascade precedence from lowest to highest. */
+@layer tokens, themes, reset, defaults, layouts, paint, utilities, overrides;
+
+/* These font-face at-rules don't belong inside layers, so they are declared at the top level. */
 @font-face {
   src: url("/@shared/design/font/inter.woff2") format("woff2");
   font-family: inter;
@@ -109,9 +123,8 @@
     /* #region ============= Non-Themeable Semantic Tokens ============= */
 
     --default-font-family: var(--font-family-sans);
-    /* "ui" here is not a good name, but we'll keep it for the time being. This is a reduced font size 
-       used in the Nue Stack component, Join-list component's form, header and footer layout modules,
-       and Nue assembly component). */
+     /* "ui" is retained for now. This reduced font size is used in the Nue Stack and assembly
+       components, the Join-list component's form, and header and footer layout modules. */
     --ui-font-size: 14px;
     --default-line-height: 1.65;
     --text-line-max-width: 42rem;
@@ -218,3 +231,7 @@
     }
   }
 }
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */

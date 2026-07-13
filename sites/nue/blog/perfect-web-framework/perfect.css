@@ -1,29 +1,69 @@
-/* Note, these styles are **not** within a layer and will have higher specificity than rules defined within a layer */
+/*---------------------------------------------------------------------------
+Contents.....: Perfect web framework article styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
 
-h2 code {
-  background-color: #e3f0ff;
-  font-size: 1rem;
-  color: var(--brand-color);
-  line-height: 1;
-  font-family: courier;
-  padding: .25em .5em;
-  border-radius: var(--radius-md);
-  float: right;
-  margin: .25em 0 0;
-}
+/* ------------------------------------------------- */
+/* #region Zone: PAGE (PERFECT WEB FRAMEWORK)        */
+/* ------------------------------------------------- */
 
-.problem {
-  border-left: 5px solid red;
-  background-color: #fff5f3;
-  padding: .1em 2.5em .1em 1.5em;
-  font-size: 95%;
-  margin: 2em 0;
-}
+/** Layouts Layer: positions and arranges article-specific elements. */
+@layer layouts {
+  /* #region ============= Default Layouts ============= */
 
-
-#design, #speed, #ux {
-  code {
-    background-color: #cdffdf;
-    color: #28ac6c;
+  h2 code {
+    padding: .25em .5em;
+    float: right;
+    margin: .25em 0 0;
   }
+
+  /* #endregion ============= Default Layouts ============= */
+
+  /* #region ============= Named Layouts ============= */
+
+  .problem {
+    padding: .1em 2.5em .1em 1.5em;
+    margin: 2em 0;
+  }
+
+  /* #endregion ============= Named Layouts ============= */
 }
+
+/** Paint Layer: defines the visual identity of article-specific elements. */
+@layer paint {
+  /* #region ============= Default Paint ============= */
+
+  h2 code {
+    background-color: #e3f0ff;
+    font-size: 1rem;
+    color: var(--brand-color);
+    line-height: 1;
+    font-family: courier;
+    border-radius: var(--radius-md);
+  }
+
+  /* #endregion ============= Default Paint ============= */
+
+  /* #region ============= Named Paint ============= */
+
+  .problem {
+    border-left: 5px solid red;
+    background-color: #fff5f3;
+    font-size: 95%;
+  }
+
+  #design, #speed, #ux {
+    code {
+      background-color: #cdffdf;
+      color: #28ac6c;
+    }
+  }
+
+  /* #endregion ============= Named Paint ============= */
+}
+
+/* ------------------------------------------------- */
+/* #endregion Zone: PAGE (PERFECT WEB FRAMEWORK)     */
+/* ------------------------------------------------- */

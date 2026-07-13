@@ -1,11 +1,21 @@
+/*---------------------------------------------------------------------------
+Contents.....: Global layout styles.
+Created......: July 10, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
 /**
- * Layouts Layer: all styles involving positioning, spacing, sizing, and arrangement (the "Geometry") must
- * be separated from Paint styles and placed in this layer. By separating Layout styles from Paint
- * styles, we can maintain separation of concerns, and minimize the risk of style conflicts.
+ * Layouts Layer: all styles involving positioning, spacing, sizing, and arrangement (the
+ * "Geometry") must be separated from Paint styles. This separation minimizes style conflicts.
  */
 @layer layouts {
 
-  /* #region ================= Old `layout` layer (global-layout.css) ================== */
+  /* #region ============= Default Layouts ============= */
 
   body {
     max-width: var(--default-page-width);
@@ -28,22 +38,11 @@
         align-items: center;
         display: flex;
         gap: 2em;
-
-        &:last-of-type {
-          margin-left: auto;
-          justify-content: right;
-        }
-      }
-
-      /* mobile layout */
-      @media (width < 750px) {
-        .teaser, .social { display: none }
       }
     }
 
 
     > footer {
-      color: var(--text-color-subtle);
       padding-bottom: 4.5em;
     }
 
@@ -56,13 +55,6 @@
       section {
         > h3, > h4 { margin-top: 2.5em }
       }
-
-      .thin { max-width: 75% }
-
-      .wide {
-        max-width: inherit;
-        width: 100%
-      }
     }
 
     /* bottom cta */
@@ -71,9 +63,75 @@
     }
   }
 
-  /* #endregion ================= Old `layout` layer (global-layout.css) ================== */
+  /* #endregion ============= Default Layouts ============= */
 
-  /* #region ================= Old `layout` layer (grid.css) ================== */
+  /* #region ============= Named Layouts ============= */
+
+  body > header nav:last-of-type {
+    margin-left: auto;
+    justify-content: right;
+  }
+
+  /* mobile layout */
+  @media (width < 750px) {
+    body > header .teaser,
+    body > header .social {
+      display: none;
+    }
+  }
+
+  /* 2026-07-13: only used in one case where there's a <body><main><article><section><div class="thin">.
+     This is on the `sites/nue/blog/tailwind-vs-semantic-css/index.md` page. The purpose seems to be
+     to put two columns closer together horizontally. */
+  body main > article .thin { max-width: 75% }
+
+  /* 2026-07-13: Does not seem to be used anywhere. */
+  body main > article .wide {
+    max-width: inherit;
+    width: 100%
+  }
+
+  /** @category Component "Theme Selector" */
+  [data-name="theme-selector"] {
+    > button {
+      padding: var(--space-1) var(--space-3);
+      anchor-name: --theme-menu-trigger;
+    }
+
+    > [popover] {
+      position-anchor: --theme-menu-trigger;
+      margin: 0;
+      margin-block-start: var(--space-1);
+      inset-block-start: anchor(bottom);
+      inset-inline-start: unset;
+      inset-inline-end: anchor(right);
+      min-inline-size: anchor-size(width);
+
+      > menu {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding-inline-start: 0;
+
+        > li > button {
+          inline-size: 100%;
+          text-align: start;
+          padding: var(--space-2) var(--space-3);
+
+          &[aria-pressed="true"] {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--inner-3);
+          }
+        }
+      }
+    }
+  }
+
+  /* #endregion ============= Named Layouts ============= */
+
+  /* #region ============= Free Layouts ============= */
 
   .grid {
     display: grid;
@@ -114,51 +172,9 @@
     }
   }
 
-  /* #endregion ================= Old `layout` layer (grid.css) ================== */
-
-  /* #region ============= Named Layouts ============= */
-
-  /* #region ------------- Component Styles ------------- */
-
-  /** @category Component "Theme Selector" */
-  [data-name="theme-selector"] {
-    > button {
-      padding: var(--space-1) var(--space-3);
-      anchor-name: --theme-menu-trigger;
-    }
-
-    > [popover] {
-      position-anchor: --theme-menu-trigger;
-      margin: 0;
-      margin-block-start: var(--space-1);
-      inset-block-start: anchor(bottom);
-      inset-inline-start: unset;
-      inset-inline-end: anchor(right);
-      min-inline-size: anchor-size(width);
-
-      > menu {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-        padding-inline-start: 0;
-
-        > li > button {
-          inline-size: 100%;
-          text-align: start;
-          padding: var(--space-2) var(--space-3);
-
-          &[aria-pressed="true"] {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--inner-3);
-          }
-        }
-      }
-    }
-  }
-
-  /* #endregion ------------- Component Styles ------------- */
-
-  /* #endregion ============= Named Layouts ============= */
+  /* #endregion ============= Free Layouts ============= */
 }
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */

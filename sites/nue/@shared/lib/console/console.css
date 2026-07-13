@@ -1,15 +1,24 @@
-@layer paint {
-  /* Console Component */
+/*---------------------------------------------------------------------------
+Contents.....: Opt-in console component styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges the console component. */
+@layer layouts {
+  /* #region ============= Named Layouts ============= */
+
+  /** @category Component "Console" */
   .console {
-    background-color: var(--code-bg-color);
     margin-block: 2em -.5em;
-    color: var(--default-text-color);
     height: 33em;
 
     pre {
-      font-family: var(--font-family-mono);
-      color: var(--text-color-subtle);
-      font-size: .875em;
       max-width: 38em;
       margin: 0;
     }
@@ -17,6 +26,43 @@
     div {
       white-space: nowrap;
       &:empty { height: 1.5em }
+    }
+
+    time { float: right }
+
+    header {
+      float: right;
+      padding: 1.25em 1.5em;
+    }
+
+    &.is-playing header { display: none }
+
+    .command.is-typing:after {
+      display: inline-block;
+      width: 0.5em;
+      height: 1em;
+      margin-left: .15em;
+      position: relative;
+      top: 0.15em;
+    }
+  }
+
+  /* #endregion ============= Named Layouts ============= */
+}
+
+/** Paint Layer: defines the visual identity of the console component. */
+@layer paint {
+  /* #region ============= Named Paint ============= */
+
+  /** @category Component "Console" */
+  .console {
+    background-color: var(--code-bg-color);
+    color: var(--default-text-color);
+
+    pre {
+      font-family: var(--font-family-mono);
+      color: var(--text-color-subtle);
+      font-size: .875em;
     }
 
     b {
@@ -30,15 +76,7 @@
 
     time {
       color: var(--brand-color);
-      float: right;
     }
-
-    header {
-      float: right;
-      padding: 1.25em 1.5em;
-    }
-
-    &.is-playing header { display: none }
 
     .command {
       color: var(--brand-color);
@@ -50,14 +88,8 @@
       /* cursor */
       &.is-typing:after {
         content: '';
-        display: inline-block;
-        width: 0.5em;
-        height: 1em;
         background-color: var(--accent-bg-color);
-        margin-left: .15em;
-        position: relative;
         opacity: .75;
-        top: 0.15em;
       }
 
       &.is-comment {
@@ -67,8 +99,14 @@
     }
   }
 
+  /* #endregion ============= Named Paint ============= */
+
   @keyframes blink {
     0%, 50% { opacity: 1 }
     51%, 100% { opacity: 0 }
   }
 }
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */

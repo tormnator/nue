@@ -1,17 +1,27 @@
-@layer paint {
-  /* Assembly Component */
+/*---------------------------------------------------------------------------
+Contents.....: Home assembly section styles.
+Created......: July 4, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* ------------------------------------ */
+/* #region Zone: SECTION (ASSEMBLY)     */
+/* ------------------------------------ */
+
+/** Layouts Layer: positions and arranges the assembly component. */
+@layer layouts {
+  /* #region ============= Named Layouts ============= */
+
+  /** @category Component "Assembly" */
   .assembly {
     margin-top: 2em;
 
     aside {
-      font-family: var(--font-family-mono);
-      border: 1px solid var(--brand-color);
-      font-size: 1em;
       max-width: 200px;
       padding: 2em;
 
-      p { margin: 0; color: var(--supporting-text-color); }
-      b { color: var(--brand-color); font-weight: 600 }
+      p { margin: 0 }
     }
 
     ul {
@@ -19,36 +29,63 @@
       overflow: hidden;
     }
 
-    /* pulsating arrow */
     svg {
       max-width: 2em;
-      color: var(--text-color-strong);
       align-self: center;
       margin: -1em 0 0 -.5em;
-      animation: flow .75s ease-in-out infinite alternate;
       display: block;
     }
 
     li {
       position: absolute;
       width: 150px;
-      animation: move calc(var(--items) * 2s) infinite linear;
-      animation-delay: calc(var(--index) * -2s);
-      h4 {
-        font-size: .9em;
-        font-weight: 500;
-        white-space: nowrap;
-        color: var(--text-color-strong);
-      }
+
+      h4 { white-space: nowrap }
     }
 
-    /* code lines */
     hr {
       margin: .75em 0;
       width: calc(20% + calc(70% * var(--random)));
     }
-
   }
+
+  /* #endregion ============= Named Layouts ============= */
+}
+
+/** Paint Layer: defines the visual identity and motion of the assembly component. */
+@layer paint {
+  /* #region ============= Named Paint ============= */
+
+  /** @category Component "Assembly" */
+  .assembly {
+    aside {
+      font-family: var(--font-family-mono);
+      border: 1px solid var(--brand-color);
+      font-size: 1em;
+
+      p { color: var(--supporting-text-color); }
+      b { color: var(--brand-color); font-weight: 600 }
+    }
+
+    /* pulsating arrow */
+    svg {
+      color: var(--text-color-strong);
+      animation: flow .75s ease-in-out infinite alternate;
+    }
+
+    li {
+      animation: move calc(var(--items) * 2s) infinite linear;
+      animation-delay: calc(var(--index) * -2s);
+
+      h4 {
+        font-size: .9em;
+        font-weight: 500;
+        color: var(--text-color-strong);
+      }
+    }
+  }
+
+  /* #endregion ============= Named Paint ============= */
 
   @keyframes flow {
     0% { opacity: 0.5; transform: translatex(-.2em) }
@@ -60,3 +97,7 @@
     100% { transform: translateX(calc(900px + 150px)) }
   }
 }
+
+/* ------------------------------------ */
+/* #endregion Zone: SECTION (ASSEMBLY)  */
+/* ------------------------------------ */

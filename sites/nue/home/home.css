@@ -1,9 +1,36 @@
-@layer paint {
+/*---------------------------------------------------------------------------
+Contents.....: Home page styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: PAGE (HOME)        */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges home page elements. */
+@layer layouts {
+  /* #region ============= Named Layouts ============= */
+
   .cta-buttons { gap: .75em }
+
+  /* #endregion ============= Named Layouts ============= */
+}
+
+/** Paint Layer: defines the visual identity of home page elements. */
+@layer paint {
+  /* #region ============= Named Paint ============= */
 
   /* captions */
   [class] + p {
     color: var(--text-color-subtle);
     font-size: .875em
   }
+
+  /* #endregion ============= Named Paint ============= */
 }
+
+/* -------------------------------- */
+/* #endregion Zone: PAGE (HOME)     */
+/* -------------------------------- */

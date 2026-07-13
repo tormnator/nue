@@ -1,32 +1,35 @@
-@layer paint {
-  /* Video Player Component */
+/*---------------------------------------------------------------------------
+Contents.....: Opt-in video player component styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges the video player component. */
+@layer layouts {
+  /* #region ============= Named Layouts ============= */
+
+  /** @category Component "Video Player" */
   .player {
     position: relative;
     display: inline-flex;
     justify-content: center;
     margin: 1em 0;
-    
-    video {
-      border-radius: var(--radius-md);
-      max-width: 100%;
-    }
 
-    .icon {
-      color: black;
-      position: absolute;
-      cursor: pointer;
-    }
+    video { max-width: 100% }
+
+    .icon { position: absolute }
 
     .play {
       align-self: center;
-      stroke-width: 1.25;
-      fill: white;
       width: 4em;
     }
 
-    &:not(.paused) .play {
-      display: none;
-    }
+    &:not(.paused) .play { display: none }
 
     .maximize {
       top: 1em;
@@ -34,4 +37,32 @@
       z-index: 1;
     }
   }
+
+  /* #endregion ============= Named Layouts ============= */
 }
+
+/** Paint Layer: defines the visual identity of the video player component. */
+@layer paint {
+  /* #region ============= Named Paint ============= */
+
+  /** @category Component "Video Player" */
+  .player {
+    video { border-radius: var(--radius-md) }
+
+    .icon {
+      color: black;
+      cursor: pointer;
+    }
+
+    .play {
+      stroke-width: 1.25;
+      fill: white;
+    }
+  }
+
+  /* #endregion ============= Named Paint ============= */
+}
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */

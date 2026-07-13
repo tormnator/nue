@@ -1,15 +1,25 @@
+/*---------------------------------------------------------------------------
+Contents.....: Documentation area styles.
+Created......: July 10, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: AREA (DOCS)        */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges documentation area elements. */
 @layer layouts {
+  /* #region ============= Named Layouts ============= */
 
   .topics {
-    font-size: var(--ui-font-size);
     margin-top: 2em;
     display: flex;
 
     nav { margin: 0 10vw 3em 0 }
 
     small {
-      font-size: inherit;
-      color: var(--text-color-subtle);
       @media (500px < width < 900px) {
         display: none;
       }
@@ -23,22 +33,51 @@
   .learn-more {
 
     .stack {
-      font-size: var(--ui-font-size);
       margin-block: 1.5em 2em;
       a { max-width: 13em }
       gap: .75em;
     }
 
     [aria-current] {
-      background-color: var(--inverse-bg-color);
-      color: var(--inverse-text-color);
       padding: .25em .5em;
-      pointer-events: none;
       margin-left: -.5em;
       width: auto;
 
-      strong { color: white }
       &:has(.row) { max-width: 25em }
     }
   }
+
+  /* #endregion ============= Named Layouts ============= */
 }
+
+/** Paint Layer: defines the visual identity of documentation area elements. */
+@layer paint {
+  /* #region ============= Named Paint ============= */
+
+  .topics {
+    font-size: var(--ui-font-size);
+
+    small {
+      font-size: inherit;
+      color: var(--text-color-subtle);
+    }
+  }
+
+  .learn-more {
+    .stack { font-size: var(--ui-font-size) }
+
+    [aria-current] {
+      background-color: var(--inverse-bg-color);
+      color: var(--inverse-text-color);
+      pointer-events: none;
+
+      strong { color: white }
+    }
+  }
+
+  /* #endregion ============= Named Paint ============= */
+}
+
+/* -------------------------------- */
+/* #endregion Zone: AREA (DOCS)     */
+/* -------------------------------- */

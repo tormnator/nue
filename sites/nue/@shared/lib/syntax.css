@@ -1,6 +1,24 @@
+/*---------------------------------------------------------------------------
+Contents.....: Opt-in syntax highlighting styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges syntax-highlighted code. */
 @layer layouts {
+  /* #region ============= Default Layouts ============= */
+
+  /** @category Component "Syntax Highlighting" */
   pre {
     padding: 1.5em;
+    overflow: hidden;
+
+    sup { vertical-align: inherit }
 
     /* marked segments */
     mark {
@@ -14,18 +32,24 @@
         padding-right: 1em;
         margin-right: 1em;
         width: 2.5em;
+        text-align: right;
       }
     }
   }
+
+  /* #endregion ============= Default Layouts ============= */
 }
 
+/** Paint Layer: defines the visual identity of syntax-highlighted code. */
 @layer paint {
+  /* #region ============= Default Paint ============= */
+
+  /** @category Component "Syntax Highlighting" */
   pre {
     background-color: var(--code-bg-color);
     border-radius: var(--radius-md);
     counter-reset: line-number 0;
     color: var(--code-text-color);
-    overflow: hidden;
 
     /* reset */
     * {
@@ -49,7 +73,6 @@
     /* comments */
     sup {
       color: var(--text-color-subtle);
-      vertical-align: inherit;
       font-size: inherit;
     }
 
@@ -73,9 +96,13 @@
       &:before {
         opacity: .3;
         content: counter(line-number);
-        display: inline-block;
-        text-align: right;
       }
     }
   }
+
+  /* #endregion ============= Default Paint ============= */
 }
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */

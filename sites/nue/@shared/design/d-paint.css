@@ -1,27 +1,27 @@
+/*---------------------------------------------------------------------------
+Contents.....: Global paint styles.
+Created......: July 10, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
 /**
  * Paint Layer: reusable styles defining UI elements' visual identity (the “Paint”).
  */
 @layer paint {
-  /* Note: styles within the inner `modifier` layer will have lower specificity than styles in the 
-     outer component layer. */
-  @layer modifier {
-    .brand {
-      background-color: var(--brand-color);
+  /* #region ============= Default Paint ============= */
 
-      &, * { color: var(--brand-text-color) }
-    }
-
-    .inverse {
-      background-color: var(--inverse-bg-color);
-      color: var(--inverse-text-color);
-
-      &, * { color: var(--inverse-text-color) }
-    }
+  body > footer {
+    color: var(--text-color-subtle);
   }
 
-  /* #region ============= Named Paint ============= */
+  /* #endregion ============= Default Paint ============= */
 
-  /* #region ------------- Component Styles ------------- */
+  /* #region ============= Named Paint ============= */
 
   /** @category Component "Theme Selector" */
   [data-name="theme-selector"] {
@@ -74,7 +74,31 @@
     }
   }
 
-  /* #endregion ------------- Component Styles ------------- */
-
   /* #endregion ============= Named Paint ============= */
+
+  /* #region ============= Free Paint ============= */
+
+  /* Styles within `modifier` have lower precedence than styles in the outer paint layer. */
+  @layer modifier {
+    /** @category Primitive "Brand Colors" */
+    .brand {
+      background-color: var(--brand-color);
+
+      &, * { color: var(--brand-text-color) }
+    }
+
+    /** @category Primitive "Inverse Colors" */
+    .inverse {
+      background-color: var(--inverse-bg-color);
+      color: var(--inverse-text-color);
+
+      &, * { color: var(--inverse-text-color) }
+    }
+  }
+
+  /* #endregion ============= Free Paint ============= */
 }
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */

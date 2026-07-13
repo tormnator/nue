@@ -1,32 +1,68 @@
+/*---------------------------------------------------------------------------
+Contents.....: Blog area styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: AREA (BLOG)        */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges blog area elements. */
 @layer layouts {
+  /* #region ============= Default Layouts ============= */
+
+  header > time {
+    margin-bottom: 1em;
+    display: inline-block;
+  }
+
+  /* #endregion ============= Default Layouts ============= */
+
+  /* #region ============= Named Layouts ============= */
+
   .list {
     margin-top: 2em;
 
     strong { flex: 3 }
 
-    a {
-      text-decoration: none;
-      padding-block: .125em;
-    }
-  }
-
-  header > time {
-    font-size: .875em;
-    margin-bottom: 1em;
-    display: inline-block;
+    a { padding-block: .125em }
   }
 
   .author {
-    font-size: .875em;
     margin-top: 1em;
     gap: 1em;
-    align-items; center;
 
-    img {
-      border-radius: var(--radius-md);
-      margin-bottom: -.25em;
-    }
+    img { margin-bottom: -.25em }
 
     h3 { margin: 0 }
   }
+
+  /* #endregion ============= Named Layouts ============= */
 }
+
+/** Paint Layer: defines the visual identity of blog area elements. */
+@layer paint {
+  /* #region ============= Default Paint ============= */
+
+  header > time { font-size: .875em }
+
+  /* #endregion ============= Default Paint ============= */
+
+  /* #region ============= Named Paint ============= */
+
+  .list a { text-decoration: none }
+
+  .author {
+    font-size: .875em;
+
+    img { border-radius: var(--radius-md) }
+  }
+
+  /* #endregion ============= Named Paint ============= */
+}
+
+/* -------------------------------- */
+/* #endregion Zone: AREA (BLOG)     */
+/* -------------------------------- */

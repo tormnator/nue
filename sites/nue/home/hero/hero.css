@@ -1,3 +1,15 @@
+/*---------------------------------------------------------------------------
+Contents.....: Home hero section styles.
+Created......: July 4, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
+
+/* -------------------------------- */
+/* #region Zone: SECTION (HERO)     */
+/* -------------------------------- */
+
+/** Themes Layer: maps the hero title gradient to the active theme. */
 @layer themes {
   :root {
     /* Light theme */
@@ -24,7 +36,10 @@
   }
 }
 
+/** Layouts Layer: positions and arranges hero section elements. */
 @layer layouts {
+  /* #region ============= Default Layouts ============= */
+
   h1 {
     max-width: unset;
     margin-top: .5em;
@@ -41,9 +56,13 @@
       margin-bottom: 1.5em;
     }
   }
+
+  /* #endregion ============= Default Layouts ============= */
 }
 
+/** Paint Layer: defines the visual identity of hero section elements. */
 @layer paint {
+  /* #region ============= Default Paint ============= */
 
   h1 {
     font-size: 4em;
@@ -76,4 +95,10 @@
       font-size: 1.125em;
     }
   }
+
+  /* #endregion ============= Default Paint ============= */
 }
+
+/* -------------------------------- */
+/* #endregion Zone: SECTION (HERO)  */
+/* -------------------------------- */

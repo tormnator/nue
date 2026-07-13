@@ -1,17 +1,49 @@
-/* Nue Stack Component */
+/*---------------------------------------------------------------------------
+Contents.....: Opt-in Nue Stack component styles.
+Created......: June 24, 2026, Tor Langlo
+Last modified: July 12, 2026, GitHub Copilot
+Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+---------------------------------------------------------------------------*/
 
-@layer paint {
+/* -------------------------------- */
+/* #region Zone: GLOBAL             */
+/* -------------------------------- */
+
+/** Layouts Layer: positions and arranges the Nue Stack component. */
+@layer layouts {
+  /* #region ============= Named Layouts ============= */
+
+  /** @category Component "Nue Stack" */
   .ui.stack {
     aside {
       --cell-width: 175px;
-      font-size: .875em;
       margin-top: 1em;
       > div { padding-left: 1.5em; }
-      p { color: var(--text-color-subtle) }
     }
 
     @media (width < 900px) {
       section { --cell-width: 250px }
     }
   }
+
+  /* #endregion ============= Named Layouts ============= */
 }
+
+/** Paint Layer: defines the visual identity of the Nue Stack component. */
+@layer paint {
+  /* #region ============= Named Paint ============= */
+
+  /** @category Component "Nue Stack" */
+  .ui.stack {
+    aside {
+      font-size: .875em;
+      p { color: var(--text-color-subtle) }
+    }
+  }
+
+  /* #endregion ============= Named Paint ============= */
+}
+
+/* -------------------------------- */
+/* #endregion Zone: GLOBAL          */
+/* -------------------------------- */
