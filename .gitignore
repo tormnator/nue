@@ -1,6 +1,8 @@
 # Ignore the vision and strategy documents for the time being
 docs-internal/local-only
 docs-internal/temp
+ascs-spec
+ascs.instructions.md
 node_modules
 
 coverage
