@@ -1,49 +1,57 @@
 /*---------------------------------------------------------------------------
 Contents.....: Opt-in Nue Stack component styles.
 Created......: June 24, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /** Layouts Layer: positions and arranges the Nue Stack component. */
 @layer layouts {
-  /* #region ============= Named Layouts ============= */
-
   /** @category Component "Nue Stack" */
-  .ui.stack {
-    aside {
+  [data-component="nue-stack"] {
+    padding: var(--surface-padding);
+
+    > [data-name="tools"] {
+      > * {
+        /* This is each tool */
+        padding: var(--surface-padding);
+
+        > :first-child { margin-block-start: 0 }
+        > :last-child { margin-block-end: 0 }
+      }
+    }
+
+    > [data-name="features"] {
       --cell-width: 175px;
       margin-top: 1em;
       > div { padding-left: 1.5em; }
     }
 
     @media (width < 900px) {
-      section { --cell-width: 250px }
+      > [data-name="tools"] { --cell-width: 250px }
     }
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity of the Nue Stack component. */
 @layer paint {
-  /* #region ============= Named Paint ============= */
-
   /** @category Component "Nue Stack" */
-  .ui.stack {
-    aside {
+  [data-component="nue-stack"] {
+    font-size: var(--ui-font-size);
+    line-height: var(--ui-line-height);
+    background-color: var(--surface-bg-color-subtle);
+    border-radius: var(--surface-border-radius, 4px);
+
+    > [data-name="tools"] {
+      > * {
+        background-color: var(--default-bg-color);
+        border-radius: var(--surface-border-radius, 4px);
+      }
+    }
+
+    > [data-name="features"] {
       font-size: .875em;
       p { color: var(--text-color-subtle) }
     }
   }
-
-  /* #endregion ============= Named Paint ============= */
 }
-
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */

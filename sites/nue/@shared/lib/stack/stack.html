@@ -1,14 +1,15 @@
-<!-- Stack HTML Component: Displays tooling and features in a card layout. Is used both on the home page and in the "Nue 2.0: The UNIX of the web" article. -->
-<nue-stack class="card ui stack">
+<!-- Stack HTML Component: Displays tooling and features in a card layout. Is used both on the home
+     page and in the "Nue 2.0: The UNIX of the web" article. -->
+<nue-stack data-component="nue-stack">
 
-  <section class="grid">
-    <div :each="tool, i in tooling" class="card" title="{ tool.info }">
-      <h3 class="row"><box-icon class="branded"/> { tool.title }</h3>
+  <section data-name="tools">
+    <div :each="tool, i in tooling" title="{ tool.info }">
+      <h3 data-kind="title"><box-icon class="branded"/> { tool.title }</h3>
       <p>{ tool.desc }</p>
     </div>
   </section>
 
-  <aside class="grid">
+  <aside data-name="features">
     <div :each="[ title, feats ] in Object.entries(features)">
       <h3>{ title }</h3>
       <p :each="feat in feats">{ feat }</p>

@@ -1,13 +1,9 @@
 /*---------------------------------------------------------------------------
 Contents.....: Global reset and element defaults.
 Created......: July 10, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /**
  * Reset Layer: makes browsers behave consistently by stripping/neutralizing defaults which vary or
@@ -37,25 +33,35 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
 /**
  * Defaults Layer: contains default, un-opinionated styling for all types of elements. Some
  * elements require additional styling in other layers. With well-defined defaults, “naked” HTML
- * should look clean and accessible.
+ * should look clean and accessible. These are the styles we want to declare before more
+ * specific styles are applied in lower layers, e.g. as nested in a component or layout.
  */
 @layer defaults {
-
-  body {
-    line-height: var(--default-line-height);
-    background-color: var(--default-bg-color);
-    font-family: var(--default-font-family);
-    color: var(--default-text-color);
-  }
 
   ::selection {
     background-color: var(--selection-bg-color);
     color: var(--selection-text-color);
   }
 
+  ::placeholder {
+     color: var(--input-placeholder-text-color);
+  }
+
+  :focus-visible {
+    outline-color: var(--default-bg-color);
+    outline-offset: 4px;
+    outline-width: 1px;
+  }
+
   img {
     max-width: 100%;
     height: auto;
+  }
+
+  figure {
+    margin: 1.5em 0;
+
+    &.bordered img { border: 1px solid var(--content-border-color) }
   }
 
   /* This likely prevents unwanted space below images that are the only child of a link. One use is
@@ -120,7 +126,6 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
   }
 
   ol, ul, table { margin-block: 1.5em }
-
   ol, ul { padding-left: 1em }
 
   li {
@@ -151,12 +156,6 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
 
   time { white-space: nowrap }
 
-  figure {
-    margin: 1.5em 0;
-
-    &.bordered img { border: 1px solid var(--content-border-color) }
-  }
-
   a {
     text-decoration-color: var(--brand-color);
     text-underline-offset: .25em;
@@ -170,12 +169,12 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
 
     &:visited { opacity: .5 }
-    &[name] { color: inherit }
   }
 
   nav {
     line-height: 1.25;
 
+    /* Typically a menu item (e.g. in page header, on docs home page). */
     a {
       color: var(--default-text-color);
       text-decoration: none;
@@ -186,62 +185,25 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
   }
 
-  button, .button {
-    background-color: var(--control-bg-color);
-    color: var(--text-color-strong);
-    text-align: center;
-    font-family: inherit;
-    font-size: inherit;
-    padding: .5em 1.25em;
-    border-radius: .25em;
-    cursor: pointer;
-    display: inline-block;
-    white-space: nowrap;
-    border: unset;
-    gap: .5em;
-
-    &:hover { filter: brightness(1.1) }
-
-    &:active {
-      filter: brightness(.9);
-      transform: scale(.99);
-    }
-
-    &[disabled] {
-      pointer-events: none;
-      opacity: .33;
-    }
-
-    &.plain {
-      background-color: unset;
-      border: 0;
-      padding: 0;
-    }
-
-    header & { padding: .375em 1em }
-  }
-
-  .button { text-decoration: none }
-
   table {
+    width: 100%;
     font-size: var(--ui-font-size);
     border-collapse: collapse;
-    width: 100%;
 
     tr { vertical-align: baseline }
     th { color: var(--text-color-strong) }
 
     th, td {
-      border-bottom: 1px solid var(--content-border-color);
       padding: .5em 0;
+      border-bottom: 1px solid var(--content-border-color);
       text-align: left;
 
       &:not(:first-child) { padding-left: 2em }
     }
 
     td:first-child {
-      white-space: nowrap;
       width: 25%;
+      white-space: nowrap;
     }
 
     tfoot td {
@@ -252,29 +214,19 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
   }
 
   form {
-    max-width: var(--width, 45em);
+    max-width: 45em;
     margin-block: 2em;
   }
 
-  ::placeholder {
-     color: var(--input-placeholder-text-color);
-  }
-
-  :focus-visible {
-    outline-color: var(--default-bg-color);
-    outline-offset: 4px;
-    outline-width: 1px;
-  }
-
   input, textarea {
+    width: 100%;
+    margin: 0;
+    padding: .75em;
     background-color: var(--control-bg-color);
     border: none;
     color: var(--default-text-color);
     font-family: inherit;
     font-size: inherit;
-    padding: .75em;
-    width: 100%;
-    margin: 0;
   }
 
   dialog {
@@ -290,97 +242,4 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
       backdrop-filter: blur(5px);
     }
   }
-
-    /* #region ------------- Component Styles ------------- */
-
-    /* Reduces font size and line height for the Nue Stack, Join list, header, footer, and
-      assembly. */
-    /** @category Component "Compact UI" */
-  .ui {
-    font-size: var(--ui-font-size);
-    line-height: 1.25;
-  }
-
-  /* "NUE" logo styling, used in the header and footer. */
-  /** @category Component "Wordmark" */
-  .wordmark {
-    color: var(--text-color-strong);
-    font-size: 1.125em;
-    letter-spacing: .025em;
-    font-weight: 750;
-  }
-
-  /* Used by the Nue Stack outer and inner divs and by each assembly folder-tree file. */
-  /** @category Component "Card" */
-  .card {
-    background-color: var(--surface-bg-color-subtle);
-    border-radius: var(--radius-md, 4px);
-    padding: 1em 1.25em;
-
-    .card { background-color: var(--default-bg-color) }
-    > :first-child { margin-top: 0 }
-    > :last-child { margin-bottom: 0 }
-  }
-
-  /* A small callout-like section used in blog articles and Nuemark documentation. */
-  /** @category Component "Note" */
-  .note {
-    background-color: var(--surface-bg-color-subtle);
-    max-width: var(--text-line-max-width);
-    font-size: var(--ui-font-size);
-    margin-block: 1.5em;
-    padding: 1em;
-
-    p { margin: 0 }
-  }
-
-  /* Inline tag-looking text. Currently only used in the header layout module. */
-  /** @category Component "Tag" */
-  .tag {
-    border-radius: var(--radius-sm);
-    font-size: .875em;
-    padding: .125em .25em;
-    font-weight: 600;
-    line-height: 1;
-  }
-
-  /* A pill-shaped generic element. Currently only used in the header layout module. */
-  /** @category Component "Pill" */
-  .pill {
-    background-color: var(--control-bg-color);
-    color: var(--text-color-strong);
-    border-radius: 9em;
-    padding: .25em .75em;
-
-    &:hover { background-color: var(--pill-bg-color-hover) }
-  }
-
-  /* Used around various svg-icons across the site. */
-  /** @category Component "Icon" */
-  .icon {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-
-    &.branded { color: var(--brand-color) }
-  }
-
-  /* No-bullet list; used by the blog-entries and Nue assembly components. */
-  /** @category Component "List" */
-  .list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    li:not([class]) { padding: 0 }
-  }
-
-  /* #endregion ------------- Component Styles ------------- */
-
 }
-
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */

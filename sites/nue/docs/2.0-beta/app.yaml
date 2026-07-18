@@ -1,6 +1,8 @@
 
 beside: false
-# Exclude globally shared files in the site's `/@shared` directory. Instead we use the local copies in the `ui/@global` directory. Note, we do need to include the `2.0-beta` prefix to avoid also pulling in files from other Docs versions.
+# Exclude globally shared files in the site's `/@shared` directory. Instead we use the local copies
+# in the `ui/@global` directory. Note, we do need to include the `2.0-beta` prefix to avoid also
+# pulling in files from other Docs versions.
 exclude: [ @shared ]
 include: [ 2.0-beta/ui/@global ]
 

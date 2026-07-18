@@ -11,10 +11,15 @@ meta:
 tagline: The UNIX of the Web
 
 # Teaser CTA in site header; enable whenever we have relevant 'breaking news', etc.
+# Old Nue 2.0 teaser, now outdated:
 #teaser:
 #  text: Nue 2.0 is out ->
 #  url: /blog/2.0/
 #  tag: New
+teaser:
+  text: Redesigned Nue 2.0 website coming ->
+#  url: /blog/2.0/
+  tag: New
 
 gh:
   url: https://github.com/tormnator/nue

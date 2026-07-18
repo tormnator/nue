@@ -1,40 +1,27 @@
 /*---------------------------------------------------------------------------
 Contents.....: Perfect web framework article styles.
 Created......: June 24, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* ------------------------------------------------- */
-/* #region Zone: PAGE (PERFECT WEB FRAMEWORK)        */
-/* ------------------------------------------------- */
 
 /** Layouts Layer: positions and arranges article-specific elements. */
 @layer layouts {
-  /* #region ============= Default Layouts ============= */
-
   h2 code {
     padding: .25em .5em;
     float: right;
     margin: .25em 0 0;
   }
 
-  /* #endregion ============= Default Layouts ============= */
-
-  /* #region ============= Named Layouts ============= */
-
-  .problem {
+  /** @category Component "Problem Block" (A small callout-like block) */
+  div.problem {
     padding: .1em 2.5em .1em 1.5em;
     margin: 2em 0;
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity of article-specific elements. */
 @layer paint {
-  /* #region ============= Default Paint ============= */
-
   h2 code {
     background-color: #e3f0ff;
     font-size: 1rem;
@@ -44,11 +31,8 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     border-radius: var(--radius-md);
   }
 
-  /* #endregion ============= Default Paint ============= */
-
-  /* #region ============= Named Paint ============= */
-
-  .problem {
+  /** @category Component "Problem Block" (A small callout-like block) */
+  div.problem {
     border-left: 5px solid red;
     background-color: #fff5f3;
     font-size: 95%;
@@ -60,10 +44,4 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
       color: #28ac6c;
     }
   }
-
-  /* #endregion ============= Named Paint ============= */
 }
-
-/* ------------------------------------------------- */
-/* #endregion Zone: PAGE (PERFECT WEB FRAMEWORK)     */
-/* ------------------------------------------------- */

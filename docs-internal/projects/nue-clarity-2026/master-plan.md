@@ -42,8 +42,8 @@ Design, implement, validate, and publish an updated Nue website with a complete 
 |---|---|---|
 | Completed | [M1: Project Setup](#m1-project-setup) | Created project specification and master plan; prepared Git; created GitHub initiation issue. |
 | Completed | [M2: Bootstrap Side-By-Side Website](#m2-bootstrap-side-by-side-website) | Created a separate updated website workspace from selected current-site pieces. |
-| In Progress | [M3: Website Foundation Review](#m3-website-foundation-review) | Align the bootstrapped site with Nue Beta 3, site-structure best practices, ASCS, and private Cloudflare preview deployment. |
-| Planned | [M4: Main-Site Direction And Content Boundaries](#m4-main-site-direction-and-content-boundaries) | Define main-site direction and the boundary between evaluation content, blog content, and working docs. |
+| Completed | [M3: Website Foundation Review](#m3-website-foundation-review) | Align the bootstrapped site with Nue Beta 3, site-structure best practices, ASCS, and private Cloudflare preview deployment. |
+| In Progress | [M4: Main-Site Direction And Content Boundaries](#m4-main-site-direction-and-content-boundaries) | Define main-site direction and the boundary between evaluation content, blog content, and working docs. |
 | Planned | [M5: Documentation Information Architecture](#m5-documentation-information-architecture) | Design docs audiences, learning paths, page types, navigation, URLs, page templates, examples strategy, and content criteria. |
 | Planned | [M6: UX/UI Design And Design System](#m6-ux-ui-design-and-design-system) | Research, prototype, and define an ASCS-compliant visual system for the docs and future main-site expansion. |
 | Planned | [M7: Implement Site Foundation And Representative Pages](#m7-implement-site-foundation-and-representative-pages) | Implement layouts, navigation, CSS, docs home, and representative page types before full content production. |
@@ -69,7 +69,7 @@ Current project state:
 - Side-by-side website bootstrap work was completed on `proj/clarity-m2-website-bootstrap`.
 - Archived Nue 2.0-beta docs added as `.md` source files; versioning approach and naming finalized in the spec.
 - M3 structure and configuration review is complete; the bootstrapped site was updated to use current Nue capabilities appropriately.
-- M3 website foundation review and reorganization is in progress.
+- M3 website foundation review and reorganization is complete.
 
 Open planning questions:
 
@@ -80,15 +80,14 @@ Open planning questions:
 Validation status:
 
 - M2 local build behavior was validated enough to support M3 review.
-- M3 structure/configuration review is complete; ASCS/CSS alignment, local build validation, archived-doc build validation, and private preview validation remain.
+- M3 structure/configuration review, ASCS/CSS alignment, local build validation, archived-doc build validation is complete.
+- M3 private preview validation has been postponed to a future milestone (TBD).
 
 ## Next Actions
 
 Immediate next actions:
 
-1. Update current HTML and CSS to be ASCS-compliant while leaving CSS useful as input for M6 prototyping.
-2. Validate local build behavior, including the archived 2.0-beta docs with the current Nue build pipeline.
-3. Configure and deploy a private Cloudflare preview.
+1. Start Milestone 4.
 
 ## Milestones And Tasks
 
@@ -124,11 +123,11 @@ This milestone makes the bootstrapped website technically sound before larger IA
 - Completed: Update the site to use current Nue capabilities appropriately.
 - Completed: Read project-local ASCS instructions and ASCS spec before HTML/CSS work.
 - Completed: Review CSS/design configuration and file-organization and align with ASCS.
-- In progress: Update current HTML and CSS to be ASCS-compliant.
-- In progress: Leave CSS useful as input for M6 prototyping.
-- Planned: Validate local build behavior.
-- Planned: Validate that the archived 2.0-beta docs build correctly with the current Nue build pipeline.
-- Planned: Configure and deploy a private Cloudflare preview.
+- Completed: Update current HTML and CSS to be ASCS-compliant.
+- Completed: Leave CSS useful as input for M6 prototyping.
+- Completed: Validate local build behavior.
+- Completed: Validate that the archived 2.0-beta docs build correctly with the current Nue build pipeline.
+- Postponed: Configure and deploy a private Cloudflare preview. This step has been postponed to a later milestone (which one is to be decided).
 
 ### M4: Main-Site Direction And Content Boundaries
 

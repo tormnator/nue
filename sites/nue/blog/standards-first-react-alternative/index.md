@@ -35,7 +35,7 @@ Let's study the difference in more detail:
 ## Simple components
 Below is a basic `<table>` component defined in three ways:
 
-[.flex]
+[.basic-columns]
   [! img/simple-table-1.png]
     caption: Modern React
     href: simple-table
@@ -61,7 +61,7 @@ While these differences might seem minor, they become apparent when we move to m
 ## Complex components
 Next we examine how these approaches handle increasing complexity. Here's the same table component, but now with sorting and filtering:
 
-[.flex]
+[.basic-columns]
   [! img/complex-table-1.png caption="Modern React"]
     href: complex-table
 

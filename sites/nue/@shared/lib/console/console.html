@@ -4,16 +4,16 @@
   import { createConsole } from './console.js'
 </script>
 
-<!-- Console HTML Component: Simulates the Nue install, create, development, and building process.
+<!-- Console Component: Simulates the Nue install, create, development, and building process.
      Is used both on the home page and in the "Nue 2.0: The UNIX of the web" article. -->
-<console class="console">
-
-  <header class="row">
+<console data-component="console">
+  <header>
     <a :onclick="model.prev()">←</a>
     <a :onclick="model.next()">→</a>
   </header>
 
   <pre/>
+  <p>{ caption }</p>
 
   <script>
     async mounted() {

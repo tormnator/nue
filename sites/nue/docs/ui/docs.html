@@ -1,22 +1,26 @@
-
 <!--
-  topics is defined in topics.yaml, and getTopicCategory defined in @shared/data/data-transforms.js
+  Topics Menu component used in the "Learn more" section of the docs (see the `pagefoot` layout
+  module) and on the "Docs" home page (page menu).
+  The `topics` template data is defined in `topics.yaml`.
 -->
-
-<nav :is="topics" class="stack">
+<nav :is="topics-menu" data-kind="topics-menu">
   <a :each="{ slug, desc, title } in topics[category]" href="{ slug }">
     <template :if="!desc">{ title }</template>
-    <div :if="desc" class="row">
+    <div :if="desc" data-kind="topic-desc">
       <strong>{ title }</strong>
       <small>{ desc }</small>
     </div>
   </a>
 </nav>
 
-<pagefoot class="learn-more">
+<!--
+  The `pagefoot` layout module is rendered at the bottom of <body><main><article> as a <footer> element.
+  This Docs pagefoot overrides any default pagefoot defined in `@shared/ui/layout-modules.html`.
+-->
+<pagefoot data-name="learn-more">
   <h2>Learn more</h2>
 
-  <topics :topics :category="getTopicCategory(slug)"/>
+  <topics-menu :topics :category="getTopicCategory(slug)"/>
 
   <p>
     <a href="/docs/"><strong>View all topics</strong></a>

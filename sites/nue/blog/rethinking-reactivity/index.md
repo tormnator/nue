@@ -74,7 +74,7 @@ function App() {
 
 To understand this choice we must go back in time. The world used to be slightly different before React and the kids entered the picture. There were two kinds of frontend skills: **UX development** and **JS development**:
 
-[.flex.thin]
+[.narrow-columns]
   ### UX development
 
   - HTML + CSS

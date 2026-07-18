@@ -8,20 +8,20 @@
   <meta name="color-scheme" content="light dark">
 </head>
 
-<header class="ui">
+<header>
   <nav>
     <a href="/"><b class="wordmark">NUE</b></a>
     <a href="/docs/">Docs</a>
     <a href="/blog/">Blog</a>
 
-    <a :if="teaser" class="teaser row" href="{ teaser.url }">
-      <span class="inverse tag">{ teaser.tag}</span>
+    <a :if="teaser" data-component="teaser" href="{ teaser.url }">
+      <span data-component="badge">{ teaser.tag}</span>
       { teaser.text }
     </a>
   </nav>
 
   <nav>
-    <div data-name="theme-selector">
+    <div data-component="theme-selector">
       <button type="button" popovertarget="theme-menu" aria-label="{ themeButton.ariaLabel }">{ themeButton.label }</button>
       <div id="theme-menu" popover>
         <menu>
@@ -32,12 +32,12 @@
       </div>
     </div>
 
-    <a  href="{ slack.url }" class="social row">
+    <a href="{ slack.url }" data-kind="social-media-link">
       <slack-icon width="18" height="18"/>
       <strong>Slack</strong>
     </a>
 
-    <a  href="{ gh.url }" class="row pill">
+    <a href="{ gh.url }" data-look="pill">
       <github-icon width="18" height="18"/> { gh.count }
     </a>
   </nav>
@@ -58,7 +58,7 @@
   <!---->
 </aside>
 
-<footer class="ui">
+<footer>
   <hr>
   <b class="wordmark">NUE</b>
   <span>— { tagline }</span>

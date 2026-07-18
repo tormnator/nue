@@ -1,4 +1,7 @@
-<author class="author row">
+<!--
+  Author component. Image, name, and X username. Used in blog post header.
+ -->
+<author data-component="author">
   <span><img src="{ img }" width="36" height="36"></span>
 
   <aside>
@@ -19,3 +22,12 @@
     this.pretty = DATE_FORMAT.format(date)
   </script>
 </time>
+
+<ul :is="blog-entries" data-component="blog-entries">
+  <li :each="el in blog">
+    <a href="{ el.url }">
+      <pretty-date :date="el.date"/>
+      <strong>{{ markdown(el.title) }}</strong>
+    </a>
+  </li>
+</ul>

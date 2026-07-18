@@ -1,13 +1,9 @@
 /*---------------------------------------------------------------------------
 Contents.....: Global layout styles.
 Created......: July 10, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /**
  * Layouts Layer: all styles involving positioning, spacing, sizing, and arrangement (the
@@ -27,7 +23,6 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     > * { padding: 1em }
     > main { flex: 1 }
 
-
     > header {
       align-items: center;
       margin-bottom: 3em;
@@ -38,9 +33,13 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
         align-items: center;
         display: flex;
         gap: 2em;
+
+        &:last-of-type {
+          margin-left: auto;
+          justify-content: right;
+        }
       }
     }
-
 
     > footer {
       padding-bottom: 4.5em;
@@ -67,32 +66,23 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
 
   /* #region ============= Named Layouts ============= */
 
-  body > header nav:last-of-type {
-    margin-left: auto;
-    justify-content: right;
-  }
-
   /* mobile layout */
   @media (width < 750px) {
-    body > header .teaser,
-    body > header .social {
+    body > header a[data-component="teaser"],
+    body > header a[data-kind="social-media-link"] {
       display: none;
     }
   }
 
-  /* 2026-07-13: only used in one case where there's a <body><main><article><section><div class="thin">.
-     This is on the `sites/nue/blog/tailwind-vs-semantic-css/index.md` page. The purpose seems to be
-     to put two columns closer together horizontally. */
-  body main > article .thin { max-width: 75% }
-
-  /* 2026-07-13: Does not seem to be used anywhere. */
-  body main > article .wide {
-    max-width: inherit;
-    width: 100%
+  /** @category Component "Button" */
+  button,
+  [data-look="button"] {
+    display: inline-block;
+    padding: .5em 1.25em;
   }
 
   /** @category Component "Theme Selector" */
-  [data-name="theme-selector"] {
+  [data-component="theme-selector"] {
     > button {
       padding: var(--space-1) var(--space-3);
       anchor-name: --theme-menu-trigger;
@@ -113,55 +103,121 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
         gap: var(--space-1);
         padding-inline-start: 0;
 
-        > li > button {
-          inline-size: 100%;
-          text-align: start;
-          padding: var(--space-2) var(--space-3);
+        > li {
+          padding: 0;
+          > button {
+            inline-size: 100%;
+            padding: var(--space-2) var(--space-3);
 
-          &[aria-pressed="true"] {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--inner-3);
+            &[aria-pressed="true"] {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: var(--inner-3);
+            }
           }
         }
       }
     }
   }
 
+  /* Used in blog articles and Nuemark documentation. */
+  /** @category Component "Note" (A small callout-like section) */
+  .note {
+    max-width: var(--text-line-max-width);
+    margin-block: 1.5em;
+    padding: 1em;
+
+    p { margin: 0 }
+  }
+
+  /* Currently only used in the header layout module. */
+  /** @category Component "Badge" */
+  [data-component="badge"] {
+    padding: .125em .25em;
+  }
+
+  /* Currently only used in the header layout module. */
+  /** @category Component "Pill" (A pill-shaped generic element) */
+  a[data-look="pill"] {
+    padding: .25em .75em;
+  }
+
+  /** @category Component "Row" (A center-aligned flex row with column gap) */
+  [data-component="row"],
+  /* We're phasing out the .row class in favor of the more semantic [data-component="row"] selector,
+     but for now we want to support both. */
+  .row,
+  /* The following selectors are aliases which helps making the html content-driven and more
+     semantic (instead of presentation-driven), and delegate presentation concerns to the CSS. */
+  [data-component="teaser"],
+  a[data-kind="social-media-link"],
+  a[data-look="pill"],
+  [data-component="cta-buttons"],
+  [data-component="author"],
+  [data-component="console"] > header,
+  [data-component="nue-stack"] > [data-name="tools"] [data-kind="title"],
+  nav[data-kind="topics-menu"] div[data-kind="topic-desc"] {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+  }
+
+  /* This was earlier named `.flex`, but that's too much of a technical term. In our content we
+     want to stay as semantic as possible, so we renamed the class to `.basic-columns`. We're
+     prefixing with `base-` since the style implementation here is opinionated (the `gap` and `flex`
+     properties). Technically this is a flex row with multiple columns. */
+  /** @category Component "Base Columns" (a simple, but opinionated style for a multi-column layout) */
+  .basic-columns,
+  /* By adding the narrow-columns alias here, we're saying that `narrow-columns` elements should
+     also inherit this layout style. */
+  .narrow-columns,
+  /* The following selectors are aliases which helps making the html content-driven and more
+     semantic (instead of presentation-driven), and delegate presentation concerns to the CSS. */
+  [data-component="join-list"] > form {
+    display: flex;
+    max-width: 40em;
+    gap: 1em;
+
+    > * { flex: 1 }
+  }
+
+  /** @category Component "Stack" (A flex column with a default gap and no alignment). */
+  .stack,
+  /* The following selectors are aliases which helps making the html content-driven and more
+     semantic (instead of presentation-driven), and delegate presentation concerns to the CSS. */
+  [data-component="join-list"] > form > [data-kind="edit-boxes"],
+  [data-component="nue-stack"],
+  nav[data-kind="topics-menu"]
+  {
+    display: flex;
+    flex-direction: column;
+    align-items: unset;
+    gap: 1em;
+  }
+
   /* #endregion ============= Named Layouts ============= */
 
   /* #region ============= Free Layouts ============= */
 
-  .grid {
+  /* Responsive, auto-fit grid with customizable minimum column width and a predefined gap. */
+  .auto-grid,
+  /* The following selectors are aliases which helps making the html content-driven and more
+     semantic (instead of presentation-driven), and delegate presentation concerns to the CSS. */
+  [data-component="nue-stack"] > [data-name="features"],
+  [data-component="nue-stack"] > [data-name="tools"] {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--cell-width, 250px), 1fr));
     gap: 1em;
   }
 
-  .row {
-    align-items: center;
-    display: flex;
-    gap: .5em;
-  }
-
-  .flex {
-    display: flex;
-    gap: 1em;
-    > * { flex: 1 }
-
-    &.wrap {
-      flex-wrap: wrap;
-      > * { flex: 1 1 var(--cell-width, 200px) }
-    }
-  }
-
-  .stack {
-    flex-direction: column;
-    align-items: unset;
-    display: flex;
-    gap: 1em;
-  }
+  /* 2026-07-13: only used in one case where there's a <body><main><article><section><div class="narrow-columns">
+     on the `sites/nue/blog/tailwind-vs-semantic-css/index.md` page. The intent is to keep
+     the columns closer together horizontally. This particular implementation solves that problem by
+     making the parent element narrower (we don't know the type of element is this CSS). Also see
+     the .basic-columns style which this style inherits from.
+  */
+  .narrow-columns { max-width: 75%; }
 
   @media (width > 900px) {
     .columns {
@@ -174,7 +230,3 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
 
   /* #endregion ============= Free Layouts ============= */
 }
-
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */

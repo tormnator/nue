@@ -1,36 +1,26 @@
 /*---------------------------------------------------------------------------
 Contents.....: Home page styles.
 Created......: June 24, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: PAGE (HOME)        */
-/* -------------------------------- */
 
 /** Layouts Layer: positions and arranges home page elements. */
 @layer layouts {
-  /* #region ============= Named Layouts ============= */
-
-  .cta-buttons { gap: .75em }
-
-  /* #endregion ============= Named Layouts ============= */
+  /** @category Component "CTA Buttons" */
+  [data-component="cta-buttons"] { gap: .75em }
 }
 
 /** Paint Layer: defines the visual identity of home page elements. */
 @layer paint {
-  /* #region ============= Named Paint ============= */
-
+  /* This is just a workaround for applying a style to paragraphs (intended to be captions)
+     declared in the markdown file. The paragraphs follow a larger section (screen, Nue stack). 
+     This is a little fragile now, though, e.g. if we add a component and we don't want the next
+     paragraph to be a caption. In that case we could be more specific and add each component name
+     to the selector, or redesign the components to include a caption element. */
   /* captions */
-  [class] + p {
+  [data-component] + p {
     color: var(--text-color-subtle);
     font-size: .875em
   }
-
-  /* #endregion ============= Named Paint ============= */
 }
-
-/* -------------------------------- */
-/* #endregion Zone: PAGE (HOME)     */
-/* -------------------------------- */

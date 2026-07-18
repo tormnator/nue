@@ -1,11 +1,11 @@
 <!--
 Assembly HTML Component: Displays a conceptual @shared directory file structure,
- and an animation of various files there (the assembly).
- This component is referenced on the home page (/index.md).
+and an animation of various files there (the assembly).
+This component is referenced on the home page (/index.md).
 -->
 
-<nue-assembly class="assembly ui flex">
-  <aside class="card">
+<nue-assembly data-component="nue-assembly">
+  <aside>
     <h3>@shared</h3>
     <p>├── <b>ui</b></p>
     <p>├── <b>app</b></p>
@@ -16,14 +16,10 @@ Assembly HTML Component: Displays a conceptual @shared directory file structure,
 
   <arrow-right/>
 
-  <ul class="list" --items="{ assembly.length }">
-    <li :each="path, i in assembly" class="card" --index="{ i }">
+  <ul --items="{ assembly.length }">
+    <li :each="path, i in assembly" --index="{ i }">
       <h4>{ path }</h4>
-      <hr :each="el in new Array(10).fill(0)"
-        --random="{ Math.round(Math.random() * 100) / 100 }">
+      <hr :each="el in new Array(10).fill(0)" --random="{ Math.round(Math.random() * 100) / 100 }">
     </li>
   </ul>
 </nue-assembly>
-
-
-

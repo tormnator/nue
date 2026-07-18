@@ -6,17 +6,17 @@
  still active here, but <join-list> should not be used anywhere for now. 2026-06-24, @tormnator.
 -->
 
-<join-list>
+<join-list data-component="join-list">
 
   <p :if="sessionStorage.joined">{ done }</p>
 
-  <form :else class="ui flex" --width="40em" :onsubmit="submit">
-    <div class="stack">
-      <input type="email" placeholder="Your email" class="flex-3" name="email" autocomplete="email" required>
+  <form :else :onsubmit="submit">
+    <div data-kind="edit-boxes">
+      <input type="email" placeholder="Your email" name="email" autocomplete="email" required>
       <textarea placeholder="{ comment }" name="comment"></textarea>
     </div>
     <div>
-      <button class="brand">{ cta }</button>
+      <button type="submit" data-variant="brand">{ cta }</button>
     </div>
   </form>
 

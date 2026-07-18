@@ -7,7 +7,7 @@ date: 2023-10-23
 
 This study compares two websites with similar design: The commercial Spotlight template from developers of Tailwind vs the same site with semantic CSS:
 
-[.flex]
+[.basic-columns]
   [image]
     href: //spotlight.tailwindui.com/
     small: img/tw-home.png
@@ -114,7 +114,7 @@ The semantic version, allows you to change the design of the gallery freely. You
 
 Here's a better example. Let's look at the "Uses" or "Setup" page on both implementations:
 
-[.flex]
+[.basic-columns]
   [image]
     href: //spotlight.tailwindui.com/uses
     small: img/tw-uses.png

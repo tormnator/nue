@@ -11,24 +11,28 @@ beside: true
 # Learn Nue
 The UNIX of the Web
 
-[.topics]
+[.topics-region]
 
   ### Essentials
-  [topics category="essentials"]
+  [topics-menu category="essentials"]
 
   ### Developing
-  [topics category="developing"]
+  [topics-menu category="developing"]
 
   ---
 
   ### Tools
-  [topics category="tools"]
+  [topics-menu category="tools"]
 
 
   ### Concepts
-  [topics category="concepts"]
+  [topics-menu category="concepts"]
 
   ---
 
   ### Reference
-  [topics category="reference"]
+  [topics-menu category="reference"]
+
+## Archived Documentation Sites
+
+[Nue 2.0 Beta](./2.0-beta/)

@@ -1,13 +1,9 @@
 /*---------------------------------------------------------------------------
 Contents.....: Global design tokens and themes.
 Created......: July 10, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 13, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /** Layer order: establishes cascade precedence from lowest to highest. */
 @layer tokens, themes, reset, defaults, layouts, paint, utilities, overrides;
@@ -123,15 +119,20 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     /* #region ============= Non-Themeable Semantic Tokens ============= */
 
     --default-font-family: var(--font-family-sans);
-     /* "ui" is retained for now. This reduced font size is used in the Nue Stack and assembly
-       components, the Join-list component's form, and header and footer layout modules. */
+     /* "ui" is retained for now. This reduced font size and accompanying line height is used in the
+        Nue Stack and assembly components, the Join-list component's form, and header and footer
+        layout modules. */
     --ui-font-size: 14px;
+    --ui-line-height: 1.25;
+
     --default-line-height: 1.65;
     --text-line-max-width: 42rem;
     --default-page-width: 1024px;
     /* Used for cards, modals, dialogs, etc. */
     --container-radius: var(--radius-lg);
     --shadow-popover: 0 4px 6px -1px var(--shadow-color-subtle);
+    --surface-border-radius: var(--radius-md);
+    --surface-padding: 1em 1.25em;
 
     /* #endregion ============= Non-Themeable Semantic Tokens ============= */
   }
@@ -231,7 +232,3 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
   }
 }
-
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */

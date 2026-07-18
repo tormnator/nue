@@ -1,5 +1,11 @@
-
 @layer layout {
+  /* This is the top banner of the documentation area. Is used to show that the current page is
+     a part of an older, archived version. */
+  body > div:first-child {
+    padding-block: 0.2em;
+    background-color: silver;
+    font-size: .8em;
+  }
 
   .topics {
     font-size: var(--ui-sizing);

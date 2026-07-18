@@ -1,23 +1,18 @@
 /*---------------------------------------------------------------------------
 Contents.....: Documentation area styles.
 Created......: July 10, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: AREA (DOCS)        */
-/* -------------------------------- */
 
 /** Layouts Layer: positions and arranges documentation area elements. */
 @layer layouts {
-  /* #region ============= Named Layouts ============= */
-
-  .topics {
+  /* This is a grouping container for the various documentation topics. */
+  div.topics-region {
     margin-top: 2em;
     display: flex;
 
-    nav { margin: 0 10vw 3em 0 }
+    nav[data-kind="topics-menu"] { margin: 0 10vw 3em 0 }
 
     small {
       @media (500px < width < 900px) {
@@ -30,12 +25,12 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
   }
 
-  .learn-more {
-
-    .stack {
+  [data-name="learn-more"] {
+    nav[data-kind="topics-menu"] {
       margin-block: 1.5em 2em;
-      a { max-width: 13em }
       gap: .75em;
+
+      > a { max-width: 13em }
     }
 
     [aria-current] {
@@ -43,18 +38,15 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
       margin-left: -.5em;
       width: auto;
 
-      &:has(.row) { max-width: 25em }
+      &:has(div[data-kind="topic-desc"]) { max-width: 25em }
     }
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity of documentation area elements. */
 @layer paint {
-  /* #region ============= Named Paint ============= */
-
-  .topics {
+  /* This is a grouping container for the various documentation topics. */
+  div.topics-region {
     font-size: var(--ui-font-size);
 
     small {
@@ -63,21 +55,17 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
   }
 
-  .learn-more {
-    .stack { font-size: var(--ui-font-size) }
+  [data-name="learn-more"] {
+    nav[data-kind="topics-menu"] {
+       font-size: var(--ui-font-size);
 
-    [aria-current] {
-      background-color: var(--inverse-bg-color);
-      color: var(--inverse-text-color);
-      pointer-events: none;
+      a[aria-current] {
+        background-color: var(--inverse-bg-color);
+        color: var(--inverse-text-color);
+        pointer-events: none;
 
-      strong { color: white }
+        strong { color: var(--inverse-text-color) }
+      }
     }
   }
-
-  /* #endregion ============= Named Paint ============= */
 }
-
-/* -------------------------------- */
-/* #endregion Zone: AREA (DOCS)     */
-/* -------------------------------- */

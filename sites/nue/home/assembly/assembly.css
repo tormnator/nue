@@ -1,91 +1,106 @@
 /*---------------------------------------------------------------------------
 Contents.....: Home assembly section styles.
 Created......: July 4, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* ------------------------------------ */
-/* #region Zone: SECTION (ASSEMBLY)     */
-/* ------------------------------------ */
 
 /** Layouts Layer: positions and arranges the assembly component. */
 @layer layouts {
-  /* #region ============= Named Layouts ============= */
-
   /** @category Component "Assembly" */
-  .assembly {
-    margin-top: 2em;
+  [data-component="nue-assembly"] {
+    display: flex;
+    gap: 1em;
+    margin-block-start: 2em;
 
-    aside {
+    > * { flex: 1 }
+
+    > aside {
       max-width: 200px;
       padding: 2em;
 
-      p { margin: 0 }
+      > :first-child { margin-block-start: 0 }
+      > :last-child { margin-block-end: 0 }
+
+    > p { margin: 0 }
     }
 
-    ul {
-      position: relative;
-      overflow: hidden;
-    }
-
-    svg {
+    /* pulsating arrow */
+    > svg {
       max-width: 2em;
       align-self: center;
       margin: -1em 0 0 -.5em;
       display: block;
     }
 
-    li {
-      position: absolute;
-      width: 150px;
+    > ul {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
 
-      h4 { white-space: nowrap }
-    }
+      > li {
+        position: absolute;
+        width: 150px;
+        padding: var(--surface-padding);
 
-    hr {
-      margin: .75em 0;
-      width: calc(20% + calc(70% * var(--random)));
+        > :first-child { margin-block-start: 0 }
+        > :last-child { margin-block-end: 0 }
+
+        > h4 { white-space: nowrap }
+
+        > hr {
+          margin: .75em 0;
+          width: calc(20% + calc(70% * var(--random)));
+        }
+      }
     }
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity and motion of the assembly component. */
 @layer paint {
-  /* #region ============= Named Paint ============= */
-
   /** @category Component "Assembly" */
-  .assembly {
-    aside {
+  [data-component="nue-assembly"] {
+    font-size: var(--ui-font-size);
+    line-height: var(--ui-line-height);
+
+    > aside {
       font-family: var(--font-family-mono);
       border: 1px solid var(--brand-color);
       font-size: 1em;
+      background-color: var(--surface-bg-color-subtle);
+      border-radius: var(--surface-border-radius, 4px);
 
-      p { color: var(--supporting-text-color); }
-      b { color: var(--brand-color); font-weight: 600 }
+      p {
+        color: var(--supporting-text-color);
+        > b { color: var(--brand-color); font-weight: 600 }
+      }
     }
 
     /* pulsating arrow */
-    svg {
+    > svg {
       color: var(--text-color-strong);
       animation: flow .75s ease-in-out infinite alternate;
     }
 
-    li {
-      animation: move calc(var(--items) * 2s) infinite linear;
-      animation-delay: calc(var(--index) * -2s);
+    > ul {
+      list-style: none;
 
-      h4 {
-        font-size: .9em;
-        font-weight: 500;
-        color: var(--text-color-strong);
+      > li {
+        background-color: var(--surface-bg-color-subtle);
+        border-radius: var(--surface-border-radius, 4px);
+        animation: move calc(var(--items) * 2s) infinite linear;
+        animation-delay: calc(var(--index) * -2s);
+
+        > h4 {
+          font-size: .9em;
+          font-weight: 500;
+          color: var(--text-color-strong);
+        }
       }
     }
   }
-
-  /* #endregion ============= Named Paint ============= */
 
   @keyframes flow {
     0% { opacity: 0.5; transform: translatex(-.2em) }
@@ -97,7 +112,3 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     100% { transform: translateX(calc(900px + 150px)) }
   }
 }
-
-/* ------------------------------------ */
-/* #endregion Zone: SECTION (ASSEMBLY)  */
-/* ------------------------------------ */

@@ -1,13 +1,9 @@
 /*---------------------------------------------------------------------------
 Contents.....: Global paint styles.
 Created......: July 10, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /**
  * Paint Layer: reusable styles defining UI elements' visual identity (the “Paint”).
@@ -15,16 +11,71 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
 @layer paint {
   /* #region ============= Default Paint ============= */
 
-  body > footer {
-    color: var(--text-color-subtle);
+  body {
+    background-color: var(--default-bg-color);
+    color: var(--default-text-color);
+    font-family: var(--default-font-family);
+    line-height: var(--default-line-height);
+
+    > header {
+      font-size: var(--ui-font-size);
+      line-height: var(--ui-line-height);
+    }
+
+    > footer {
+      font-size: var(--ui-font-size);
+      line-height: var(--ui-line-height);
+      color: var(--text-color-subtle);
+    }
   }
 
   /* #endregion ============= Default Paint ============= */
 
   /* #region ============= Named Paint ============= */
 
+  /** @category Component "Button" */
+  button,
+  [data-look="button"] {
+    background-color: var(--control-bg-color);
+    color: var(--text-color-strong);
+    text-align: center;
+    font-family: inherit;
+    font-size: inherit;
+    border-radius: .25em;
+    white-space: nowrap;
+    border: unset;
+
+    &:hover { filter: brightness(1.1) }
+
+    &:active {
+      filter: brightness(.9);
+      transform: scale(.99);
+    }
+
+    &[disabled] {
+      pointer-events: none;
+      opacity: .33;
+    }
+
+    &[data-variant="plain"] {
+      background-color: unset;
+      border: 0;
+      padding: 0;
+    }
+
+    &[data-variant="brand"] {
+      background-color: var(--brand-color);
+      color: var(--brand-text-color);
+    }
+  }
+
+  a[data-look="button"] {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
   /** @category Component "Theme Selector" */
-  [data-name="theme-selector"] {
+  [data-component="theme-selector"] {
     > button {
       /*background: transparent;*/
       color: var(--default-text-color);
@@ -54,6 +105,7 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
           cursor: pointer;
           color: var(--default-text-color);
           font-size: var(--ui-font-size);
+          text-align: start;
 
           &:hover {
             background-color: var(--pill-bg-color-hover);
@@ -74,31 +126,60 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
   }
 
-  /* #endregion ============= Named Paint ============= */
-
-  /* #region ============= Free Paint ============= */
-
-  /* Styles within `modifier` have lower precedence than styles in the outer paint layer. */
-  @layer modifier {
-    /** @category Primitive "Brand Colors" */
-    .brand {
-      background-color: var(--brand-color);
-
-      &, * { color: var(--brand-text-color) }
-    }
-
-    /** @category Primitive "Inverse Colors" */
-    .inverse {
-      background-color: var(--inverse-bg-color);
-      color: var(--inverse-text-color);
-
-      &, * { color: var(--inverse-text-color) }
-    }
+  [data-component="join-list"] {
+    font-size: var(--ui-font-size);
+    line-height: var(--ui-line-height);
   }
 
-  /* #endregion ============= Free Paint ============= */
-}
+  /* "NUE" logo styling, used in the header and footer. */
+  /** @category Component "Wordmark" (logo made from the brand's name) */
+  .wordmark {
+    color: var(--text-color-strong);
+    font-size: 1.125em;
+    letter-spacing: .025em;
+    font-weight: 750;
+  }
 
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */
+  /* Used in blog articles and Nuemark documentation. */
+  /** @category Component "Note" (A small callout-like block) */
+  .note {
+    background-color: var(--surface-bg-color-subtle);
+    font-size: var(--ui-font-size);
+  }
+
+  /* Currently only used in the header layout module. */
+  /** @category Component "Badge" */
+  [data-component="badge"] {
+    border-radius: var(--radius-sm);
+    font-size: .875em;
+    font-weight: 600;
+    line-height: 1;
+    background-color: var(--inverse-bg-color);
+    color: var(--inverse-text-color);
+
+    &, * { color: var(--inverse-text-color) }
+  }
+
+  /* Currently only used in the header layout module. */
+  /** @category Component "Pill" (A pill-shaped generic element) */
+  a[data-look="pill"] {
+    background-color: var(--control-bg-color);
+    color: var(--text-color-strong);
+    border-radius: 9em;
+
+    &:hover { background-color: var(--pill-bg-color-hover) }
+  }
+
+  /** @category Component "Icon" (Used around various svg-icons) */
+  .icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    &.branded { color: var(--brand-color) }
+  }
+
+  /* #endregion ============= Named Paint ============= */
+}

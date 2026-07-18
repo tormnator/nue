@@ -1,20 +1,14 @@
 /*---------------------------------------------------------------------------
 Contents.....: Opt-in video player component styles.
 Created......: June 24, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /** Layouts Layer: positions and arranges the video player component. */
 @layer layouts {
-  /* #region ============= Named Layouts ============= */
-
   /** @category Component "Video Player" */
-  .player {
+  [data-component="video-player"] {
     position: relative;
     display: inline-flex;
     justify-content: center;
@@ -37,16 +31,12 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
       z-index: 1;
     }
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity of the video player component. */
 @layer paint {
-  /* #region ============= Named Paint ============= */
-
   /** @category Component "Video Player" */
-  .player {
+  [data-component="video-player"] {
     video { border-radius: var(--radius-md) }
 
     .icon {
@@ -59,10 +49,4 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
       fill: white;
     }
   }
-
-  /* #endregion ============= Named Paint ============= */
 }
-
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */

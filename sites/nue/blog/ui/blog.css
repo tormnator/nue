@@ -1,68 +1,62 @@
 /*---------------------------------------------------------------------------
 Contents.....: Blog area styles.
 Created......: June 24, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: AREA (BLOG)        */
-/* -------------------------------- */
 
 /** Layouts Layer: positions and arranges blog area elements. */
 @layer layouts {
-  /* #region ============= Default Layouts ============= */
-
   header > time {
     margin-bottom: 1em;
     display: inline-block;
   }
 
-  /* #endregion ============= Default Layouts ============= */
+  /** @category Component "Blog Entries" (List of blog entries with link and description) */
+  [data-component="blog-entries"] {
+    margin-block: 2em 0;
+    margin-inline: 0;
+    padding: 0;
 
-  /* #region ============= Named Layouts ============= */
+    > li {
+      padding: 0;
 
-  .list {
-    margin-top: 2em;
+      > a {
+        display: flex;
+        gap: 1em;
+        padding-block: .125em;
 
-    strong { flex: 3 }
-
-    a { padding-block: .125em }
+        > * { flex: 1 }
+        > :last-child { flex: 3 }
+      }
+    }
   }
 
-  .author {
+  /** @category Component "Author" (Displays author information) */
+  [data-component="author"] {
     margin-top: 1em;
     gap: 1em;
 
     img { margin-bottom: -.25em }
-
     h3 { margin: 0 }
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity of blog area elements. */
 @layer paint {
-  /* #region ============= Default Paint ============= */
-
   header > time { font-size: .875em }
 
-  /* #endregion ============= Default Paint ============= */
+  /** @category Component "Blog Entries" (List of blog entries with link and description) */
+  [data-component="blog-entries"] {
+    list-style: none;
 
-  /* #region ============= Named Paint ============= */
+    a { text-decoration: none }
+  }
 
-  .list a { text-decoration: none }
-
-  .author {
+  /** @category Component "Author" (Displays author information) */
+  [data-component="author"] {
     font-size: .875em;
 
     img { border-radius: var(--radius-md) }
   }
-
-  /* #endregion ============= Named Paint ============= */
 }
-
-/* -------------------------------- */
-/* #endregion Zone: AREA (BLOG)     */
-/* -------------------------------- */

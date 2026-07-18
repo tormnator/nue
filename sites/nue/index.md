@@ -23,6 +23,3 @@ Move fast by focusing on content and structure
 
 [nue-assembly]
 Construct apps and pages with a scalable architecture
-
-
-

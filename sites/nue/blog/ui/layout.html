@@ -1,14 +1,7 @@
-
-<ul :is="blog-entries" class="list">
-  <li :each="el in blog">
-    <a href="{ el.url }" class="flex">
-      <pretty-date :date="el.date"/>
-      <strong>{{ markdown(el.title) }}</strong>
-    </a>
-  </li>
-</ul>
-
-<!-- the hero area for each blog entry -->
+<!--
+  The hero area for each blog entry.
+  The `pagehead` layout module is placed here: `<body<main><article><header>`
+-->
 <header :is="pagehead">
   <pretty-date :date/>
 

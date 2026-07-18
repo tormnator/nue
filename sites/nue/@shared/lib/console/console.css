@@ -1,20 +1,14 @@
 /*---------------------------------------------------------------------------
 Contents.....: Opt-in console component styles.
 Created......: June 24, 2026, Tor Langlo
-Last modified: July 12, 2026, GitHub Copilot
-Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors preserved.
+Last modified: July 16, 2026, Tor Langlo
+Notes........: Refactored from original Nue CSS using ASCS 0.3.7.
 ---------------------------------------------------------------------------*/
-
-/* -------------------------------- */
-/* #region Zone: GLOBAL             */
-/* -------------------------------- */
 
 /** Layouts Layer: positions and arranges the console component. */
 @layer layouts {
-  /* #region ============= Named Layouts ============= */
-
   /** @category Component "Console" */
-  .console {
+  [data-component="console"] {
     margin-block: 2em -.5em;
     height: 33em;
 
@@ -46,16 +40,12 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
       top: 0.15em;
     }
   }
-
-  /* #endregion ============= Named Layouts ============= */
 }
 
 /** Paint Layer: defines the visual identity of the console component. */
 @layer paint {
-  /* #region ============= Named Paint ============= */
-
   /** @category Component "Console" */
-  .console {
+  [data-component="console"] {
     background-color: var(--code-bg-color);
     color: var(--default-text-color);
 
@@ -99,14 +89,8 @@ Notes........: Refactored using ASCS 0.3.7; original Nue CSS and selectors prese
     }
   }
 
-  /* #endregion ============= Named Paint ============= */
-
   @keyframes blink {
     0%, 50% { opacity: 1 }
     51%, 100% { opacity: 0 }
   }
 }
-
-/* -------------------------------- */
-/* #endregion Zone: GLOBAL          */
-/* -------------------------------- */
