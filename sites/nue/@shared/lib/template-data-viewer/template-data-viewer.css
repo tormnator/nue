@@ -1,0 +1,22 @@
+@layer layouts {
+  [data-component="template-data-viewer"] {
+    h4 { margin-block-start: 1.5em; }
+    ul {
+       margin-block: 0;
+       margin-inline-start: 0.5em;
+    }
+    pre { margin: 0; }
+  }
+}
+
+@layer paint {
+  [data-component="template-data-viewer"] {
+    h4,li { font-size: 0.9em; }
+    ul {
+       > li {
+        color: var(--gray-800);
+       }
+    }
+    pre { font-family: var(--default-font-family); }
+  }
+}

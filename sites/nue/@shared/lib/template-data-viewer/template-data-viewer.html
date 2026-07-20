@@ -1,0 +1,84 @@
+<!html lib>
+
+<!--
+  This HTML Component was created simply to display the template data typically available to a
+  template. It is not intended for use in production.
+-->
+<template-data-viewer data-component="template-data-viewer">
+  <h3>Template Data:</h3>
+  
+  <h4>Nue Data:</h4>
+  <ul>
+    <li :each="line in nue_data"><pre>{ line }</pre></li>
+  </ul>
+
+  <h4>Functions:</h4>
+  <ul>
+    <li :each="line in template_functions"><pre>{ line }</pre></li>
+  </ul>
+
+  <h4>User Data:</h4>
+  <ul>
+    <li :each="line in user_data"><pre>{ line }</pre></li>
+  </ul>
+  
+  <script>
+    const known_nue_keys = new Set([
+      'description', 'dir', 'favicon', 'headings', 'language', 'og', 'og_image',
+      'origin', 'scope', 'slug', 'title', 'title_template', 'url', 'dist', 'ignore', 'is_prod', 'rss'
+    ])
+    const runtime_keys = new Set(['mount', 'parent', 'root', 'update'])
+
+    function scalar(value) {
+      if (value === null) return 'null'
+      if (typeof value === 'string') return JSON.stringify(value)
+      return String(value)
+    }
+
+    function yaml_entry(key, value, indent = '') {
+      const prefix = `${indent}<b>${key}</b>:`
+      if (typeof value === 'function') return `${prefix} [function]`
+      if (value === null || typeof value !== 'object') return `${prefix} ${scalar(value)}`
+      if (Array.isArray(value)) {
+        if (!value.length) return `${prefix} []`
+        return [prefix, ...value.flatMap(item => yaml_item(item, `${indent}  `))].join('\n')
+      }
+
+      const entries = Object.entries(value)
+      if (!entries.length) return `${prefix} {}`
+      return [prefix, ...entries.map(([key, value]) => yaml_entry(key, value, `${indent}  `))].join('\n')
+    }
+
+    function yaml_item(value, indent) {
+      if (value === null || typeof value !== 'object') return [`${indent}- ${scalar(value)}`]
+      if (Array.isArray(value)) return [`${indent}-`, ...value.flatMap(item => yaml_item(item, `${indent}  `))]
+
+      const entries = Object.entries(value)
+      if (!entries.length) return [`${indent}- {}`]
+      const [[key, item], ...rest] = entries
+      return [`${indent}- ${yaml_entry(key, item)}`, ...rest.map(([key, value]) => yaml_entry(key, value, `${indent}  `))]
+    }
+
+    const context_entries = Object.entries(this)
+
+    this.nue_data = []
+    this.template_functions = []
+    this.user_data = []
+
+    context_entries.forEach(([key, value]) => {
+      if (runtime_keys.has(key))
+        return
+      const output = yaml_entry(key, value)
+      if (typeof value === 'function')
+        this.template_functions.push(output)
+      else if (known_nue_keys.has(key))
+        this.nue_data.push(output)
+      else
+        this.user_data.push(output)
+    })
+
+    this.nue_data.sort((left, right) => left.localeCompare(right))
+    this.template_functions.sort((left, right) => left.localeCompare(right))
+    this.user_data.sort((left, right) => left.localeCompare(right))
+  </script>
+</template-data-viewer>
