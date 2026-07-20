@@ -15,7 +15,14 @@ We will have sections in this document according to the starting point for our d
 
 
 ## Tutorials
+*These are just some ideas for tutorials; needs to be evaluated (and expanded?).*
 
+- Creating a Nue project from scratch (should be a regular MPA, SSG site)
+- Creating an SPA app
+- Creating an MPA/SPA hybrid site
+- Creating a blog site
+- Creating a documentation site
+- Deploying a Nue project to CloudFlare (with Wranger, with Git integration)
 
 ## How-to Guides
 
@@ -297,6 +304,16 @@ Do not document this pattern as if it produced both data and slot content:
 Once a tag body is recognized as YAML data, Nuemark does not also parse that body as Markdown blocks.
 
 Raw HTML in `.md` is not a general escape hatch today. The block parser skips lines that start with `<`, so manual `<div>` or `<section>` markup in Markdown does not reliably render as HTML. Use an `.html` page/layout/component for arbitrary HTML structure, or expose the structure through a custom component.
+
+### FAQ
+*For instance:*
+
+- What’s the syntax used inside template expressions (`{ expr }`)?
+- What's the difference between using single and double braces for template expressions?
+- How do I render HTML using markdown template data?
+- How do I pass data into HTML components?
+- What kind of HTML rendering does Nue 2.0 provide (SSG/SSR/CSR)? (Note: this is not a "How-to" topic)
+- What external dependencies does Nue 2.0 have? (Note: this is not a "How-to" topic)
 
 
 ## Reference
@@ -808,7 +825,14 @@ These values are good candidates for `@shared/data/content.yaml` or another desc
 
 ## Explanation
 
-
+- What is Nue? (should this be part of the documenation, or the main site?)
+- How do the key parts of Nue work (build system, dev server, prod server, platform adapters)
+- Rendering Pipeline
+  - Build-time rendering (SSG)
+  - Dev-server rendering (SSR)
+  - Prod-server rendering (SSR)
+  - Client-side rendering (CSR)
+- Best Practices (is this the right place, or should be in a different location?)
 
 
 ***

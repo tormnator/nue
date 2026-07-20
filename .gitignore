@@ -3,6 +3,9 @@ docs-internal/local-only
 docs-internal/temp
 ascs-spec
 ascs.instructions.md
+# Website pages intentionally only available in local development:
+sites/nue/local-only
+
 node_modules
 
 coverage
